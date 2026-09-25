@@ -1,0 +1,38 @@
+[
+  {
+    "audience": "power_utility",
+    "language": "en",
+    "priority": "P0",
+    "message": "De-energize S1 by T-24h [FC-2026-E2E] S1 upakendra",
+    "asset_refs": [
+      "S1"
+    ],
+    "forecast_id": "FC-2026-E2E",
+    "recommended_action": "De-energize S1 by T-24h",
+    "channel": "sms"
+  },
+  {
+    "audience": "health_department",
+    "language": "en",
+    "priority": "P0",
+    "message": "Secure H1 by T-24h [FC-2026-E2E] H1 upakendra",
+    "asset_refs": [
+      "H1"
+    ],
+    "forecast_id": "FC-2026-E2E",
+    "recommended_action": "Secure H1 by T-24h",
+    "channel": "sms"
+  },
+  {
+    "audience": "roads_authority",
+    "language": "en",
+    "priority": "P1",
+    "message": "Secure R1 by T-24h [FC-2026-E2E] R1 upakendra",
+    "asset_refs": [
+      "R1"
+    ],
+    "forecast_id": "FC-2026-E2E",
+    "recommended_action": "Secure R1 by T-24h",
+    "channel": "sms"
+  }
+]

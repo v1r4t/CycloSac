@@ -1,0 +1,23 @@
+{
+  "hazard_summary": "Michaung cat 2 landfall 2026-09-27T06:00:00+05:30",
+  "inundation_area_km2": 100.0,
+  "depth_bands": [
+    60.0,
+    40.0
+  ],
+  "max_depth_m": 2.0,
+  "timeline": [
+    {
+      "hours_before_landfall": 48,
+      "event": "surge arrival"
+    },
+    {
+      "hours_before_landfall": 24,
+      "event": "peak wind"
+    },
+    {
+      "hours_before_landfall": 0,
+      "event": "landfall"
+    }
+  ]
+}

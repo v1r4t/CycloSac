@@ -1,0 +1,22 @@
+{
+  "cascade_chains": [
+    {
+      "trigger_asset_id": "S1",
+      "chain": [
+        {
+          "asset_id": "H1",
+          "dependency_type": "power",
+          "hop": 1
+        }
+      ],
+      "max_depth": 1,
+      "population_affected": 30000,
+      "confidence": {
+        "level": "high",
+        "reason": "deterministic BFS"
+      }
+    }
+  ],
+  "cumulative_population_affected": 30000,
+  "critical_paths": []
+}
