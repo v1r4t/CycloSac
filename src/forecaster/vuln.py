@@ -83,7 +83,7 @@ def score_assets(assets, surge=None, rainfall=None, wind=None, crs=None):
         else:
             fm = "no direct inundation; access/cascade risk"
         out.append({"asset_id": a["asset_id"], "asset_name": a.get("asset_name", a["asset_id"]),
-                    "asset_type": atype, "in_hazard": in_h,
+                    "asset_type": atype, "lat": a.get("lat"), "lon": a.get("lon"), "in_hazard": in_h,
                     "hazard_depth_m": depth if kind != "wind" else 0.0,
                     "hazard_wind_kmh": wnd, "hazard_type": kind, "near_boundary": near,
                     "vulnerability_score": score,

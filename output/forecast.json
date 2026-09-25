@@ -1,0 +1,223 @@
+{
+  "forecast_id": "FC-2026-E2E",
+  "generated_at": "2026-09-26T00:02:47.408228+05:30",
+  "prompt_version": "MASTER-FORECASTER-1.1.0",
+  "hazard_narrative": {
+    "hazard_summary": "Michaung cat 2 landfall 2026-09-27T06:00:00+05:30",
+    "inundation_area_km2": 100.0,
+    "depth_bands": [
+      60.0,
+      40.0
+    ],
+    "max_depth_m": 2.0,
+    "timeline": [
+      {
+        "hours_before_landfall": 48,
+        "event": "surge arrival"
+      },
+      {
+        "hours_before_landfall": 24,
+        "event": "peak wind"
+      },
+      {
+        "hours_before_landfall": 0,
+        "event": "landfall"
+      }
+    ]
+  },
+  "vulnerability_register": [
+    {
+      "asset_id": "S1",
+      "asset_name": "Sub Puri-04",
+      "asset_type": "substation",
+      "lat": 19.8,
+      "lon": 85.5,
+      "in_hazard": true,
+      "hazard_depth_m": 2.0,
+      "hazard_wind_kmh": 0.0,
+      "hazard_type": "surge",
+      "near_boundary": false,
+      "vulnerability_score": 80.3,
+      "reasoning": "surge sev; frag 25/25, exposure 23/35",
+      "confidence": {
+        "level": "high",
+        "reason": "direct exposure"
+      },
+      "estimated_failure_mode": "inundation 2.0m vs threshold 0.5m",
+      "population_affected": 0,
+      "data_gaps": [],
+      "score_breakdown": {
+        "hazard_exposure": 23.3,
+        "asset_fragility": 25.0,
+        "criticality": 16.0,
+        "accessibility": 8.0,
+        "redundancy": 8.0
+      }
+    },
+    {
+      "asset_id": "H1",
+      "asset_name": "CHC Puri",
+      "asset_type": "hospital",
+      "lat": 19.85,
+      "lon": 85.55,
+      "in_hazard": false,
+      "hazard_depth_m": 0.0,
+      "hazard_wind_kmh": 0.0,
+      "hazard_type": "none",
+      "near_boundary": false,
+      "vulnerability_score": 31.0,
+      "reasoning": "none sev; frag 0/25, exposure 0/35",
+      "confidence": {
+        "level": "high",
+        "reason": "outside footprint"
+      },
+      "estimated_failure_mode": "no direct inundation; access/cascade risk",
+      "population_affected": 0,
+      "data_gaps": [],
+      "score_breakdown": {
+        "hazard_exposure": 0.0,
+        "asset_fragility": 0.0,
+        "criticality": 20.0,
+        "accessibility": 3.0,
+        "redundancy": 8.0
+      }
+    },
+    {
+      "asset_id": "R1",
+      "asset_name": "NH-316",
+      "asset_type": "arterial_road",
+      "lat": 19.82,
+      "lon": 85.52,
+      "in_hazard": false,
+      "hazard_depth_m": 0.0,
+      "hazard_wind_kmh": 0.0,
+      "hazard_type": "none",
+      "near_boundary": false,
+      "vulnerability_score": 23.0,
+      "reasoning": "none sev; frag 0/25, exposure 0/35",
+      "confidence": {
+        "level": "high",
+        "reason": "outside footprint"
+      },
+      "estimated_failure_mode": "no direct inundation; access/cascade risk",
+      "population_affected": 0,
+      "data_gaps": [],
+      "score_breakdown": {
+        "hazard_exposure": 0.0,
+        "asset_fragility": 0.0,
+        "criticality": 12.0,
+        "accessibility": 3.0,
+        "redundancy": 8.0
+      }
+    }
+  ],
+  "cascade_impact": {
+    "cascade_chains": [
+      {
+        "trigger_asset_id": "S1",
+        "chain": [
+          {
+            "asset_id": "H1",
+            "dependency_type": "power",
+            "hop": 1
+          }
+        ],
+        "max_depth": 1,
+        "population_affected": 30000,
+        "confidence": {
+          "level": "high",
+          "reason": "deterministic BFS"
+        }
+      }
+    ],
+    "cumulative_population_affected": 30000,
+    "critical_paths": []
+  },
+  "advisories": [
+    {
+      "audience": "power_utility",
+      "language": "en",
+      "priority": "P0",
+      "message": "De-energize S1 by T-24h [FC-2026-E2E] S1 upakendra",
+      "asset_refs": [
+        "S1"
+      ],
+      "forecast_id": "FC-2026-E2E",
+      "recommended_action": "De-energize S1 by T-24h",
+      "channel": "sms"
+    },
+    {
+      "audience": "health_department",
+      "language": "en",
+      "priority": "P0",
+      "message": "Secure H1 by T-24h [FC-2026-E2E] H1 upakendra",
+      "asset_refs": [
+        "H1"
+      ],
+      "forecast_id": "FC-2026-E2E",
+      "recommended_action": "Secure H1 by T-24h",
+      "channel": "sms"
+    },
+    {
+      "audience": "roads_authority",
+      "language": "en",
+      "priority": "P1",
+      "message": "Secure R1 by T-24h [FC-2026-E2E] R1 upakendra",
+      "asset_refs": [
+        "R1"
+      ],
+      "forecast_id": "FC-2026-E2E",
+      "recommended_action": "Secure R1 by T-24h",
+      "channel": "sms"
+    }
+  ],
+  "parametric": {
+    "payout_events": [
+      {
+        "asset_id": "S1",
+        "trigger_condition": "wind>=160.0 surge>=2.0",
+        "payout_pct": 0.4,
+        "payout_amount": 2000000.0,
+        "insurer_id": "INS-1",
+        "confidence": "high"
+      }
+    ],
+    "warnings": []
+  },
+  "counterfactual": [
+    {
+      "horizon_h": 0,
+      "exposed_pop": 3000,
+      "reachable_shelters": 1,
+      "cascade_chains_len": 1,
+      "marginal_lives_saved": 0
+    },
+    {
+      "horizon_h": 6,
+      "exposed_pop": 2640,
+      "reachable_shelters": 1,
+      "cascade_chains_len": 1,
+      "marginal_lives_saved": 360
+    },
+    {
+      "horizon_h": 12,
+      "exposed_pop": 2280,
+      "reachable_shelters": 1,
+      "cascade_chains_len": 1,
+      "marginal_lives_saved": 720
+    },
+    {
+      "horizon_h": 24,
+      "exposed_pop": 1560,
+      "reachable_shelters": 1,
+      "cascade_chains_len": 1,
+      "marginal_lives_saved": 1440
+    }
+  ],
+  "data_conflicts": [],
+  "quality_check": {
+    "overall_status": "pass",
+    "blocker_count": 0,
+    "flags": []
+  }
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CycloSac — Cyclone Decision Pipeline (prototype)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#0b1220;color:#e8eef7}
+header{padding:12px 16px;background:#111c33;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+#map{height:42vh}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;padding:12px}
+.card{background:#131f38;border:1px solid #274067;border-radius:10px;padding:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{border-bottom:1px solid #274067;padding:4px 6px;text-align:left}
+button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1e3a5f;font-size:12px}
+input[type=range]{width:100%}
+small{color:#9fb3d1}
+</style>
+</head>
+<body>
+<header>
+<h2 style="margin:0">CycloSac <small>prototype — complete decision pipeline, not production</small></h2>
+<span class="pill" id="fid">…</span><span class="pill" id="status">…</span>
+</header>
+<div id="map"></div>
+<div class="grid">
+<div class="card"><h3>Exposure (vulnerability desc)</h3><table id="exp"><tr><th>Asset</th><th>Type</th><th>Score</th><th>Hazard</th></tr></table></div>
+<div class="card"><h3>Cascade (BFS ≤3, union pop)</h3><div id="cas"></div></div>
+<div class="card"><h3>Advisories (SMS ≤280)</h3><div id="adv"></div></div>
+<div class="card"><h3>Counterfactual slider <small>static evac rate — tooltip limitation</small></h3>
+<input type="range" id="cf" min="0" max="3" step="1" value="0"/><div id="cfv"></div></div>
+<div class="card"><h3>Parametric ledger (mock INR)</h3><table id="led"><tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr></table></div>
+<div class="card"><h3>Gemini conflicts (human-in-loop)</h3><div id="con">No conflicts — Path2 stub. Wire tile PNG + band JSON to flag SAR-vs-model.</div></div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let FC=null, CF=null;
+fetch('../output/forecast.json').then(r=>r.json()).then(fc=>{
+FC=fc;
+document.getElementById('fid').textContent=fc.forecast_id;
+document.getElementById('status').textContent='QA '+fc.quality_check.overall_status;
+const map=L.map('map').setView([19.8,85.55],11);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(map);
+fc.vulnerability_register.forEach(a=>{
+ const color=a.vulnerability_score>=70?'red':(a.vulnerability_score>=40?'orange':'green');
+ L.circleMarker([a.lat||19.8,a.lon||85.5],{radius:6,color}).bindPopup(`${a.asset_id} ${a.asset_type} score=${a.vulnerability_score}`).addTo(map);
+});
+document.getElementById('exp').innerHTML='<tr><th>Asset</th><th>Type</th><th>Score</th><th>Hazard</th></tr>'+fc.vulnerability_register.map(a=>`<tr><td>${a.asset_id}</td><td>${a.asset_type}</td><td>${a.vulnerability_score}</td><td>${a.hazard_type}</td></tr>`).join('');
+document.getElementById('cas').innerHTML=`<p>Cumulative pop: <b>${fc.cascade_impact.cumulative_population_affected}</b></p>`+fc.cascade_impact.cascade_chains.map(c=>`<p>⚡ ${c.trigger_asset_id} → ${c.chain.map(x=>x.asset_id+'(h'+x.hop+')').join(' → ')||'—'}</p>`).join('');
+document.getElementById('adv').innerHTML=fc.advisories.map((m,i)=>`<p><b>${m.audience}</b> [${m.priority}] (${m.message.length}ch)<br/>${m.message}<br/><button onclick="navigator.clipboard.writeText(document.getElementById('am${i}').textContent)">Copy</button> <span id="am${i}">${m.message}</span></p>`).join('');
+document.getElementById('led').innerHTML='<tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr>'+(fc.parametric?.payout_events||[]).map(p=>`<tr><td>${p.asset_id}</td><td>${p.payout_pct}</td><td>₹${p.payout_amount}</td></tr>`).join('');
+CF=fc.counterfactual||[]; updCF(0);
+});
+function updCF(i){const r=(CF||[])[i];if(!r)return;document.getElementById('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop}</b>, saved <b>${r.marginal_lives_saved}</b>`;}
+document.getElementById('cf').addEventListener('input',e=>updCF(+e.target.value));
+</script>
+</body>
+</html>

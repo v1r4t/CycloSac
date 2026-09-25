@@ -1,0 +1,8 @@
+pydantic>=2
+shapely>=2
+pyproj>=3
+scipy
+numpy
+pytest
+fastapi
+uvicorn
