@@ -60,6 +60,8 @@ button.ghost{background:transparent;border:1px solid var(--line)}
 select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:12px}
 .legend{background:#0a1327ee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.8}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px}
+.aoi-label{background:transparent!important;border:0!important;box-shadow:none!important;
+ font-size:11px;font-weight:800;letter-spacing:1.2px;color:#dbe7f7;opacity:.75;text-shadow:0 1px 3px #000}
 #err{display:none;margin:12px;padding:12px;background:#3a1414;border:1px solid #a33;border-radius:8px}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#12325e;border:1px solid var(--acc);
 border-radius:8px;padding:8px 16px;font-size:13px;display:none;z-index:600}
@@ -135,23 +137,28 @@ $('fid').textContent=fc.forecast_id;
 const st=$('status');st.textContent='QA '+fc.quality_check.overall_status.toUpperCase();
 st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_check.overall_status==='block'?'warn':'');
 const gt=fc.gee_tile||{};$('tile').textContent='GEE LIVE S1 '+(gt.source||'?')+' '+(gt.date||'');
+$('tile').title='Sentinel-1 via Google Earth Engine';
 $('gen').textContent='gen '+(fc.generated_at||'').slice(0,16).replace('T',' ');
 MAP=L.map('map').setView([19.8,85.55],11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
+const surgeLayer=L.layerGroup().addTo(MAP),markerLayer=L.layerGroup().addTo(MAP);
+// Omitted (no data — never invent geometry): rainfall, cascade-geometry, vulnerability-heat overlays.
+L.tooltip({permanent:true,direction:'top',className:'aoi-label',offset:[0,-6]}).setLatLng([19.794,85.502]).setContent('PURI, ODISHA — VALIDATED CASE STUDY').addTo(MAP);
 SURGE=[];((surge&&surge.features)||[]).forEach(f=>{const ring=(((f.geometry||{}).coordinates||[])[0])||[];
  if(!ring.length)return;const depth=(f.properties||{}).depth_m||0;SURGE.push({ring,depth});
  const shade=depth>=2?'#0369a1':depth>=1?'#0284c7':'#38bdf8';
- L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1,fillOpacity:.3}).bindPopup('surge '+depth+'m').addTo(MAP);});
+ L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1,fillOpacity:.3}).bindPopup('surge '+depth+'m').addTo(surgeLayer);});
 const P0=new Set(fc.advisories.filter(a=>a.priority==='P0').flatMap(a=>a.asset_refs||[]));
 CF=fc.counterfactual||[];
 fc.vulnerability_register.forEach(a=>{
  const m=L.circleMarker([a.lat,a.lon],{radius:5+Math.round(a.vulnerability_score/20),color:cssColor(a.vulnerability_score),
-  className:P0.has(a.asset_id)?'p0':''}).addTo(MAP);
+  className:P0.has(a.asset_id)?'p0':''}).addTo(markerLayer);
  let extra='outside footprint';for(const s of SURGE){if(inPoly(a.lon,a.lat,s.ring)){extra='surge '+s.depth+'m at asset';break;}}
  m.bindPopup(`<b>${a.asset_id}</b> ${a.asset_type}<br/>score ${a.vulnerability_score}<br/>${extra}<br/><small>${a.estimated_failure_mode||''}</small>`);
  MARKERS[a.asset_id]=m;});
 const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.create('div','legend');
- d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint';return d;};lg.addTo(MAP);
+ d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint<br/><span class="p0" style="color:#f0524f">◉</span> pulsing ring = P0 trigger asset';return d;};lg.addTo(MAP);
+ L.control.layers(null,{'Storm Surge':surgeLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
 renderStats();renderThreat();renderActions();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();updCF(0);
