@@ -1,7 +1,13 @@
 {
   "forecast_id": "FC-2026-PURI-001",
-  "generated_at": "2026-09-26T17:36:07.691959+05:30",
+  "generated_at": "2026-09-26T20:34:48.834872+05:30",
   "prompt_version": "MASTER-FORECASTER-1.1.0",
+  "gee_tile": {
+    "source": "real",
+    "date": "2026-09-24",
+    "cached": true,
+    "thumb_url": "https://earthengine.googleapis.com/v1/projects/cyclone-forecast-123456/thumbnails/3b70b23464523e6d9d2870ab7655cb58-3802a6c1418ad6bdc37859b9572e6e67:getPixels"
+  },
   "hazard_narrative": {
     "hazard_summary": "Michaung cat 3 landfall 2026-09-27T06:00:00+05:30",
     "inundation_area_km2": 100.0,

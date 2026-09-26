@@ -1,1 +1,1 @@
-{"cached": false, "aoi": "aoi", "date": "2026-09-25", "note": "stub tile; replace with 1 real tile"}
+{"cached": false, "source": "real", "aoi": "85.40,19.70,85.75,19.95", "date": "2026-09-25", "date_acquired": "2026-09-24", "image_count": 2, "thumb_url": "https://earthengine.googleapis.com/v1/projects/cyclone-forecast-123456/thumbnails/3b70b23464523e6d9d2870ab7655cb58-3802a6c1418ad6bdc37859b9572e6e67:getPixels", "project": "cyclone-forecast-123456", "datasets": {"sentinel1": "COPERNICUS/S1_GRD", "srtm": "USGS/SRTMGL1_003", "imerg": "NASA/GPM_L3/IMERG_V07"}}

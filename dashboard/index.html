@@ -22,7 +22,7 @@ small{color:#9fb3d1}
 <body>
 <header>
 <h2 style="margin:0">CycloSac <small>prototype — complete decision pipeline, not production</small></h2>
-<span class="pill" id="fid">…</span><span class="pill" id="status">…</span>
+<span class="pill" id="fid">…</span><span class="pill" id="status">…</span><span class="pill" id="tile">…</span>
 </header>
 <div id="map"></div>
 <div class="grid">
@@ -41,6 +41,7 @@ fetch('../output/forecast.json').then(r=>r.json()).then(fc=>{
 FC=fc;
 document.getElementById('fid').textContent=fc.forecast_id;
 document.getElementById('status').textContent='QA '+fc.quality_check.overall_status;
+const gt=fc.gee_tile||{};document.getElementById('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
 const map=L.map('map').setView([19.8,85.55],11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(map);
 fc.vulnerability_register.forEach(a=>{

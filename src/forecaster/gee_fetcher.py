@@ -103,7 +103,9 @@ def fetch_real_or_stub(aoi: str, date: str, cache_dir: str,
     c = Path(cache_dir)
     tile = c / "tile.json"
     if tile.exists():
-        return {"cached": True, **json.loads(tile.read_text())}
+        data = json.loads(tile.read_text())
+        data["cached"] = True
+        return data
     if use_cache_only:
         raise GeeError(f"GEE upstream unavailable and no cache in {cache_dir}")
     fetch_fn = live_fetch if live_fetch is not None else None
