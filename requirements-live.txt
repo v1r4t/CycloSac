@@ -1,0 +1,6 @@
+# Live-only deps (lazy-imported; NOT needed for offline/demo runs).
+# gemini_path1.py imports google.generativeai only when GEMINI_API_KEY is set.
+# gee_fetcher.py imports earthengine-api (ee) only for live GEE fetch.
+# Verified on PyPI 2026-09-26: google-generativeai latest 0.8.6, earthengine-api latest 1.7.45.
+google-generativeai>=0.8
+earthengine-api>=0.9
