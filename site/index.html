@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CycloSac — Cyclone Impact & Infrastructure Vulnerability Forecast</title>
+<style>
+:root{--bg:#0b1220;--panel:#131f38;--line:#274067;--txt:#e8eef7;--dim:#9fb3d1;--acc:#38bdf8}
+*{box-sizing:border-box}body{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--txt);line-height:1.55}
+.wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+header.hero{padding:64px 0 40px;background:radial-gradient(800px 300px at 20% 0%,#14305c,transparent)}
+.kicker{color:var(--acc);text-transform:uppercase;letter-spacing:2px;font-size:12px}
+h1{font-size:42px;margin:8px 0}h2{margin-top:48px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.lede{font-size:19px;color:var(--dim);max-width:760px}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:140px}
+.stat b{font-size:26px;display:block}.stat span{font-size:12px;color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{margin:0 0 6px;font-size:16px}.card p{margin:0;font-size:14px;color:var(--dim)}
+.card code{font-size:12px;color:var(--acc)}
+ol.pipe li{margin:10px 0}ol.pipe code{color:var(--acc);font-size:13px}
+.cta{display:flex;gap:12px;margin:24px 0;flex-wrap:wrap}
+a.btn{background:#2b6cb0;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none}
+a.btn.ghost{background:transparent;border:1px solid var(--line)}
+pre{background:#0a0f1e;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font-size:13px}
+footer{margin:56px 0 32px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+<div class="kicker">Coastal South Asia · 48–120h warning window</div>
+<h1>CycloSac</h1>
+<p class="lede"><b>Core problem:</b> when a cyclone approaches, disaster managers must know
+<b>what will break, where, when, and who it affects</b> — across power, roads, hospitals,
+water, and telecom — in time to de-energize, evacuate, reroute, and pre-position.
+CycloSac fuses satellite tiles, surge/rainfall/wind footprints, asset registers, ward
+population, and dependency graphs into one decision-grade forecast JSON.</p>
+<div class="stats">
+<div class="stat"><b id="s-assets">…</b><span>assets scored</span></div>
+<div class="stat"><b id="s-trig">…</b><span>cascade triggers (≥70)</span></div>
+<div class="stat"><b id="s-pop">…</b><span>population in cascade union</span></div>
+<div class="stat"><b id="s-adv">…</b><span>advisories dispatched</span></div>
+<div class="stat"><b id="s-pay">…</b><span>parametric payouts fired</span></div>
+<div class="stat"><b id="s-qa">…</b><span>QA verdict</span></div>
+</div>
+<div class="cta">
+<a class="btn" href="../dashboard/index.html">Open live dashboard</a>
+<a class="btn ghost" href="https://github.com/v1r4t/CycloSac">GitHub repo</a>
+</div>
+</div></header>
+<div class="wrap">
+<h2>The pipeline</h2>
+<ol class="pipe">
+<li><code>loader</code> — validates 10 inputs, fail-fast (exit 2). No partial runs.</li>
+<li><code>gee_fetcher</code> — Sentinel-1/SRTM/IMERG tile, cache-first (exit 5).</li>
+<li><code>hazard_sim + hazard</code> — Holland wind, SLOSH surge grid, rain index; bands-sum 5%, timeline sorted.</li>
+<li><code>vuln</code> — UTM-32645 polygon buffers (50m ring), 35/25/20/10/10 scoring vs fragility curves.</li>
+<li><code>cascade</code> — BFS from triggers ≥70, depth ≤3, ward-union population.</li>
+<li><code>advisory + Gemini Path1</code> — SMS ≤280ch, glossary (ଓଡ଼ିଆ), banned-word retry or exit 4.</li>
+<li><code>parametric + counterfactual</code> — wind/surge payout table → mock INR ledger; 0/6/12/24h evacuation slider.</li>
+<li><code>qa + cli</code> — 12 deterministic checks, exact blocker count, exits 0–5, one <code>forecast.json</code>.</li>
+</ol>
+<h2>Replay it (T-48h, Cyclone Michaung → Puri)</h2>
+<pre>$env:PYTHONPATH='src'
+python -m forecaster.cli --inputs sample_inputs_demo --out output/forecast.json --artifacts output/artifacts
+python -m pytest tests/   # 63 green</pre>
+<h2>Audiences served</h2>
+<div class="grid">
+<div class="card"><h3>Power utility</h3><p>Which substations to de-energize, when, backup options.</p></div>
+<div class="card"><h3>Roads authority</h3><p>Segments to close, alternate routes, debris risk.</p></div>
+<div class="card"><h3>Health dept</h3><p>Functional hospitals/shelters, patient routing, supplies.</p></div>
+<div class="card"><h3>Collector / NDRF</h3><p>Evacuation zones, deployment locations, priority brief.</p></div>
+</div>
+<footer>Prototype for hackathon demo — deterministic core, mocked ledger, stub physics documented in <code>docs/GEE.md</code>. Not a production disaster-management platform.</footer>
+</div>
+<script>
+fetch('../output/forecast.json').then(r=>r.json()).then(fc=>{
+const set=(id,v)=>document.getElementById(id).textContent=v;
+set('s-assets',fc.vulnerability_register.length);
+set('s-trig',fc.cascade_impact.cascade_chains.length);
+set('s-pop',fc.cascade_impact.cumulative_population_affected.toLocaleString('en-IN'));
+set('s-adv',fc.advisories.length);
+set('s-pay',(fc.parametric.payout_events||[]).length);
+set('s-qa',fc.quality_check.overall_status);
+}).catch(()=>{});
+</script>
+</body>
+</html>
