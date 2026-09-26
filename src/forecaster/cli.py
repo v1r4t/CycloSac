@@ -11,7 +11,7 @@ from . import config
 from .loader import load_inputs, LoaderError
 from .gee_fetcher import fetch as gee_fetch, GeeError
 from .hazard import validate_hazard, StageError
-from . import vuln, cascade, glossary, advisory, parametric, counterfactual, qa
+from . import vuln, cascade, glossary, advisory, gemini_path1, parametric, counterfactual, qa
 from .glossary import GlossaryError
 
 
@@ -111,10 +111,13 @@ def main(argv=None):
         advs = []
         for r in reg[:5]:
             aud = inp.audience.get(r["asset_id"], "district_collector")
+            action = (f"De-energize {r['asset_id']} by T-24h" if "substation" in r["asset_type"]
+                      else f"Secure {r['asset_id']} by T-24h")
+            ctx = {"audience": aud, "language": "en" if aud != "municipal_commissioner" else lang,
+                   "forecast_id": inp.regional.forecast_id, "asset_id": r["asset_id"],
+                   "glossary": gloss, "channel": "sms"}
             try:
-                advs.append(advisory.render(aud, "en" if aud != "municipal_commissioner" else lang,
-                                            inp.regional.forecast_id, r["asset_id"], gloss,
-                                            action=f"De-energize {r['asset_id']} by T-24h" if "substation" in r["asset_type"] else f"Secure {r['asset_id']} by T-24h"))
+                advs.append(gemini_path1.generate(action, ctx))
             except advisory.AdvisoryError as e:
                 log("error", "advisory", "ADVISORY_PROMPT_QUALITY", str(e), {"asset": r["asset_id"]})
                 write_error(a.artifacts, "advisory", e, a.verbose)
