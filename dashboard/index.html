@@ -11,21 +11,37 @@
 --red:#f0524f;--org:#f5a524;--grn:#30c48d;--acc:#38bdf8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
 font-family:Inter,"Noto Sans Oriya",system-ui,sans-serif}
-header{position:sticky;top:0;z-index:500;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+header{position:sticky;top:0;z-index:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
 padding:10px 16px;background:#0a1327ee;border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
 header h1{font-size:17px;margin:0;font-weight:800;letter-spacing:.4px}
+.sub{font-size:12px;color:var(--dim)}
+.replay{font-size:12px;font-weight:800;letter-spacing:.6px;color:#ffd7d7;background:#3a1414;
+border:1px solid #a33;border-radius:6px;padding:3px 10px}
+.demo{font-size:11px;font-weight:600;letter-spacing:.6px;color:var(--acc);border:1px dashed var(--acc);
+border-radius:6px;padding:3px 8px}
 .pill{font-size:12px;padding:3px 10px;border-radius:999px;background:#1a2c52;border:1px solid var(--line)}
-.pill.warn{background:#3a2a10}.pill.ok{background:#0e3a2a}
+.pill.warn{background:#3a2a10}.pill.ok{background:#0e3a2a}.pill.live{background:#0c2b3a}
+.pill small{color:var(--dim)}
+#scope{width:100%;font-size:11px;color:var(--dim)}
 #clock{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
-main{display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:calc(100vh - 53px)}
-#map{min-height:calc(100vh - 53px)}
-aside{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;max-height:calc(100vh - 53px)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 420px;min-height:calc(100vh - 78px)}
+.mapwrap{position:relative;min-height:calc(100vh - 78px)}
+#map{position:absolute;inset:0}
+aside{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;max-height:calc(100vh - 78px)}
 section{padding:12px 14px;border-bottom:1px solid var(--line)}
 section h2{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);margin:0 0 8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
 .stat b{font-size:22px;display:block;font-variant-numeric:tabular-nums}
-.stat span{font-size:11px;color:var(--dim)}
+.stat span{font-size:10px;color:var(--dim);letter-spacing:.4px}
+.threatcard{border:1px solid var(--line);border-left:4px solid var(--org);background:var(--panel2);
+border-radius:8px;padding:10px;font-size:13px;line-height:1.6}
+.act{display:flex;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:8px;
+padding:8px;font-size:13px;margin:6px 0;background:var(--panel2)}
+.act b.count{background:#1d3a6b;border-radius:6px;padding:1px 8px;font-size:12px}
+.tl{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:11px}
+.tl div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center}
+.tl b{display:block;font-size:11px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
 .chip{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--txt);cursor:pointer}
 .chip.on{background:#1d3a6b;border-color:var(--acc)}
@@ -53,21 +69,33 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 @keyframes pulse{0%{stroke-opacity:1}50%{stroke-opacity:.2}100%{stroke-opacity:1}}
 .p0{animation:pulse 1.4s infinite}
 .okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
-@media(max-width:900px){main{grid-template-columns:1fr}#map{min-height:52vh}aside{max-height:none;border-left:0}}
+@media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}}
 </style>
 </head>
 <body>
 <header>
 <h1>CYCLOSAC OPS</h1>
-<span class="pill" id="fid">loading…</span><span class="pill" id="status">…</span>
-<span class="pill" id="tile">…</span><span class="pill" id="gen">…</span>
+<span class="sub">Bay of Bengal &middot; Puri Odisha</span>
+<span class="replay">MICHAUNG REPLAY T&minus;48H</span>
+<span class="demo" id="demo">DEMO REPLAY</span>
+<span class="pill live" id="tile">&hellip;</span>
+<span class="pill live" id="llm">GEMINI VERIFIED</span>
+<span class="pill" id="status">&hellip;</span>
+<span class="pill" id="fid">loading&hellip;</span>
+<span class="pill" id="gen">&hellip;</span>
 <span id="clock"></span>
+<div id="scope">Platform: Bay of Bengal &middot; Validated case study: Puri, Odisha &middot; Replay of forecast, planning only</div>
 </header>
-<div id="err">Could not load <code>output/forecast.json</code> — serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
+<div id="err">Could not load <code>output/forecast.json</code> &mdash; serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
 <main>
-<div id="map"></div>
+<div class="mapwrap"><div id="map"></div></div>
 <aside>
-<section><h2>Impact at a glance</h2><div class="stats" id="stats"></div></section>
+<section><h2>Situation</h2><div class="stats" id="stats"></div></section>
+<section><h2>Threat</h2><div class="threatcard" id="threat"><div class="shimmer"></div></div></section>
+<section><h2>Priority actions</h2><div id="actions"><div class="shimmer"></div></div></section>
+<section><h2>Anticipatory timeline</h2><div class="tl" id="timeline">
+<div><b>T&minus;48H</b>forecast</div><div><b>T&minus;24H</b>prep</div><div><b>T&minus;12H</b>evac planning</div><div><b>T&minus;6H</b>dispatch</div><div><b>Landfall</b>Michaung</div>
+</div></section>
 <section><h2>Exposure filter</h2>
 <div class="chips" id="typechips"></div>
 <label style="font-size:12px;color:var(--dim)">Min score <b id="scorev">0</b></label>
@@ -75,7 +103,7 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 <table id="exp"></table></section>
 <section><h2>Cascade chains</h2><div id="cas"><div class="shimmer"></div></div></section>
 <section><h2>Advisories</h2>
-<div class="chips"><button class="chip on" id="langbtn">EN / ଓଡ଼ିଆ</button>
+<div class="chips"><button class="chip on" id="langbtn">EN / &#xB13;&#xB21;&#xBBC;&#xB3F;&#xB06;</button>
 <select id="prifilter"><option value="">all priorities</option><option>P0</option><option>P1</option><option>P2</option></select></div>
 <div id="adv"><div class="shimmer"></div></div></section>
 <section><h2>Counterfactual</h2><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div></section>
@@ -104,9 +132,9 @@ Promise.all([fetch('../output/forecast.json').then(r=>r.json()),
 .then(([fc,surge,gloss])=>{
 FC=fc;GLOSS=gloss||{};
 $('fid').textContent=fc.forecast_id;
-const st=$('status');st.textContent='QA '+fc.quality_check.overall_status;
+const st=$('status');st.textContent='QA '+fc.quality_check.overall_status.toUpperCase();
 st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_check.overall_status==='block'?'warn':'');
-const gt=fc.gee_tile||{};$('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
+const gt=fc.gee_tile||{};$('tile').textContent='GEE LIVE S1 '+(gt.source||'?')+' '+(gt.date||'');
 $('gen').textContent='gen '+(fc.generated_at||'').slice(0,16).replace('T',' ');
 MAP=L.map('map').setView([19.8,85.55],11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
@@ -126,16 +154,27 @@ const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.cre
  d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint';return d;};lg.addTo(MAP);
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
-renderStats();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();updCF(0);
+renderStats();renderThreat();renderActions();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();updCF(0);
 }).catch(()=>{$('err').style.display='block';});
 function renderStats(){const fc=FC;
- $('stats').innerHTML=[['assets',fc.vulnerability_register.length,''],['triggers',fc.cascade_impact.cascade_chains.length,''],
-  ['pop.aff.',fc.cascade_impact.cumulative_population_affected,''],['advisories',fc.advisories.length,''],
-  ['payouts',(fc.parametric.payout_events||[]).length,''],['blockers',fc.quality_check.blocker_count,'']]
- .map(([k,v])=>`<div class="stat"><b id="st-${k}">0</b><span>${k}</span></div>`).join('');
- countUp($('st-assets'),fc.vulnerability_register.length);countUp($('st-triggers'),fc.cascade_impact.cascade_chains.length);
- countUp($('st-pop.aff.'),fc.cascade_impact.cumulative_population_affected);countUp($('st-advisories'),fc.advisories.length);
- countUp($('st-payouts'),(fc.parametric.payout_events||[]).length);countUp($('st-blockers'),fc.quality_check.blocker_count);}
+ const crit=fc.vulnerability_register.filter(a=>a.vulnerability_score>=70).length;
+ const p0=fc.advisories.filter(a=>a.priority==='P0').length;
+ const rows=[['critical',crit,'CRITICAL ASSETS'],['pop',fc.cascade_impact.cumulative_population_affected,'POPULATION EXPOSED'],
+  ['p0',p0,'PRIORITY ADVISORIES'],['cas',fc.cascade_impact.cascade_chains.length,'CASCADE EVENTS'],
+  ['pay',(fc.parametric.payout_events||[]).length,'INSURANCE TRIGGERS'],['block',fc.quality_check.blocker_count,'QA BLOCKERS']];
+ $('stats').innerHTML=rows.map(([k,v,l])=>`<div class="stat"><b id="st-${k}">0</b><span>${l}</span></div>`).join('');
+ countUp($('st-critical'),crit);countUp($('st-pop'),fc.cascade_impact.cumulative_population_affected);
+ countUp($('st-p0'),p0);countUp($('st-cas'),fc.cascade_impact.cascade_chains.length);
+ countUp($('st-pay'),(fc.parametric.payout_events||[]).length);countUp($('st-block'),fc.quality_check.blocker_count);}
+function renderThreat(){const fc=FC;
+ const worst=fc.vulnerability_register.reduce((m,a)=>a.vulnerability_score>m?a.vulnerability_score:m,0);
+ const wasset=(fc.vulnerability_register.find(a=>a.vulnerability_score===worst)||{}).asset_id||'—';
+ const maxd=fc.cascade_impact.cascade_chains.reduce((m,c)=>Math.max(m,c.max_depth||0),0);
+ const depth=Math.max(...SURGE.map(s=>s.depth),((fc.hazard_narrative||{}).max_depth_m||0),0);
+ $('threat').innerHTML=`Worst score <b>${worst}</b> (${wasset}) &middot; max cascade depth <b>${maxd}</b><br/>`+
+ `Surge <b>${depth}m</b> &middot; ${(fc.hazard_narrative||{}).hazard_summary||''}`;}
+function renderActions(){const counts={};FC.advisories.forEach(a=>{const k=a.recommended_action||a.audience;counts[k]=(counts[k]||0)+1;});
+ $('actions').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="act"><span>${k}</span><b class="count">&times;${v}</b></div>`).join('')||'<p><small>No advisories.</small></p>';}
 let ACTIVE_TYPE='',MIN_SCORE=0;
 function renderTypeChips(){const types=[...new Set(FC.vulnerability_register.map(a=>a.asset_type))];
  $('typechips').innerHTML='<button class="chip on" data-t="">all</button>'+types.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
