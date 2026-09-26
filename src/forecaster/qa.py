@@ -38,3 +38,25 @@ def summarize(flags) -> dict:
     warns = sum(1 for f in flags if f.get("severity") == "WARNING")
     status = "block" if blockers else ("pass_with_warnings" if warns else "pass")
     return {"overall_status": status, "blocker_count": blockers, "flags": flags}
+
+
+def check_parametric(parametric: dict) -> list:
+    flags = []
+    for e in (parametric or {}).get("payout_events", []):
+        pct = e.get("payout_pct", 0)
+        if not 0 <= pct <= 1:
+            flags.append({"severity": "BLOCKER", "check": "parametric-range", "field": "payout_pct",
+                          "issue": f"payout range violation: {pct}", "suggested_fix": "clamp to [0,1]"})
+        if not e.get("trigger_condition"):
+            flags.append({"severity": "WARNING", "check": "parametric-trigger", "field": "trigger_condition",
+                          "issue": f"missing trigger for {e.get('asset_id')}", "suggested_fix": "record condition"})
+    return flags
+
+
+def check_counterfactual(counterfactual: list) -> list:
+    pops = [r["exposed_pop"] for r in counterfactual or [] if "exposed_pop" in r]
+    if pops != sorted(pops, reverse=True):
+        return [{"severity": "WARNING", "check": "counterfactual-monotonicity",
+                 "field": "exposed_pop", "issue": "COUNTERFACTUAL_NONMONOTONIC: exposed grows with lead time",
+                 "suggested_fix": "recheck evacuation model"}]
+    return []

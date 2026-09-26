@@ -136,7 +136,8 @@ def main(argv=None):
         conflicts = [] if a.gemini_conflict_mode == "off" else []
         # QA
         known = {x["asset_id"] for x in assets}
-        flags = qa.check_register(reg, known) + qa.check_advisories(advs)
+        flags = (qa.check_register(reg, known) + qa.check_advisories(advs)
+                 + qa.check_parametric(par) + qa.check_counterfactual(cf))
         if par.get("warnings"):
             flags.append({"severity": "WARNING", "check": "parametric-orphan", "field": "insurance",
                           "issue": ";".join(par["warnings"]), "suggested_fix": "map to register"})
