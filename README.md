@@ -4,9 +4,10 @@ Technically credible prototype of the complete cyclone decision pipeline (MASTER
 ## Run (Windows PowerShell)
 ```powershell
 pip install -r requirements.txt
+pip install -r requirements-live.txt  # only for live GEE tile + live Gemini; offline demo skips this
 $env:PYTHONPATH='src'
 python -m forecaster.cli --inputs sample_inputs --out output/forecast.json --artifacts output/artifacts
-python -m pytest tests/unit tests/e2e
+python -m pytest tests/
 ```
 Open `dashboard/index.html` (serve repo root so it can fetch `output/forecast.json`, e.g. `python -m http.server`) — map, exposure, cascade, advisories with copy buttons, counterfactual slider, parametric ledger, conflicts panel.
 

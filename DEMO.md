@@ -24,7 +24,7 @@ Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 60
 
 ## 1:20 — Advisory, Odia + English, SMS-280 (30s)
 
-Say: "Glossary-grounded advisory (Odia), SMS channel capped at 280 chars; banned hedging words force a second LLM sampling or exit 4."
+Say: "Odia glossary loaded; top-5 dispatch in English, SMS channel capped at 280 chars; banned hedging words force a second LLM sampling or exit 4."
 Show: `output/artifacts/04_advisories.json` — `channel: sms`, `len(message) <= 280`. Live-key? run `python scripts/smoke_gemini.py`.
 
 ## 1:50 — Counterfactual slider 0→6→12→24h (30s)
