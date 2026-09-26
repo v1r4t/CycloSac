@@ -3,71 +3,180 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CycloSac — Cyclone Decision Pipeline (prototype)</title>
+<title>CycloSac Ops — Cyclone Decision Console</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+Oriya:wght@400;600&display=swap"/>
 <style>
-body{font-family:system-ui,sans-serif;margin:0;background:#0b1220;color:#e8eef7}
-header{padding:12px 16px;background:#111c33;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
-#map{height:42vh}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;padding:12px}
-.card{background:#131f38;border:1px solid #274067;border-radius:10px;padding:12px}
+:root{--bg:#070d18;--panel:#0e1830;--panel2:#12203c;--line:#22395f;--txt:#e9f1fc;--dim:#93a9c9;
+--red:#f0524f;--org:#f5a524;--grn:#30c48d;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
+font-family:Inter,"Noto Sans Oriya",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:500;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+padding:10px 16px;background:#0a1327ee;border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+header h1{font-size:17px;margin:0;font-weight:800;letter-spacing:.4px}
+.pill{font-size:12px;padding:3px 10px;border-radius:999px;background:#1a2c52;border:1px solid var(--line)}
+.pill.warn{background:#3a2a10}.pill.ok{background:#0e3a2a}
+#clock{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+main{display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:calc(100vh - 53px)}
+#map{min-height:calc(100vh - 53px)}
+aside{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;max-height:calc(100vh - 53px)}
+section{padding:12px 14px;border-bottom:1px solid var(--line)}
+section h2{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);margin:0 0 8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat b{font-size:22px;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--dim)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--txt);cursor:pointer}
+.chip.on{background:#1d3a6b;border-color:var(--acc)}
+input[type=range]{width:100%;accent-color:var(--acc)}
 table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{border-bottom:1px solid #274067;padding:4px 6px;text-align:left}
-button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
-.pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1e3a5f;font-size:12px}
-.legend{background:#111c33ee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.7}
+td,th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+tr.row{cursor:pointer}tr.row:hover td{background:#16294f}tr.row.dim{opacity:.28}tr.row.hot td{background:#3a2a10}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.chain{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:13px}
+.chain:hover{border-color:var(--acc)}.chain.hot{border-color:var(--org);background:#241c0c}
+.adv{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:13px}
+.adv.flash{border-color:var(--acc);box-shadow:0 0 0 2px #38bdf855}
+.adv small{color:var(--dim)}
+button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px}
+button.ghost{background:transparent;border:1px solid var(--line)}
+select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:12px}
+.legend{background:#0a1327ee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.8}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px}
-#err{display:none;background:#5c1a1a;border:1px solid #a33;border-radius:8px;margin:12px;padding:12px}
-input[type=range]{width:100%}
-small{color:#9fb3d1}
+#err{display:none;margin:12px;padding:12px;background:#3a1414;border:1px solid #a33;border-radius:8px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#12325e;border:1px solid var(--acc);
+border-radius:8px;padding:8px 16px;font-size:13px;display:none;z-index:600}
+.shimmer{background:linear-gradient(90deg,#12203c 25%,#1b3159 50%,#12203c 75%);background-size:200% 100%;
+animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
+@keyframes sh{to{background-position:-200% 0}}
+@keyframes pulse{0%{stroke-opacity:1}50%{stroke-opacity:.2}100%{stroke-opacity:1}}
+.p0{animation:pulse 1.4s infinite}
+.okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
+@media(max-width:900px){main{grid-template-columns:1fr}#map{min-height:52vh}aside{max-height:none;border-left:0}}
 </style>
 </head>
 <body>
 <header>
-<h2 style="margin:0">CycloSac <small>prototype — complete decision pipeline, not production</small></h2>
-<span class="pill" id="fid">…</span><span class="pill" id="status">…</span><span class="pill" id="tile">…</span><small id="gen"></small>
+<h1>CYCLOSAC OPS</h1>
+<span class="pill" id="fid">loading…</span><span class="pill" id="status">…</span>
+<span class="pill" id="tile">…</span><span class="pill" id="gen">…</span>
+<span id="clock"></span>
 </header>
-<div id="err">Could not load <code>output/forecast.json</code> — serve the repo root first: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
+<div id="err">Could not load <code>output/forecast.json</code> — serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
+<main>
 <div id="map"></div>
-<div class="grid">
-<div class="card"><h3>Exposure (vulnerability desc)</h3><table id="exp"><tr><th>Asset</th><th>Type</th><th>Score</th><th>Hazard</th></tr></table></div>
-<div class="card"><h3>Cascade (BFS ≤3, union pop)</h3><div id="cas"></div></div>
-<div class="card"><h3>Advisories (SMS ≤280)</h3><div id="adv"></div></div>
-<div class="card"><h3>Counterfactual slider <small>static evac rate — tooltip limitation</small></h3>
-<input type="range" id="cf" min="0" max="3" step="1" value="0"/><div id="cfv"></div></div>
-<div class="card"><h3>Parametric ledger (mock INR)</h3><table id="led"><tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr></table></div>
-<div class="card"><h3>Gemini conflicts (human-in-loop)</h3><div id="con"></div></div>
-</div>
+<aside>
+<section><h2>Impact at a glance</h2><div class="stats" id="stats"></div></section>
+<section><h2>Exposure filter</h2>
+<div class="chips" id="typechips"></div>
+<label style="font-size:12px;color:var(--dim)">Min score <b id="scorev">0</b></label>
+<input type="range" id="scoreslider" min="0" max="100" value="0"/>
+<table id="exp"></table></section>
+<section><h2>Cascade chains</h2><div id="cas"><div class="shimmer"></div></div></section>
+<section><h2>Advisories</h2>
+<div class="chips"><button class="chip on" id="langbtn">EN / ଓଡ଼ିଆ</button>
+<select id="prifilter"><option value="">all priorities</option><option>P0</option><option>P1</option><option>P2</option></select></div>
+<div id="adv"><div class="shimmer"></div></div></section>
+<section><h2>Counterfactual</h2><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div></section>
+<section><h2>Parametric ledger</h2><table id="led"></table></section>
+<section><h2>Conflicts</h2><div id="con"></div></section>
+</aside>
+</main>
+<div id="toast">copied</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let FC=null, CF=null;
-fetch('../output/forecast.json').then(r=>r.json()).then(fc=>{
-FC=fc;
-document.getElementById('fid').textContent=fc.forecast_id;
-document.getElementById('status').textContent='QA '+fc.quality_check.overall_status;
-const gt=fc.gee_tile||{};document.getElementById('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
-document.getElementById('gen').textContent='generated '+(fc.generated_at||'');
-const map=L.map('map').setView([19.8,85.55],11);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(map);
-fetch('../sample_inputs_demo/surge.geojson').then(r=>r.json()).then(g=>{
- (g.features||[]).forEach(f=>{const c=((f.geometry||{}).coordinates||[])[0]||[];
-  if(c.length)L.polygon(c.map(p=>[p[1],p[0]]),{color:'#38bdf8',weight:1,fillOpacity:0.25}).bindPopup('surge '+(f.properties.depth_m||'?')+'m').addTo(map);});
-}).catch(()=>{});
-const legend=L.control({position:'bottomright'});legend.onAdd=()=>{const d=L.DomUtil.create('div','legend');
- d.innerHTML='<b>Legend</b><br/><i style="background:red"></i>critical ≥70<br/><i style="background:orange"></i>moderate ≥40<br/><i style="background:green"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint';return d;};legend.addTo(map);
+let FC,CF,GLOSS={},OR=false,MARKERS={},MAP;
+const $=id=>document.getElementById(id);
+const color=s=>s>=70?'var(--red)':s>=40?'var(--org)':'var(--grn)';
+const cssColor=s=>s>=70?'#f0524f':s>=40?'#f5a524':'#30c48d';
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1400);}
+function countUp(el,to,suffix){suffix=suffix||'';let v=0;const st=Math.max(1,Math.round(to/30));
+ const iv=setInterval(()=>{v+=st;if(v>=to){v=to;clearInterval(iv);}el.textContent=v.toLocaleString('en-IN')+suffix;},30);}
+function inPoly(lon,lat,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+ const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
+ if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))inside=!inside;}return inside;}
+let SURGE=[];
+setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleString('en-IN',{hour12:false});},1000);
+Promise.all([fetch('../output/forecast.json').then(r=>r.json()),
+ fetch('../sample_inputs_demo/surge.geojson').then(r=>r.json()).catch(()=>null),
+ fetch('../sample_inputs_demo/glossary/or.json').then(r=>r.json()).catch(()=>({}))])
+.then(([fc,surge,gloss])=>{
+FC=fc;GLOSS=gloss||{};
+$('fid').textContent=fc.forecast_id;
+const st=$('status');st.textContent='QA '+fc.quality_check.overall_status;
+st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_check.overall_status==='block'?'warn':'');
+const gt=fc.gee_tile||{};$('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
+$('gen').textContent='gen '+(fc.generated_at||'').slice(0,16).replace('T',' ');
+MAP=L.map('map').setView([19.8,85.55],11);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,attribution:'© OSM © CARTO'}).addTo(MAP);
+SURGE=[];((surge&&surge.features)||[]).forEach(f=>{const ring=(((f.geometry||{}).coordinates||[])[0])||[];
+ if(!ring.length)return;const depth=(f.properties||{}).depth_m||0;SURGE.push({ring,depth});
+ const shade=depth>=2?'#0369a1':depth>=1?'#0284c7':'#38bdf8';
+ L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1,fillOpacity:.3}).bindPopup('surge '+depth+'m').addTo(MAP);});
+const P0=new Set(fc.advisories.filter(a=>a.priority==='P0').flatMap(a=>a.asset_refs||[]));
+CF=fc.counterfactual||[];
 fc.vulnerability_register.forEach(a=>{
- const color=a.vulnerability_score>=70?'red':(a.vulnerability_score>=40?'orange':'green');
- L.circleMarker([a.lat||19.8,a.lon||85.5],{radius:6,color}).bindPopup(`${a.asset_id} ${a.asset_type} score=${a.vulnerability_score}`).addTo(map);
-});
-document.getElementById('exp').innerHTML='<tr><th>Asset</th><th>Type</th><th>Score</th><th>Hazard</th></tr>'+fc.vulnerability_register.map(a=>`<tr><td>${a.asset_id}</td><td>${a.asset_type}</td><td>${a.vulnerability_score}</td><td>${a.hazard_type}</td></tr>`).join('');
-document.getElementById('cas').innerHTML=`<p>Cumulative pop: <b>${fc.cascade_impact.cumulative_population_affected}</b></p>`+fc.cascade_impact.cascade_chains.map(c=>`<p>⚡ ${c.trigger_asset_id} → ${c.chain.map(x=>x.asset_id+'(h'+x.hop+')').join(' → ')||'—'}</p>`).join('');
-document.getElementById('adv').innerHTML=fc.advisories.map((m,i)=>`<p><b>${m.audience}</b> [${m.priority}] (${m.message.length}ch)<br/>${m.message}<br/><button onclick="navigator.clipboard.writeText(document.getElementById('am${i}').textContent)">Copy</button> <span id="am${i}">${m.message}</span></p>`).join('');
-document.getElementById('led').innerHTML='<tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr>'+(fc.parametric?.payout_events||[]).map(p=>`<tr><td>${p.asset_id}</td><td>${p.payout_pct}</td><td>₹${p.payout_amount}</td></tr>`).join('');
-CF=fc.counterfactual||[]; updCF(0);
-const dc=fc.data_conflicts||[];document.getElementById('con').innerHTML=dc.length?dc.map(c=>`<p>CONFLICT <b>${c.conflict_id}</b> [${c.tile_ref}]<br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence}</small></p>`).join(''):'<p>No conflicts.</p>';
-}).catch(()=>{document.getElementById('err').style.display='block';});
-function updCF(i){const r=(CF||[])[i];if(!r)return;document.getElementById('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop}</b>, saved <b>${r.marginal_lives_saved}</b>`;}
-document.getElementById('cf').addEventListener('input',e=>updCF(+e.target.value));
+ const m=L.circleMarker([a.lat,a.lon],{radius:5+Math.round(a.vulnerability_score/20),color:cssColor(a.vulnerability_score),
+  className:P0.has(a.asset_id)?'p0':''}).addTo(MAP);
+ let extra='outside footprint';for(const s of SURGE){if(inPoly(a.lon,a.lat,s.ring)){extra='surge '+s.depth+'m at asset';break;}}
+ m.bindPopup(`<b>${a.asset_id}</b> ${a.asset_type}<br/>score ${a.vulnerability_score}<br/>${extra}<br/><small>${a.estimated_failure_mode||''}</small>`);
+ MARKERS[a.asset_id]=m;});
+const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.create('div','legend');
+ d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint';return d;};lg.addTo(MAP);
+MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
+ L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
+renderStats();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();updCF(0);
+}).catch(()=>{$('err').style.display='block';});
+function renderStats(){const fc=FC;
+ $('stats').innerHTML=[['assets',fc.vulnerability_register.length,''],['triggers',fc.cascade_impact.cascade_chains.length,''],
+  ['pop.aff.',fc.cascade_impact.cumulative_population_affected,''],['advisories',fc.advisories.length,''],
+  ['payouts',(fc.parametric.payout_events||[]).length,''],['blockers',fc.quality_check.blocker_count,'']]
+ .map(([k,v])=>`<div class="stat"><b id="st-${k}">0</b><span>${k}</span></div>`).join('');
+ countUp($('st-assets'),fc.vulnerability_register.length);countUp($('st-triggers'),fc.cascade_impact.cascade_chains.length);
+ countUp($('st-pop.aff.'),fc.cascade_impact.cumulative_population_affected);countUp($('st-advisories'),fc.advisories.length);
+ countUp($('st-payouts'),(fc.parametric.payout_events||[]).length);countUp($('st-blockers'),fc.quality_check.blocker_count);}
+let ACTIVE_TYPE='',MIN_SCORE=0;
+function renderTypeChips(){const types=[...new Set(FC.vulnerability_register.map(a=>a.asset_type))];
+ $('typechips').innerHTML='<button class="chip on" data-t="">all</button>'+types.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+ $('typechips').querySelectorAll('button').forEach(b=>b.onclick=()=>{ACTIVE_TYPE=b.dataset.t;
+  $('typechips').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');applyFilter();});
+ $('scoreslider').oninput=e=>{MIN_SCORE=+e.target.value;$('scorev').textContent=MIN_SCORE;applyFilter();};}
+function applyFilter(){const rows=FC.vulnerability_register.filter(a=>(!ACTIVE_TYPE||a.asset_type===ACTIVE_TYPE)&&a.vulnerability_score>=MIN_SCORE);
+ const ids=new Set(rows.map(a=>a.asset_id));
+ Object.entries(MARKERS).forEach(([id,m])=>m.setStyle({opacity:ids.has(id)?1:.15,fillOpacity:ids.has(id)?.8:.1}));
+ $('exp').innerHTML='<tr><th></th><th>Asset</th><th>Score</th><th>Hazard</th></tr>'+rows.map(a=>
+  `<tr class="row" data-id="${a.asset_id}"><td><span class="dot" style="background:${cssColor(a.vulnerability_score)}"></span></td><td>${a.asset_id}<br/><small>${a.asset_type}</small></td><td>${a.vulnerability_score}</td><td>${a.hazard_type}</td></tr>`).join('');
+ $('exp').querySelectorAll('tr.row').forEach(r=>r.onclick=()=>focusAsset(r.dataset.id));}
+function focusAsset(id){const a=FC.vulnerability_register.find(x=>x.asset_id===id);if(!a)return;
+ const m=MARKERS[id];MAP.flyTo([a.lat,a.lon],13,{duration:.8});setTimeout(()=>m.openPopup(),850);
+ document.querySelectorAll('#adv .adv').forEach(d=>d.classList.remove('flash'));
+ const card=document.querySelector(`#adv .adv[data-assets*="${id}"]`);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('flash');}}
+function renderChains(){$('cas').innerHTML=`<p>Cumulative pop: <b>${FC.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}</b></p>`+
+ FC.cascade_impact.cascade_chains.map((c,i)=>`<div class="chain" data-i="${i}">⚡ <b>${c.trigger_asset_id}</b> → ${c.chain.map(x=>x.asset_id+'(h'+x.hop+')').join(' → ')||'—'} <small>· pop ${c.population_affected}</small></div>`).join('');
+ $('cas').querySelectorAll('.chain').forEach(d=>d.onclick=()=>{document.querySelectorAll('.chain').forEach(x=>x.classList.remove('hot'));d.classList.add('hot');
+  const c=FC.cascade_impact.cascade_chains[+d.dataset.i];const ids=[c.trigger_asset_id,...c.chain.map(x=>x.asset_id)];
+  const pts=ids.map(id=>{const a=FC.vulnerability_register.find(x=>x.asset_id===id);return a?[a.lat,a.lon]:null;}).filter(Boolean);
+  if(pts.length)MAP.flyToBounds(pts,{padding:[40,40]});toast(ids.length+' assets in chain');});}
+function orText(s){let o=s;for(const[k,v]of Object.entries(GLOSS)){o=o.split(k).join(v);}return o;}
+function renderAdv(){const pri=$('prifilter').value;
+ const list=FC.advisories.filter(a=>!pri||a.priority===pri);
+ $('adv').innerHTML=list.map((m,i)=>{const msg=OR?orText(m.message):m.message;
+  return `<div class="adv" data-assets="${(m.asset_refs||[]).join(',')}"><b>${m.audience}</b> [${m.priority}] (${msg.length}ch)<br/>${msg}<br/><small>${m.recommended_action||''} · ${m.channel||'sms'}</small><br/><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('span').textContent);toast('advisory copied')">Copy</button> <span style="display:none">${msg}</span></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
+$('prifilter').onchange=renderAdv;
+$('langbtn').onclick=e=>{OR=!OR;e.target.classList.toggle('on',!OR);renderAdv();toast(OR?'ଓଡ଼ିଆ terms on':'English');};
+function renderLedger(){$('led').innerHTML='<tr><th>Asset</th><th>%</th><th>Amount</th></tr>'+(FC.parametric.payout_events||[]).map(p=>
+ `<tr><td>${p.asset_id}</td><td>${Math.round(p.payout_pct*100)}%</td><td>₹${Number(p.payout_amount).toLocaleString('en-IN')}</td></tr>`).join('');}
+function renderConflicts(){const dc=FC.data_conflicts||[];
+ $('con').innerHTML=dc.length?dc.map(c=>`<div class="adv">CONFLICT <b>${c.conflict_id}</b><br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence} · reviewer required</small></div>`).join('')
+ :'<div class="okcard">✓ No open conflicts. Path2 check ran annotate-only and never blocks dispatch.</div>';}
+function updCF(i){const r=(CF||[])[i];if(!r)return;
+ $('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop.toLocaleString('en-IN')}</b>, saved <b>${(r.marginal_lives_saved||0).toLocaleString('en-IN')}</b>`;
+ const all=FC.vulnerability_register;
+ Object.entries(MARKERS).forEach(([id,m])=>{const a=all.find(x=>x.asset_id===id);
+  const atRisk=r.horizon_h===0?true:(a.in_hazard&&r.horizon_h<12);
+  m.setStyle({opacity:atRisk?1:.25,fillOpacity:atRisk?.85:.15});});}
+$('cf').addEventListener('input',e=>updCF(+e.target.value));
 </script>
 </body>
 </html>
