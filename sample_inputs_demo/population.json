@@ -1,0 +1,26 @@
+[
+ {
+  "ward_code": "W1",
+  "ward_name": "Sea Beach",
+  "population": 12000,
+  "vulnerability_index": 0.8
+ },
+ {
+  "ward_code": "W2",
+  "ward_name": "Town",
+  "population": 25000,
+  "vulnerability_index": 0.5
+ },
+ {
+  "ward_code": "W3",
+  "ward_name": "Port",
+  "population": 8000,
+  "vulnerability_index": 0.7
+ },
+ {
+  "ward_code": "W4",
+  "ward_name": "Rural",
+  "population": 15000,
+  "vulnerability_index": 0.4
+ }
+]

@@ -1,0 +1,27 @@
+[
+ {
+  "asset_id": "PURI-SUB-01",
+  "sum_insured_inr": 5000000,
+  "insurer_id": "INS-1"
+ },
+ {
+  "asset_id": "PURI-SUB-03",
+  "sum_insured_inr": 5000000,
+  "insurer_id": "INS-1"
+ },
+ {
+  "asset_id": "PURI-SUB-05",
+  "sum_insured_inr": 5000000,
+  "insurer_id": "INS-1"
+ },
+ {
+  "asset_id": "PURI-SUB-07",
+  "sum_insured_inr": 5000000,
+  "insurer_id": "INS-1"
+ },
+ {
+  "asset_id": "PURI-SUB-09",
+  "sum_insured_inr": 5000000,
+  "insurer_id": "INS-1"
+ }
+]

@@ -1,8 +1,40 @@
 {
   "payout_events": [
     {
-      "asset_id": "S1",
-      "trigger_condition": "wind>=160.0 surge>=2.0",
+      "asset_id": "PURI-SUB-01",
+      "trigger_condition": "wind>=165.0 surge>=2.5",
+      "payout_pct": 0.4,
+      "payout_amount": 2000000.0,
+      "insurer_id": "INS-1",
+      "confidence": "high"
+    },
+    {
+      "asset_id": "PURI-SUB-03",
+      "trigger_condition": "wind>=165.0 surge>=2.5",
+      "payout_pct": 0.4,
+      "payout_amount": 2000000.0,
+      "insurer_id": "INS-1",
+      "confidence": "high"
+    },
+    {
+      "asset_id": "PURI-SUB-05",
+      "trigger_condition": "wind>=165.0 surge>=2.5",
+      "payout_pct": 0.4,
+      "payout_amount": 2000000.0,
+      "insurer_id": "INS-1",
+      "confidence": "high"
+    },
+    {
+      "asset_id": "PURI-SUB-07",
+      "trigger_condition": "wind>=165.0 surge>=2.5",
+      "payout_pct": 0.4,
+      "payout_amount": 2000000.0,
+      "insurer_id": "INS-1",
+      "confidence": "high"
+    },
+    {
+      "asset_id": "PURI-SUB-09",
+      "trigger_condition": "wind>=165.0 surge>=2.5",
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",

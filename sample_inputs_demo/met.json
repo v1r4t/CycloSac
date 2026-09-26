@@ -1,0 +1,9 @@
+{
+ "cyclone_name": "Michaung",
+ "cyclone_category": 3,
+ "eta_landfall": "2026-09-27T06:00:00+05:30",
+ "intensity_kmh": 165,
+ "forward_speed_kmh": 14,
+ "rainfall_72h_mm": 320,
+ "tide_phase": "high"
+}

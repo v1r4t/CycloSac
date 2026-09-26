@@ -1,38 +1,72 @@
 [
   {
+    "audience": "ndrf_commander",
+    "language": "en",
+    "priority": "P0",
+    "message": "Secure PURI-SHEL-01 by T-24h [FC-2026-PURI-001] PURI-SHEL-01 upakendra",
+    "asset_refs": [
+      "PURI-SHEL-01"
+    ],
+    "forecast_id": "FC-2026-PURI-001",
+    "recommended_action": "Secure PURI-SHEL-01 by T-24h",
+    "channel": "sms",
+    "truncated": false,
+    "llm_used": false
+  },
+  {
+    "audience": "ndrf_commander",
+    "language": "en",
+    "priority": "P0",
+    "message": "Secure PURI-SHEL-02 by T-24h [FC-2026-PURI-001] PURI-SHEL-02 upakendra",
+    "asset_refs": [
+      "PURI-SHEL-02"
+    ],
+    "forecast_id": "FC-2026-PURI-001",
+    "recommended_action": "Secure PURI-SHEL-02 by T-24h",
+    "channel": "sms",
+    "truncated": false,
+    "llm_used": false
+  },
+  {
     "audience": "power_utility",
     "language": "en",
     "priority": "P0",
-    "message": "De-energize S1 by T-24h [FC-2026-E2E] S1 upakendra",
+    "message": "Secure PURI-TWR-01 by T-24h [FC-2026-PURI-001] PURI-TWR-01 upakendra",
     "asset_refs": [
-      "S1"
+      "PURI-TWR-01"
     ],
-    "forecast_id": "FC-2026-E2E",
-    "recommended_action": "De-energize S1 by T-24h",
-    "channel": "sms"
+    "forecast_id": "FC-2026-PURI-001",
+    "recommended_action": "Secure PURI-TWR-01 by T-24h",
+    "channel": "sms",
+    "truncated": false,
+    "llm_used": false
   },
   {
-    "audience": "health_department",
+    "audience": "power_utility",
     "language": "en",
     "priority": "P0",
-    "message": "Secure H1 by T-24h [FC-2026-E2E] H1 upakendra",
+    "message": "Secure PURI-TWR-02 by T-24h [FC-2026-PURI-001] PURI-TWR-02 upakendra",
     "asset_refs": [
-      "H1"
+      "PURI-TWR-02"
     ],
-    "forecast_id": "FC-2026-E2E",
-    "recommended_action": "Secure H1 by T-24h",
-    "channel": "sms"
+    "forecast_id": "FC-2026-PURI-001",
+    "recommended_action": "Secure PURI-TWR-02 by T-24h",
+    "channel": "sms",
+    "truncated": false,
+    "llm_used": false
   },
   {
-    "audience": "roads_authority",
+    "audience": "power_utility",
     "language": "en",
-    "priority": "P1",
-    "message": "Secure R1 by T-24h [FC-2026-E2E] R1 upakendra",
+    "priority": "P0",
+    "message": "Secure PURI-TWR-03 by T-24h [FC-2026-PURI-001] PURI-TWR-03 upakendra",
     "asset_refs": [
-      "R1"
+      "PURI-TWR-03"
     ],
-    "forecast_id": "FC-2026-E2E",
-    "recommended_action": "Secure R1 by T-24h",
-    "channel": "sms"
+    "forecast_id": "FC-2026-PURI-001",
+    "recommended_action": "Secure PURI-TWR-03 by T-24h",
+    "channel": "sms",
+    "truncated": false,
+    "llm_used": false
   }
 ]

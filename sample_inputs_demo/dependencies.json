@@ -1,0 +1,32 @@
+[
+ {
+  "from_asset": "PURI-HOSP-01",
+  "to_asset": "PURI-SUB-01",
+  "dependency_type": "power"
+ },
+ {
+  "from_asset": "PURI-HOSP-02",
+  "to_asset": "PURI-SUB-02",
+  "dependency_type": "power"
+ },
+ {
+  "from_asset": "PURI-HOSP-03",
+  "to_asset": "PURI-SUB-03",
+  "dependency_type": "power"
+ },
+ {
+  "from_asset": "PURI-HOSP-04",
+  "to_asset": "PURI-SUB-04",
+  "dependency_type": "power"
+ },
+ {
+  "from_asset": "PURI-SHEL-01",
+  "to_asset": "NH316-SEG-01",
+  "dependency_type": "access"
+ },
+ {
+  "from_asset": "PURI-SHEL-02",
+  "to_asset": "NH316-SEG-03",
+  "dependency_type": "access"
+ }
+]

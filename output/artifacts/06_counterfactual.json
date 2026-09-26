@@ -1,30 +1,30 @@
 [
   {
     "horizon_h": 0,
-    "exposed_pop": 3000,
-    "reachable_shelters": 1,
-    "cascade_chains_len": 1,
+    "exposed_pop": 6000,
+    "reachable_shelters": 30,
+    "cascade_chains_len": 30,
     "marginal_lives_saved": 0
   },
   {
     "horizon_h": 6,
-    "exposed_pop": 2640,
-    "reachable_shelters": 1,
-    "cascade_chains_len": 1,
-    "marginal_lives_saved": 360
-  },
-  {
-    "horizon_h": 12,
-    "exposed_pop": 2280,
-    "reachable_shelters": 1,
-    "cascade_chains_len": 1,
+    "exposed_pop": 5280,
+    "reachable_shelters": 30,
+    "cascade_chains_len": 30,
     "marginal_lives_saved": 720
   },
   {
-    "horizon_h": 24,
-    "exposed_pop": 1560,
-    "reachable_shelters": 1,
-    "cascade_chains_len": 1,
+    "horizon_h": 12,
+    "exposed_pop": 4560,
+    "reachable_shelters": 30,
+    "cascade_chains_len": 30,
     "marginal_lives_saved": 1440
+  },
+  {
+    "horizon_h": 24,
+    "exposed_pop": 3120,
+    "reachable_shelters": 30,
+    "cascade_chains_len": 30,
+    "marginal_lives_saved": 2880
   }
 ]

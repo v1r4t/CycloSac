@@ -1,0 +1,38 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "wind_kmh": 165
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       85.4,
+       19.7
+      ],
+      [
+       85.75,
+       19.7
+      ],
+      [
+       85.75,
+       19.95
+      ],
+      [
+       85.4,
+       19.95
+      ],
+      [
+       85.4,
+       19.7
+      ]
+     ]
+    ]
+   }
+  }
+ ]
+}
