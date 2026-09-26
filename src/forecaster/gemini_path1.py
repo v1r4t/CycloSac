@@ -33,7 +33,7 @@ def llm_complete(prompt: str, action: str, ctx: dict) -> str:
     import google.generativeai as genai  # lazy, only when key is set
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel(os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
     resp = model.generate_content(prompt)
     text = getattr(resp, "text", "") or ""
     return text.strip() or _template_raw(action, ctx)
