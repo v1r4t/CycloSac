@@ -198,8 +198,8 @@ function renderThreat(){const fc=FC;
  const depth=Math.max(...SURGE.map(s=>s.depth),((fc.hazard_narrative||{}).max_depth_m||0),0);
  $('threat').innerHTML=`Worst score <b>${worst}</b> (${wasset}) &middot; max cascade depth <b>${maxd}</b><br/>`+
  `Surge <b>${depth}m</b> &middot; ${(fc.hazard_narrative||{}).hazard_summary||''}`;}
-function renderActions(){const counts={};FC.advisories.forEach(a=>{const k=a.recommended_action||a.audience;counts[k]=(counts[k]||0)+1;});
- $('actions').innerHTML=Object.entries(counts).map(([k,v])=>`<div class="act"><span>${k}</span><b class="count">&times;${v}</b></div>`).join('')||'<p><small>No advisories.</small></p>';}
+function renderActions(){const counts={};const prio={};FC.advisories.forEach(a=>{const k=a.recommended_action||a.audience;counts[k]=(counts[k]||0)+1;if(a.priority==='P0')prio[k]='P0';else if(!prio[k])prio[k]=a.priority;});
+ $('actions').innerHTML=Object.entries(counts).map(([k,v])=>{const p=prio[k]||'';const cls=p==='P0'?'act p0act':(p==='P1'?'act p1act':'act');const badge=p==='P0'?' <span class="apri p0">P0</span>':(p?` <span class="apri">${p}</span>`:'');return `<div class="${cls}"><span>${badge}${k}</span><b class="count">&times;${v}</b></div>`;}).join('')||'<p><small>No advisories.</small></p>';}
 let ACTIVE_TYPE='',MIN_SCORE=0;
 function renderTypeChips(){const types=[...new Set(FC.vulnerability_register.map(a=>a.asset_type))];
  $('typechips').innerHTML='<button class="chip on" data-t="">all</button>'+types.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
@@ -227,7 +227,9 @@ function orText(s){let o=s;for(const[k,v]of Object.entries(GLOSS)){o=o.split(k).
 function renderAdv(){const pri=$('prifilter').value;
  const list=FC.advisories.filter(a=>!pri||a.priority===pri);
  $('adv').innerHTML=list.map((m,i)=>{const msg=OR?orText(m.message):m.message;
-  return `<div class="adv" data-assets="${(m.asset_refs||[]).join(',')}"><b>${m.audience}</b> [${m.priority}] (${msg.length}ch)<br/>${msg}<br/><small>${m.recommended_action||''} · ${m.channel||'sms'}</small><br/><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('span').textContent);toast('advisory copied')">Copy</button> <span style="display:none">${msg}</span></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
+  const pc=m.priority==='P0'?'p0':(m.priority==='P1'?'p1':'p2');
+  const lang=OR?'\u0b13\u0b21\u0b3c\u0b3f\u0b06':'English';
+  return `<div class="adv ${pc}" data-assets="${(m.asset_refs||[]).join(',')}"><div class="adv-head"><span class="pri ${pc}">${m.priority}</span><span class="auth">\u26a0 Early warning</span><span style="margin-left:auto;font-size:11px;color:var(--dim)">${msg.length}ch \u00b7 ${lang}</span></div><div class="auth">Issuing authority: <b>${m.audience}</b></div><div class="adv-msg">${msg}</div><div class="adv-meta">ACTION: <b>${m.recommended_action||''}</b><br/>CHANNEL: <b>${m.channel||'sms'}</b> \u00b7 LANGUAGE: <b>${lang}</b></div><div class="adv-foot"><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('span').textContent);toast('advisory copied')">COPY ADVISORY</button><span style="display:none">${msg}</span></div></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
 $('prifilter').onchange=renderAdv;
 $('langbtn').onclick=e=>{OR=!OR;e.target.classList.toggle('on',!OR);renderAdv();toast(OR?'ଓଡ଼ିଆ terms on':'English');};
 function renderLedger(){const ev=FC.parametric.payout_events||[];
