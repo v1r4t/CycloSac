@@ -109,7 +109,7 @@ st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_c
 const gt=fc.gee_tile||{};$('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
 $('gen').textContent='gen '+(fc.generated_at||'').slice(0,16).replace('T',' ');
 MAP=L.map('map').setView([19.8,85.55],11);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,attribution:'© OSM © CARTO'}).addTo(MAP);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
 SURGE=[];((surge&&surge.features)||[]).forEach(f=>{const ring=(((f.geometry||{}).coordinates||[])[0])||[];
  if(!ring.length)return;const depth=(f.properties||{}).depth_m||0;SURGE.push({ring,depth});
  const shade=depth>=2?'#0369a1':depth>=1?'#0284c7':'#38bdf8';
