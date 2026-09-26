@@ -154,6 +154,8 @@ def main(argv=None):
         fc = {"forecast_id": inp.regional.forecast_id,
               "generated_at": datetime.now(ist).isoformat(),
               "prompt_version": "MASTER-FORECASTER-1.1.0",
+              "gee_tile": {"source": tile.get("source", "stub"), "date": tile.get("date_acquired", tile.get("date")),
+                           "cached": tile.get("cached", False), "thumb_url": tile.get("thumb_url")},
               "hazard_narrative": narrative, "vulnerability_register": reg,
               "cascade_impact": casc, "advisories": advs,
               "parametric": par, "counterfactual": cf,

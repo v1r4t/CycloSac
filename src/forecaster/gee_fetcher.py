@@ -13,7 +13,11 @@ from . import config
 
 log = logging.getLogger(__name__)
 
-# Dataset IDs used for the demo tile(s).
+# Verified live 2026-09-26 (ee.Number(1) round-trip). Override via GEE_PROJECT.
+DEFAULT_PROJECT = "cyclone-forecast-123456"
+
+# Puri demo AOI: [minlon, minlat, maxlon, maxlat] (matches regional.json bbox).
+PURI_BBOX = [85.40, 19.70, 85.75, 19.95]
 DATASETS = {
     "sentinel1": "COPERNICUS/S1_GRD",  # SAR backscatter (flood extent proxy)
     "srtm": "USGS/SRTMGL1_003",  # 30m DEM (surge exposure elevation)
@@ -41,30 +45,40 @@ def _has_credentials() -> bool:
 
 
 def _try_live_fetch(aoi: str, date: str) -> dict | None:
-    """Attempt one real GEE tile. Returns tile dict or None on any failure."""
+    """One real S1 tile over the AOI. Returns tile dict or None on any failure."""
     try:
         import ee  # earthengine-api, optional
     except ImportError:
         log.warning("GEE earthengine-api not installed; using cached/stub tile")
         return None
     try:
-        project = os.environ.get("GEE_PROJECT")
-        if project:
-            ee.Initialize(project=project)
-        else:
-            ee.Initialize()
-        aoi_geom = ee.Geometry.Rectangle(aoi) if "," in aoi else None
-        s1 = (
-            ee.ImageCollection(DATASETS["sentinel1"])
-            .filterDate(date, date)
-            .first()
-        )
-        _ = s1.getInfo() if aoi_geom is None else s1.clip(aoi_geom).getInfo()
+        project = os.environ.get("GEE_PROJECT", DEFAULT_PROJECT)
+        ee.Initialize(project=project)
+        coords = [float(x) for x in aoi.split(",")] if "," in aoi else PURI_BBOX
+        rect = ee.Geometry.Rectangle(coords)
+        col = (ee.ImageCollection(DATASETS["sentinel1"])
+               .filterBounds(rect)
+               .filterDate("2026-09-01", "2026-09-26")
+               .sort("system:time_start", False))
+        n = col.size().getInfo()
+        if not n:
+            return None
+        first = ee.Image(col.first())
+        acquired = first.date().format("YYYY-MM-dd").getInfo()
+        try:
+            thumb = first.clip(rect).getThumbURL(
+                {"bands": ["VV"], "min": -25, "max": 0, "dimensions": 512})
+        except Exception:
+            thumb = None
         return {
             "cached": False,
             "source": "real",
             "aoi": aoi,
             "date": date,
+            "date_acquired": acquired,
+            "image_count": n,
+            "thumb_url": thumb,
+            "project": project,
             "datasets": DATASETS,
         }
     except Exception as exc:  # auth, quota, network, bad AOI, ...
@@ -92,9 +106,13 @@ def fetch_real_or_stub(aoi: str, date: str, cache_dir: str,
         return {"cached": True, **json.loads(tile.read_text())}
     if use_cache_only:
         raise GeeError(f"GEE upstream unavailable and no cache in {cache_dir}")
-    fetch_fn = live_fetch if live_fetch is not None else (
-        _try_live_fetch if _has_credentials() else None
-    )
+    fetch_fn = live_fetch if live_fetch is not None else None
+    if fetch_fn is None:
+        try:
+            import ee  # noqa: F401 — ambient creds work; stub fallback covers failure
+            fetch_fn = _try_live_fetch
+        except ImportError:
+            fetch_fn = _try_live_fetch if _has_credentials() else None
     if fetch_fn is not None:
         try:
             live = fetch_fn(aoi, date)

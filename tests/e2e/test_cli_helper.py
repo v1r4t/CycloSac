@@ -33,4 +33,8 @@ def make_inputs(d: Path) -> Path:
     w(d / "insurance.json", [
         {"asset_id": "S1", "sum_insured_inr": 5000000, "insurer_id": "INS-1"}])
     w(d / "glossary" / "or.json", {"substation": "upakendra"})
+    (d / ".geecache").mkdir(exist_ok=True)
+    w(d / ".geecache" / "tile.json", {"cached": False, "source": "stub",
+                                      "aoi": "test", "date": "2026-09-25",
+                                      "note": "test stub; live path covered manually"})
     return d

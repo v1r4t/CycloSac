@@ -35,6 +35,8 @@ def test_exit_3_bands_off(tmp_path):
 
 def test_exit_5_gee_no_cache(tmp_path):
     inp = make_inputs(tmp_path / "in")
+    import shutil
+    shutil.rmtree(inp / ".geecache")  # no cache -> cache-only must exit 5
     r = _run(inp, tmp_path / "o.json", ["--cache-only"])
     assert r.returncode == 5
 

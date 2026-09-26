@@ -93,6 +93,10 @@ def build(d: Path) -> Path:
         {"asset_id": f"PURI-SUB-{i:02d}", "sum_insured_inr": 5000000, "insurer_id": "INS-1"}
         for i in (1, 3, 5, 7, 9)])
     w(d / "glossary" / "or.json", {"substation": "upakendra", "hospital": "chikitsalaya"})
+    (d / ".geecache").mkdir(exist_ok=True)
+    w(d / ".geecache" / "tile.json", {"cached": False, "source": "stub",
+                                      "aoi": "demo", "date": "2026-09-25",
+                                      "note": "demo stub; live tile fetched separately"})
     return d
 
 
