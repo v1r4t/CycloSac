@@ -32,7 +32,7 @@ small{color:#9fb3d1}
 <div class="card"><h3>Counterfactual slider <small>static evac rate — tooltip limitation</small></h3>
 <input type="range" id="cf" min="0" max="3" step="1" value="0"/><div id="cfv"></div></div>
 <div class="card"><h3>Parametric ledger (mock INR)</h3><table id="led"><tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr></table></div>
-<div class="card"><h3>Gemini conflicts (human-in-loop)</h3><div id="con">No conflicts — Path2 stub. Wire tile PNG + band JSON to flag SAR-vs-model.</div></div>
+<div class="card"><h3>Gemini conflicts (human-in-loop)</h3><div id="con"></div></div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -52,6 +52,7 @@ document.getElementById('cas').innerHTML=`<p>Cumulative pop: <b>${fc.cascade_imp
 document.getElementById('adv').innerHTML=fc.advisories.map((m,i)=>`<p><b>${m.audience}</b> [${m.priority}] (${m.message.length}ch)<br/>${m.message}<br/><button onclick="navigator.clipboard.writeText(document.getElementById('am${i}').textContent)">Copy</button> <span id="am${i}">${m.message}</span></p>`).join('');
 document.getElementById('led').innerHTML='<tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr>'+(fc.parametric?.payout_events||[]).map(p=>`<tr><td>${p.asset_id}</td><td>${p.payout_pct}</td><td>₹${p.payout_amount}</td></tr>`).join('');
 CF=fc.counterfactual||[]; updCF(0);
+const dc=fc.data_conflicts||[];document.getElementById('con').innerHTML=dc.length?dc.map(c=>`<p>CONFLICT <b>${c.conflict_id}</b> [${c.tile_ref}]<br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence}</small></p>`).join(''):'<p>No conflicts.</p>';
 });
 function updCF(i){const r=(CF||[])[i];if(!r)return;document.getElementById('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop}</b>, saved <b>${r.marginal_lives_saved}</b>`;}
 document.getElementById('cf').addEventListener('input',e=>updCF(+e.target.value));
