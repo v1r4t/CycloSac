@@ -11,7 +11,7 @@ from . import config
 from .loader import load_inputs, LoaderError
 from .gee_fetcher import fetch as gee_fetch, GeeError
 from .hazard import validate_hazard, StageError
-from . import vuln, cascade, glossary, advisory, gemini_path1, parametric, counterfactual, qa
+from . import vuln, cascade, glossary, advisory, gemini_path1, gemini_conflict, parametric, counterfactual, qa
 from .glossary import GlossaryError
 
 
@@ -132,8 +132,17 @@ def main(argv=None):
         base_pop = sum(w.population for w in wards) // 10
         cf = counterfactual.build(base_pop, len(casc["cascade_chains"]))
         write_stage(a.artifacts, "06_counterfactual.json", cf)
-        # Gemini Path2 stub (cut-first if short): annotate only
-        conflicts = [] if a.gemini_conflict_mode == "off" else []
+        # Gemini Path2: annotate only, never blocks (off => skip)
+        if a.gemini_conflict_mode == "off":
+            conflicts = []
+        else:
+            try:
+                bands = {"sar_water_frac": tile.get("sar_water_frac", 0),
+                         "model_surge_m": max_depth}
+                conflicts = gemini_conflict.detect("geetile", bands, assets)
+            except Exception as e:
+                log("warning", "gemini_conflict", "CONFLICT_DEGRADED", str(e), {})
+                conflicts = []
         # QA
         known = {x["asset_id"] for x in assets}
         flags = (qa.check_register(reg, known) + qa.check_advisories(advs)
