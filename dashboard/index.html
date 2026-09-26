@@ -15,6 +15,9 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 td,th{border-bottom:1px solid #274067;padding:4px 6px;text-align:left}
 button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer}
 .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1e3a5f;font-size:12px}
+.legend{background:#111c33ee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.7}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px}
+#err{display:none;background:#5c1a1a;border:1px solid #a33;border-radius:8px;margin:12px;padding:12px}
 input[type=range]{width:100%}
 small{color:#9fb3d1}
 </style>
@@ -22,8 +25,9 @@ small{color:#9fb3d1}
 <body>
 <header>
 <h2 style="margin:0">CycloSac <small>prototype — complete decision pipeline, not production</small></h2>
-<span class="pill" id="fid">…</span><span class="pill" id="status">…</span><span class="pill" id="tile">…</span>
+<span class="pill" id="fid">…</span><span class="pill" id="status">…</span><span class="pill" id="tile">…</span><small id="gen"></small>
 </header>
+<div id="err">Could not load <code>output/forecast.json</code> — serve the repo root first: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
 <div id="map"></div>
 <div class="grid">
 <div class="card"><h3>Exposure (vulnerability desc)</h3><table id="exp"><tr><th>Asset</th><th>Type</th><th>Score</th><th>Hazard</th></tr></table></div>
@@ -42,8 +46,15 @@ FC=fc;
 document.getElementById('fid').textContent=fc.forecast_id;
 document.getElementById('status').textContent='QA '+fc.quality_check.overall_status;
 const gt=fc.gee_tile||{};document.getElementById('tile').textContent='S1 '+(gt.source||'?')+' '+(gt.date||'');
+document.getElementById('gen').textContent='generated '+(fc.generated_at||'');
 const map=L.map('map').setView([19.8,85.55],11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(map);
+fetch('../sample_inputs_demo/surge.geojson').then(r=>r.json()).then(g=>{
+ (g.features||[]).forEach(f=>{const c=((f.geometry||{}).coordinates||[])[0]||[];
+  if(c.length)L.polygon(c.map(p=>[p[1],p[0]]),{color:'#38bdf8',weight:1,fillOpacity:0.25}).bindPopup('surge '+(f.properties.depth_m||'?')+'m').addTo(map);});
+}).catch(()=>{});
+const legend=L.control({position:'bottomright'});legend.onAdd=()=>{const d=L.DomUtil.create('div','legend');
+ d.innerHTML='<b>Legend</b><br/><i style="background:red"></i>critical ≥70<br/><i style="background:orange"></i>moderate ≥40<br/><i style="background:green"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint';return d;};legend.addTo(map);
 fc.vulnerability_register.forEach(a=>{
  const color=a.vulnerability_score>=70?'red':(a.vulnerability_score>=40?'orange':'green');
  L.circleMarker([a.lat||19.8,a.lon||85.5],{radius:6,color}).bindPopup(`${a.asset_id} ${a.asset_type} score=${a.vulnerability_score}`).addTo(map);
@@ -54,7 +65,7 @@ document.getElementById('adv').innerHTML=fc.advisories.map((m,i)=>`<p><b>${m.aud
 document.getElementById('led').innerHTML='<tr><th>Asset</th><th>Payout%</th><th>Amount</th></tr>'+(fc.parametric?.payout_events||[]).map(p=>`<tr><td>${p.asset_id}</td><td>${p.payout_pct}</td><td>₹${p.payout_amount}</td></tr>`).join('');
 CF=fc.counterfactual||[]; updCF(0);
 const dc=fc.data_conflicts||[];document.getElementById('con').innerHTML=dc.length?dc.map(c=>`<p>CONFLICT <b>${c.conflict_id}</b> [${c.tile_ref}]<br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence}</small></p>`).join(''):'<p>No conflicts.</p>';
-});
+}).catch(()=>{document.getElementById('err').style.display='block';});
 function updCF(i){const r=(CF||[])[i];if(!r)return;document.getElementById('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop}</b>, saved <b>${r.marginal_lives_saved}</b>`;}
 document.getElementById('cf').addEventListener('input',e=>updCF(+e.target.value));
 </script>

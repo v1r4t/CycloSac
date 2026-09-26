@@ -83,7 +83,7 @@ set('s-pop',fc.cascade_impact.cumulative_population_affected.toLocaleString('en-
 set('s-adv',fc.advisories.length);
 set('s-pay',(fc.parametric.payout_events||[]).length);
 set('s-qa',fc.quality_check.overall_status);
-}).catch(()=>{});
+}).catch(()=>{document.querySelector('.stats').innerHTML='<p>Could not load <code>output/forecast.json</code> — serve the repo root: <code>python -m http.server</code>, then open <code>/site/</code>.</p>';});
 </script>
 </body>
 </html>
