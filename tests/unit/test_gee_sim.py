@@ -31,3 +31,24 @@ def test_surge_interp():
 def test_glossary_missing_raises(tmp_path):
     with pytest.raises(glossary.GlossaryError):
         glossary.load(str(tmp_path), "or")
+
+
+def test_gee_fetch_real_or_stub_cache_hit(tmp_path):
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    (cache / "tile.json").write_text(json.dumps({"cached": True, "source": "real"}))
+    out = gee_fetcher.fetch_real_or_stub("AOI", "2026-09-25", str(cache))
+    assert out["cached"] is True
+
+
+def test_gee_live_fallback_warns_and_stubs(tmp_path, caplog):
+    def boom(aoi, date):
+        raise RuntimeError("GEE upstream down")
+
+    with caplog.at_level("WARNING", logger="forecaster.gee_fetcher"):
+        out = gee_fetcher.fetch_real_or_stub(
+            "AOI", "2026-09-25", str(tmp_path / "empty"), live_fetch=boom
+        )
+    assert out["cached"] is False
+    assert any("GEE" in r.message for r in caplog.records)
+    assert (tmp_path / "empty" / "tile.json").exists()
