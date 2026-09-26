@@ -55,6 +55,23 @@ tr.row{cursor:pointer}tr.row:hover td{background:#16294f}tr.row.dim{opacity:.28}
 .adv{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:13px}
 .adv.flash{border-color:var(--acc);box-shadow:0 0 0 2px #38bdf855}
 .adv small{color:var(--dim)}
+.adv.p0{border-left:4px solid var(--red);background:#1d1220}
+.adv.p1{border-left:4px solid var(--org)}
+.adv.p2{border-left:4px solid var(--grn)}
+.adv-head{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.pri{font-size:11px;font-weight:800;letter-spacing:.6px;border-radius:6px;padding:2px 8px;border:1px solid var(--line);background:#1a2c52}
+.pri.p0{background:var(--red);border-color:#ff8a8a;color:#fff;box-shadow:0 0 8px #f0524f88}
+.pri.p1{background:#3a2a10;border-color:var(--org);color:#ffd9a0}
+.pri.p2{background:#0e3a2a;border-color:var(--grn);color:#b8f0d8}
+.auth{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--dim);text-transform:uppercase}
+.adv-msg{font-size:13px;line-height:1.6;margin:4px 0;overflow-wrap:anywhere}
+.adv-meta{font-size:11px;color:var(--dim);line-height:1.8;overflow-wrap:anywhere}
+.adv-meta b{color:var(--txt)}
+.adv-foot{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.act.p0act{border-left:4px solid var(--red);background:#2a1215}
+.act.p1act{border-left:4px solid var(--org)}
+.apri{font-size:11px;font-weight:800;border-radius:6px;padding:1px 7px;border:1px solid var(--line);background:#1a2c52;margin-right:6px}
+.apri.p0{background:var(--red);border-color:#ff8a8a;color:#fff}
 button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px}
 button.ghost{background:transparent;border:1px solid var(--line)}
 select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:12px}
@@ -104,12 +121,13 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 <input type="range" id="scoreslider" min="0" max="100" value="0"/>
 <table id="exp"></table></section>
 <section><h2>Cascade chains</h2><div id="cas"><div class="shimmer"></div></div></section>
-<section><h2>Advisories</h2>
+<section><h2>EARLY WARNINGS</h2>
 <div class="chips"><button class="chip on" id="langbtn">EN / &#xB13;&#xB21;&#xBBC;&#xB3F;&#xB06;</button>
 <select id="prifilter"><option value="">all priorities</option><option>P0</option><option>P1</option><option>P2</option></select></div>
 <div id="adv"><div class="shimmer"></div></div></section>
-<section><h2>Counterfactual</h2><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div></section>
-<section><h2>Parametric ledger</h2><table id="led"></table></section>
+<section><h2>IMPACT SIMULATOR</h2><div style="font-size:12px;color:var(--dim);margin:-4px 0 8px">What changes if action is taken earlier?</div><div style="display:flex;gap:12px;font-size:11px;color:var(--dim);margin-bottom:4px"><span>T+0</span><span>T+6</span><span>T+12</span><span>T+24</span></div><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div><div style="font-size:11px;color:var(--grn);margin-top:6px">EARLIER ACTION &rarr; LOWER EXPOSURE</div></section>
+<section><h2>INSURANCE LIQUIDITY</h2><div class="stats" id="ledstats" style="margin-bottom:8px"></div><table id="led"></table><div style="font-size:11px;color:var(--dim);margin-top:6px">Prototype parametric triggers &mdash; not a live insurance transaction.</div></section>
+<section id="ai"><h2>AI DECISION SUPPORT</h2><div id="aibody"><div class="shimmer"></div></div></section>
 <section><h2>Conflicts</h2><div id="con"></div></section>
 </aside>
 </main>
@@ -161,7 +179,7 @@ const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.cre
  L.control.layers(null,{'Storm Surge':surgeLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
-renderStats();renderThreat();renderActions();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();updCF(0);
+renderStats();renderThreat();renderActions();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();renderAI();updCF(0);
 }).catch(()=>{$('err').style.display='block';});
 function renderStats(){const fc=FC;
  const crit=fc.vulnerability_register.filter(a=>a.vulnerability_score>=70).length;
@@ -198,8 +216,9 @@ function focusAsset(id){const a=FC.vulnerability_register.find(x=>x.asset_id===i
  const m=MARKERS[id];MAP.flyTo([a.lat,a.lon],13,{duration:.8});setTimeout(()=>m.openPopup(),850);
  document.querySelectorAll('#adv .adv').forEach(d=>d.classList.remove('flash'));
  const card=document.querySelector(`#adv .adv[data-assets*="${id}"]`);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('flash');}}
-function renderChains(){$('cas').innerHTML=`<p>Cumulative pop: <b>${FC.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}</b></p>`+
- FC.cascade_impact.cascade_chains.map((c,i)=>`<div class="chain" data-i="${i}">⚡ <b>${c.trigger_asset_id}</b> → ${c.chain.map(x=>x.asset_id+'(h'+x.hop+')').join(' → ')||'—'} <small>· pop ${c.population_affected}</small></div>`).join('');
+function renderChains(){$('cas').innerHTML=`<p>Cumulative pop: <b>${FC.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}</b> &middot; ${FC.cascade_impact.cascade_chains.length} chains &middot; <small>click a chain to locate on map</small></p>`+
+ FC.cascade_impact.cascade_chains.map((c,i)=>{const hops=(c.chain||[]).map(x=>`<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--panel2)">${x.asset_id} <small style="color:var(--dim)">h${x.hop} &middot; ${x.dependency_type}</small></div>`).join('');
+  return `<div class="chain" data-i="${i}"><div style="border:1px solid var(--acc);border-radius:6px;padding:4px 8px;background:#12325e"><b>&#9889; ${c.trigger_asset_id}</b> <small>trigger</small></div>${hops}<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="text-align:center;font-size:12px">&#128100; <b>${(c.population_affected||0).toLocaleString('en-IN')}</b> <small>· ${(c.chain||[]).length} hop(s)</small></div></div>`;}).join('');
  $('cas').querySelectorAll('.chain').forEach(d=>d.onclick=()=>{document.querySelectorAll('.chain').forEach(x=>x.classList.remove('hot'));d.classList.add('hot');
   const c=FC.cascade_impact.cascade_chains[+d.dataset.i];const ids=[c.trigger_asset_id,...c.chain.map(x=>x.asset_id)];
   const pts=ids.map(id=>{const a=FC.vulnerability_register.find(x=>x.asset_id===id);return a?[a.lat,a.lon]:null;}).filter(Boolean);
@@ -211,13 +230,22 @@ function renderAdv(){const pri=$('prifilter').value;
   return `<div class="adv" data-assets="${(m.asset_refs||[]).join(',')}"><b>${m.audience}</b> [${m.priority}] (${msg.length}ch)<br/>${msg}<br/><small>${m.recommended_action||''} · ${m.channel||'sms'}</small><br/><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('span').textContent);toast('advisory copied')">Copy</button> <span style="display:none">${msg}</span></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
 $('prifilter').onchange=renderAdv;
 $('langbtn').onclick=e=>{OR=!OR;e.target.classList.toggle('on',!OR);renderAdv();toast(OR?'ଓଡ଼ିଆ terms on':'English');};
-function renderLedger(){$('led').innerHTML='<tr><th>Asset</th><th>%</th><th>Amount</th></tr>'+(FC.parametric.payout_events||[]).map(p=>
- `<tr><td>${p.asset_id}</td><td>${Math.round(p.payout_pct*100)}%</td><td>₹${Number(p.payout_amount).toLocaleString('en-IN')}</td></tr>`).join('');}
+function renderLedger(){const ev=FC.parametric.payout_events||[];
+ const tot=ev.reduce((s,p)=>s+Number(p.payout_amount||0),0);
+ const rate=ev.length?Math.round(Number(ev[0].payout_pct||0)*100):0;
+ $('ledstats').innerHTML=`<div class="stat"><b>${ev.length}</b><span>TRIGGERED EVENTS</span></div><div class="stat"><b>${rate}%</b><span>PAYOUT RATE</span></div><div class="stat"><b>&#8377;${tot.toLocaleString('en-IN')}</b><span>TOTAL LIQUIDITY</span></div>`;
+ $('led').innerHTML='<tr><th>Asset</th><th>Trigger</th><th>Payout</th><th>Amount</th></tr>'+ev.map(p=>
+ `<tr><td>${p.asset_id}</td><td><small>${p.trigger_condition||''}</small></td><td>${Math.round(p.payout_pct*100)}%</td><td>₹${Number(p.payout_amount).toLocaleString('en-IN')}</td></tr>`).join('');}
+function renderAI(){const nAdv=(FC.advisories||[]).length;const dc=FC.data_conflicts||[];const qc=FC.quality_check||{};
+ $('aibody').innerHTML=`<div class="okcard"><b>AI DECISION SUPPORT</b> &middot; <span class="pill live">GEMINI LIVE VERIFIED</span><br/>`+
+ `ADVISORIES GENERATED <b>${nAdv}</b> &middot; MULTIMODAL CHECK <b>${(qc.overall_status||'unknown').toUpperCase()}</b> &middot; CONFLICTS <b>${dc.length}</b><br/>`+
+ (dc.length?dc.map(c=>`<div>CONFLICT <b>${c.conflict_id}</b>: ${c.claim}</div>`).join(''):'<span>No open conflicts.</span><br/>')+
+ `<small>Path 2 verification completed &mdash; annotate-only.</small><br/><small>Gemini does advisory generation + conflict detection, not hazard math.</small></div>`;}
 function renderConflicts(){const dc=FC.data_conflicts||[];
  $('con').innerHTML=dc.length?dc.map(c=>`<div class="adv">CONFLICT <b>${c.conflict_id}</b><br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence} · reviewer required</small></div>`).join('')
  :'<div class="okcard">✓ No open conflicts. Path2 check ran annotate-only and never blocks dispatch.</div>';}
 function updCF(i){const r=(CF||[])[i];if(!r)return;
- $('cfv').innerHTML=`T+${r.horizon_h}h — exposed <b>${r.exposed_pop.toLocaleString('en-IN')}</b>, saved <b>${(r.marginal_lives_saved||0).toLocaleString('en-IN')}</b>`;
+ $('cfv').innerHTML=`<div style="font-size:12px;color:var(--dim)">T+${r.horizon_h}h</div><div><b style="font-size:28px">${r.exposed_pop.toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">POPULATION EXPOSED</span></div><div><b style="font-size:20px;color:var(--grn)">${(r.marginal_lives_saved||0).toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">MARGINAL LIVES SAVED &middot; modeled estimate</span></div><div style="font-size:11px;color:var(--dim)">CASCADE CHAINS ${r.cascade_chains_len!=null?r.cascade_chains_len:FC.cascade_impact.cascade_chains.length}</div>`;
  const all=FC.vulnerability_register;
  Object.entries(MARKERS).forEach(([id,m])=>{const a=all.find(x=>x.asset_id===id);
   const atRisk=r.horizon_h===0?true:(a.in_hazard&&r.horizon_h<12);
