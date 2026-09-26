@@ -33,7 +33,10 @@ def _has_credentials() -> bool:
         return True
     if os.environ.get("GEE_PROJECT"):
         return True
-    ee_key = Path.home() / ".config" / "earthengine" / "credentials"
+    try:
+        ee_key = Path.home() / ".config" / "earthengine" / "credentials"
+    except RuntimeError:
+        return False  # stripped env (e.g. test subprocess): no home, no creds
     return ee_key.exists()
 
 
