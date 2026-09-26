@@ -1,0 +1,17 @@
+{
+  "description": "QA contradiction threshold boundary: in_hazard=false + score>50 is BLOCKER (qa.py). 49.9 must be clean, 50.1 must flag.",
+  "input": {
+    "register": [
+      {"asset_id": "B1", "in_hazard": false, "vulnerability_score": 49.9, "hazard_depth_m": 0.0},
+      {"asset_id": "B2", "in_hazard": false, "vulnerability_score": 50.1, "hazard_depth_m": 0.0}
+    ],
+    "known_ids": ["B1", "B2"]
+  },
+  "expected": {
+    "B1_flags": 0,
+    "B2_flags": 1,
+    "B2_severity": "BLOCKER",
+    "B2_check": "contradiction",
+    "exit": 1
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "description": "Cyclic dependency A1->A2->A1 with trigger A1>=70. BFS must terminate, record cycle in critical_paths, exit 0.",
+  "input": {
+    "register": [
+      {"asset_id": "A1", "vulnerability_score": 85},
+      {"asset_id": "A2", "vulnerability_score": 10}
+    ],
+    "dependencies": [
+      {"from_asset": "A1", "to_asset": "A2", "dependency_type": "power"},
+      {"from_asset": "A2", "to_asset": "A1", "dependency_type": "power"}
+    ]
+  },
+  "expected": {
+    "exit": 0,
+    "critical_paths_contains": "cycle detected at A1",
+    "cascade_chains_len": 1,
+    "hangs": false
+  }
+}

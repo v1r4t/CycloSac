@@ -1,0 +1,21 @@
+{
+  "description": "Overlapping wards: A1 and A2 both in W1. Union pop must be W1+W2=1500, not per-asset sum 2500.",
+  "input": {
+    "register": [
+      {"asset_id": "A1", "vulnerability_score": 80},
+      {"asset_id": "A2", "vulnerability_score": 50},
+      {"asset_id": "A3", "vulnerability_score": 50}
+    ],
+    "dependencies": [
+      {"from_asset": "A1", "to_asset": "A2", "dependency_type": "power"},
+      {"from_asset": "A2", "to_asset": "A3", "dependency_type": "power"}
+    ],
+    "asset_ward": {"A1": "W1", "A2": "W1", "A3": "W2"},
+    "ward_pop": {"W1": 1000, "W2": 500}
+  },
+  "expected": {
+    "exit": 0,
+    "cumulative_population_affected": 1500,
+    "rule": "union <= sum"
+  }
+}

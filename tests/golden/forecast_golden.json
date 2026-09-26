@@ -1,0 +1,35 @@
+{
+  "blocker_count": 0,
+  "cascade_chains": [
+    {
+      "chain": [
+        {
+          "asset_id": "H1",
+          "dependency_type": "power",
+          "hop": 1
+        }
+      ],
+      "confidence": {
+        "level": "high",
+        "reason": "deterministic BFS"
+      },
+      "max_depth": 1,
+      "population_affected": 30000,
+      "trigger_asset_id": "S1"
+    }
+  ],
+  "exposed_pop": [
+    3000,
+    2640,
+    2280,
+    1560
+  ],
+  "payout_pct": [
+    0.4
+  ],
+  "vulnerability_scores": {
+    "H1": 31.0,
+    "R1": 23.0,
+    "S1": 80.3
+  }
+}
