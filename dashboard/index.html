@@ -165,7 +165,7 @@ st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_c
 const gt=fc.gee_tile||{};$('tile').textContent='GEE LIVE S1 '+(gt.source||'?')+' '+(gt.date||'');
 $('tile').title='Sentinel-1 via Google Earth Engine';
 $('gen').textContent='Generated '+(fc.generated_at||'').slice(0,16).replace('T',' ');
-MAP=L.map('map').setView([19.8,85.55],11);
+MAP=L.map('map').setView([19.845,85.865],12);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
 const surgeLayer=L.layerGroup().addTo(MAP),markerLayer=L.layerGroup().addTo(MAP);
 // Omitted (no data — never invent geometry): rainfall, cascade-geometry, vulnerability-heat overlays.

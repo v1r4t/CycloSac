@@ -3,249 +3,249 @@
   "asset_id": "PURI-SUB-01",
   "asset_name": "Puri substation 1",
   "asset_type": "substation",
-  "lat": 19.81,
-  "lon": 85.57
+  "lat": 19.8135,
+  "lon": 85.8312
  },
  {
   "asset_id": "PURI-SUB-02",
   "asset_name": "Puri substation 2",
   "asset_type": "substation",
-  "lat": 19.81,
-  "lon": 85.59
+  "lat": 19.818,
+  "lon": 85.825
  },
  {
   "asset_id": "PURI-SUB-03",
   "asset_name": "Puri substation 3",
   "asset_type": "substation",
   "lat": 19.81,
-  "lon": 85.61
+  "lon": 85.82
  },
  {
   "asset_id": "PURI-SUB-04",
   "asset_name": "Puri substation 4",
   "asset_type": "substation",
-  "lat": 19.815,
-  "lon": 85.575
+  "lat": 19.812,
+  "lon": 85.836
  },
  {
   "asset_id": "PURI-SUB-05",
   "asset_name": "Puri substation 5",
   "asset_type": "substation",
-  "lat": 19.83,
-  "lon": 85.57
+  "lat": 19.8079,
+  "lon": 85.841
  },
  {
   "asset_id": "PURI-SUB-06",
   "asset_name": "Puri substation 6",
   "asset_type": "substation",
-  "lat": 19.83,
-  "lon": 85.59
+  "lat": 19.804,
+  "lon": 85.835
  },
  {
   "asset_id": "PURI-SUB-07",
   "asset_name": "Puri substation 7",
   "asset_type": "substation",
-  "lat": 19.83,
-  "lon": 85.61
+  "lat": 19.82,
+  "lon": 85.85
  },
  {
   "asset_id": "PURI-SUB-08",
   "asset_name": "Puri substation 8",
   "asset_type": "substation",
-  "lat": 19.85,
-  "lon": 85.59
+  "lat": 19.83,
+  "lon": 85.858
  },
  {
   "asset_id": "PURI-SUB-09",
   "asset_name": "Puri substation 9",
   "asset_type": "substation",
-  "lat": 19.85,
-  "lon": 85.61
+  "lat": 19.818,
+  "lon": 85.82
  },
  {
   "asset_id": "PURI-SUB-10",
   "asset_name": "Puri substation 10",
   "asset_type": "substation",
-  "lat": 19.87,
-  "lon": 85.43
+  "lat": 19.815,
+  "lon": 85.845
  },
  {
   "asset_id": "PURI-SUB-11",
   "asset_name": "Puri substation 11",
   "asset_type": "substation",
-  "lat": 19.87,
-  "lon": 85.45
+  "lat": 19.825,
+  "lon": 85.855
  },
  {
   "asset_id": "PURI-SUB-12",
   "asset_name": "Puri substation 12",
   "asset_type": "substation",
-  "lat": 19.87,
-  "lon": 85.47
+  "lat": 19.815,
+  "lon": 85.8
  },
  {
   "asset_id": "PURI-SUB-13",
   "asset_name": "Puri substation 13",
   "asset_type": "substation",
-  "lat": 19.87,
-  "lon": 85.57
+  "lat": 19.825,
+  "lon": 85.87
  },
  {
   "asset_id": "PURI-SUB-14",
   "asset_name": "Puri substation 14",
   "asset_type": "substation",
-  "lat": 19.87,
-  "lon": 85.59
+  "lat": 19.83,
+  "lon": 85.845
  },
  {
   "asset_id": "PURI-SUB-15",
   "asset_name": "Puri substation 15",
   "asset_type": "substation",
   "lat": 19.87,
-  "lon": 85.61
+  "lon": 85.45
  },
  {
   "asset_id": "PURI-SUB-16",
   "asset_name": "Puri substation 16",
   "asset_type": "substation",
   "lat": 19.89,
-  "lon": 85.43
+  "lon": 85.47
  },
  {
   "asset_id": "PURI-SUB-17",
   "asset_name": "Puri substation 17",
   "asset_type": "substation",
-  "lat": 19.888,
-  "lon": 85.452
+  "lat": 19.89,
+  "lon": 85.43
  },
  {
   "asset_id": "PURI-HOSP-01",
   "asset_name": "Puri hospital 1",
   "asset_type": "hospital",
-  "lat": 19.87,
-  "lon": 85.65,
+  "lat": 19.815,
+  "lon": 85.86,
   "backup_power": true
  },
  {
   "asset_id": "PURI-HOSP-02",
   "asset_name": "Puri hospital 2",
   "asset_type": "hospital",
-  "lat": 19.85,
-  "lon": 85.59,
+  "lat": 19.83,
+  "lon": 85.85,
   "backup_power": false
  },
  {
   "asset_id": "PURI-HOSP-03",
   "asset_name": "Puri hospital 3",
   "asset_type": "hospital",
-  "lat": 19.85,
-  "lon": 85.65,
+  "lat": 19.855,
+  "lon": 85.845,
   "backup_power": true
  },
  {
   "asset_id": "PURI-HOSP-04",
   "asset_name": "Puri hospital 4",
   "asset_type": "hospital",
-  "lat": 19.89,
-  "lon": 85.49,
+  "lat": 19.809,
+  "lon": 85.836,
   "backup_power": false
  },
  {
   "asset_id": "NH316-SEG-01",
   "asset_name": "NH-316 segment 1",
   "asset_type": "arterial_road",
-  "lat": 19.85,
-  "lon": 85.43
+  "lat": 19.804,
+  "lon": 85.835
  },
  {
   "asset_id": "NH316-SEG-02",
   "asset_name": "NH-316 segment 2",
   "asset_type": "arterial_road",
-  "lat": 19.85,
-  "lon": 85.45
+  "lat": 19.82,
+  "lon": 85.85
  },
  {
   "asset_id": "NH316-SEG-03",
   "asset_name": "NH-316 segment 3",
   "asset_type": "arterial_road",
-  "lat": 19.89,
-  "lon": 85.51
+  "lat": 19.83,
+  "lon": 85.858
  },
  {
   "asset_id": "NH316-SEG-04",
   "asset_name": "NH-316 segment 4",
   "asset_type": "arterial_road",
-  "lat": 19.89,
-  "lon": 85.53
+  "lat": 19.86,
+  "lon": 85.86
  },
  {
   "asset_id": "NH316-SEG-05",
   "asset_name": "NH-316 segment 5",
   "asset_type": "arterial_road",
   "lat": 19.87,
-  "lon": 85.63
+  "lon": 85.85
  },
  {
   "asset_id": "PURI-WTR-01",
   "asset_name": "Water plant 1",
   "asset_type": "water_plant",
-  "lat": 19.85,
-  "lon": 85.65
+  "lat": 19.855,
+  "lon": 85.845
  },
  {
   "asset_id": "PURI-WTR-02",
   "asset_name": "Water plant 2",
   "asset_type": "water_plant",
-  "lat": 19.85,
-  "lon": 85.67
+  "lat": 19.86,
+  "lon": 85.87
  },
  {
   "asset_id": "PURI-WTR-03",
   "asset_name": "Water plant 3",
   "asset_type": "water_plant",
-  "lat": 19.89,
-  "lon": 85.67
+  "lat": 19.83,
+  "lon": 85.58
  },
  {
   "asset_id": "PURI-TWR-01",
   "asset_name": "Transmission tower 1",
   "asset_type": "transmission_tower",
-  "lat": 19.85,
-  "lon": 85.41
+  "lat": 19.815,
+  "lon": 85.8
  },
  {
   "asset_id": "PURI-TWR-02",
   "asset_name": "Transmission tower 2",
   "asset_type": "transmission_tower",
-  "lat": 19.87,
-  "lon": 85.41
+  "lat": 19.85,
+  "lon": 85.89
  },
  {
   "asset_id": "PURI-TWR-03",
   "asset_name": "Transmission tower 3",
   "asset_type": "transmission_tower",
-  "lat": 19.87,
-  "lon": 85.49
+  "lat": 19.89,
+  "lon": 85.6
  },
  {
   "asset_id": "PURI-TWR-04",
   "asset_name": "Transmission tower 4",
   "asset_type": "transmission_tower",
-  "lat": 19.89,
-  "lon": 85.65
+  "lat": 19.87,
+  "lon": 85.87
  },
  {
   "asset_id": "PURI-SHEL-01",
   "asset_name": "Cyclone shelter 1",
   "asset_type": "cyclone_shelter",
-  "lat": 19.89,
-  "lon": 85.69
+  "lat": 19.86,
+  "lon": 85.86
  },
  {
   "asset_id": "PURI-SHEL-02",
   "asset_name": "Cyclone shelter 2",
   "asset_type": "cyclone_shelter",
-  "lat": 19.89,
-  "lon": 85.71
+  "lat": 19.87,
+  "lon": 85.85
  }
 ]

@@ -59,12 +59,12 @@
     "audience": "power_utility",
     "language": "en",
     "priority": "P0",
-    "message": "Secure PURI-TWR-03 by T-24h [FC-2026-PURI-001] PURI-TWR-03 upakendra",
+    "message": "Secure PURI-TWR-04 by T-24h [FC-2026-PURI-001] PURI-TWR-04 upakendra",
     "asset_refs": [
-      "PURI-TWR-03"
+      "PURI-TWR-04"
     ],
     "forecast_id": "FC-2026-PURI-001",
-    "recommended_action": "Secure PURI-TWR-03 by T-24h",
+    "recommended_action": "Secure PURI-TWR-04 by T-24h",
     "channel": "sms",
     "truncated": false,
     "llm_used": false

@@ -13,21 +13,19 @@ def build(d: Path) -> Path:
     (d / "glossary").mkdir(exist_ok=True)
     w = lambda p, o: Path(p).write_text(json.dumps(o, indent=1))
 
-    # Surge footprint shifted onto the coastal landmass (verified against
-    # JRC GSW1_4 surface-water: all asset cells below are land, occ < 20).
-    # Water coverage inside the polygon is honest — surge comes from the sea.
-    surge_poly = [[[85.55, 19.79], [85.68, 19.79], [85.68, 19.90], [85.55, 19.90], [85.55, 19.79]]]
+    # Surge strip hugging the real shoreline (sea overlap honest).
+    surge_poly = [[[85.78, 19.775], [85.94, 19.775], [85.95, 19.89], [85.79, 19.89], [85.78, 19.775]]]
     w(d / "surge.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"depth_m": 2.5},
          "geometry": {"type": "Polygon", "coordinates": surge_poly}}]})
     w(d / "rainfall.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"depth_m": 0.6},
          "geometry": {"type": "Polygon", "coordinates": [
-             [[85.55, 19.80], [85.70, 19.80], [85.70, 19.90], [85.55, 19.90], [85.55, 19.80]]]}}]})
+             [[85.78, 19.80], [85.95, 19.80], [85.95, 19.92], [85.78, 19.92], [85.78, 19.80]]]}}]})
     w(d / "wind.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"wind_kmh": 165},
          "geometry": {"type": "Polygon", "coordinates": [
-             [[85.40, 19.70], [85.75, 19.70], [85.75, 19.95], [85.40, 19.95], [85.40, 19.70]]]}}]})
+             [[85.75, 19.75], [85.98, 19.75], [85.98, 19.95], [85.75, 19.95], [85.75, 19.75]]]}}]})
     w(d / "aoi.geojson", {"type": "FeatureCollection", "features": []})
     w(d / "met.json", {"cyclone_name": "Michaung", "cyclone_category": 3,
                        "eta_landfall": "2026-09-27T06:00:00+05:30", "intensity_kmh": 165,
@@ -37,12 +35,16 @@ def build(d: Path) -> Path:
     subs = []
     # Explicit land-verified cells (JRC GSW1_4 occurrence < 20, probed
     # 2026-09-27 on a 0.02 deg lattice). Jitter stays within cells.
-    SUBS = [(85.57, 19.81), (85.59, 19.81), (85.61, 19.81), (85.575, 19.815),
-            (85.57, 19.83), (85.59, 19.83), (85.61, 19.83),
-            (85.59, 19.85), (85.61, 19.85),
-            (85.43, 19.87), (85.45, 19.87), (85.47, 19.87),
-            (85.57, 19.87), (85.59, 19.87), (85.61, 19.87),
-            (85.43, 19.89), (85.452, 19.888)]
+    # Puri CITY ground (not the old Chilika-rural grid): every coordinate below
+    # is SRTM-verified land (elev >= 3) via live GEE 2026-09-27. GSW occurrence
+    # nulls over dense town are a mask quirk (temple max_extent == 0 = certain
+    # land); combined rule WATER iff gsw_occ >= 50 or srtm < 3.
+    SUBS = [(85.8312, 19.8135), (85.825, 19.818), (85.82, 19.81),
+            (85.836, 19.812), (85.841, 19.8079), (85.835, 19.804),
+            (85.85, 19.82), (85.858, 19.83), (85.82, 19.818),
+            (85.845, 19.815), (85.855, 19.825), (85.80, 19.815),
+            (85.87, 19.825), (85.845, 19.83),
+            (85.45, 19.87), (85.47, 19.89), (85.43, 19.89)]
     for i, (lon, lat) in enumerate(SUBS):
         aid = f"PURI-SUB-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Puri substation {i+1}",
@@ -50,35 +52,35 @@ def build(d: Path) -> Path:
         audience[aid] = "power_utility"
         subs.append(aid)
     hosps = []
-    for i, (lon, lat) in enumerate([(85.65, 19.87), (85.59, 19.85), (85.65, 19.85), (85.49, 19.89)]):
+    for i, (lon, lat) in enumerate([(85.86, 19.815), (85.85, 19.83), (85.845, 19.855), (85.836, 19.809)]):
         aid = f"PURI-HOSP-{i+1:02d}"
         lat, lon = round(lat, 5), round(lon, 5)
         assets.append({"asset_id": aid, "asset_name": f"Puri hospital {i+1}",
                        "asset_type": "hospital", "lat": lat, "lon": lon, "backup_power": i % 2 == 0})
         audience[aid] = "health_department"
         hosps.append(aid)
-    for i, (lon, lat) in enumerate([(85.43, 19.85), (85.45, 19.85), (85.51, 19.89), (85.53, 19.89), (85.63, 19.87)]):
+    for i, (lon, lat) in enumerate([(85.835, 19.804), (85.85, 19.82), (85.858, 19.83), (85.86, 19.86), (85.85, 19.87)]):
         aid = f"NH316-SEG-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"NH-316 segment {i+1}",
                        "asset_type": "arterial_road",
                        "lat": round(lat, 5),
                        "lon": round(lon, 5)})
         audience[aid] = "roads_authority"
-    for i, (lon, lat) in enumerate([(85.65, 19.85), (85.67, 19.85), (85.67, 19.89)]):
+    for i, (lon, lat) in enumerate([(85.845, 19.855), (85.87, 19.86), (85.58, 19.83)]):
         aid = f"PURI-WTR-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Water plant {i+1}",
                        "asset_type": "water_plant",
                        "lat": round(lat, 5),
                        "lon": round(lon, 5)})
         audience[aid] = "municipal_commissioner"
-    for i, (lon, lat) in enumerate([(85.41, 19.85), (85.41, 19.87), (85.49, 19.87), (85.65, 19.89)]):
+    for i, (lon, lat) in enumerate([(85.80, 19.815), (85.89, 19.85), (85.60, 19.89), (85.87, 19.87)]):
         aid = f"PURI-TWR-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Transmission tower {i+1}",
                        "asset_type": "transmission_tower",
                        "lat": round(lat, 5),
                        "lon": round(lon, 5)})
         audience[aid] = "power_utility"
-    for i, (lon, lat) in enumerate([(85.69, 19.89), (85.71, 19.89)]):
+    for i, (lon, lat) in enumerate([(85.86, 19.86), (85.85, 19.87)]):
         aid = f"PURI-SHEL-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Cyclone shelter {i+1}",
                        "asset_type": "cyclone_shelter",
@@ -103,17 +105,16 @@ def build(d: Path) -> Path:
     w(d / "audience.json", audience)
     w(d / "regional.json", {"forecast_id": "FC-2026-PURI-001", "district_name": "Puri",
                             "district_population": 1700000, "primary_language": "or",
-                            "bbox": [85.40, 19.70, 85.75, 19.95]})
+                            "bbox": [85.78, 19.78, 85.95, 19.92]})
     w(d / "insurance.json", [
         {"asset_id": f"PURI-SUB-{i:02d}", "sum_insured_inr": 5000000, "insurer_id": "INS-1"}
         for i in (1, 3, 5, 7, 9)])
-    # Ward quadrants of the AOI bbox (mid 85.575 / 19.825); real geometries
-    # so assets map to wards spatially instead of round-robin.
-    mx, my = 85.575, 19.825
-    quads = {"W1": [[85.40, 19.70], [mx, 19.70], [mx, my], [85.40, my]],
-             "W2": [[mx, 19.70], [85.75, 19.70], [85.75, my], [mx, my]],
-             "W3": [[85.40, my], [mx, my], [mx, 19.95], [85.40, 19.95]],
-             "W4": [[mx, my], [85.75, my], [85.75, 19.95], [mx, 19.95]]}
+    # Ward quadrants of the city AOI bbox (mid 85.865 / 19.85).
+    mx, my = 85.865, 19.85
+    quads = {"W1": [[85.78, 19.78], [mx, 19.78], [mx, my], [85.78, my]],
+             "W2": [[mx, 19.78], [85.95, 19.78], [85.95, my], [mx, my]],
+             "W3": [[85.78, my], [mx, my], [mx, 19.92], [85.78, 19.92]],
+             "W4": [[mx, my], [85.95, my], [85.95, 19.92], [mx, 19.92]]}
     w(d / "wards.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"ward_code": k},
          "geometry": {"type": "Polygon", "coordinates": [v + [v[0]]]}}

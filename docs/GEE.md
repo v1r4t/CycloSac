@@ -6,8 +6,10 @@
 - IMERG precip: `NASA/GPM_L3/IMERG_V07` (rainfall input)
 
 ## AOI
-Odisha coast (Michaung replay): bounding box `86.0,19.0,87.5,20.5`
-(lon_min,lat_min,lon_max,lat_max). Date window: `2026-09-25`.
+Puri city (Michaung replay): bounding box `85.78,19.78,85.95,19.92`
+(lon_min,lat_min,lon_max,lat_max) — temple, station, DHH hospital, NH-316.
+Date window: `2026-09-25`. Earlier rural-Chilika AOI retired 2026-09-27 after
+the structures-on-water finding.
 
 ## Reproduce 1 real tile (judge path, ~5 min)
 1. `pip install earthengine-api`

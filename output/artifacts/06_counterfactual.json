@@ -1,30 +1,30 @@
 [
   {
     "horizon_h": 0,
-    "exposed_pop": 31272,
-    "reachable_shelters": 30,
-    "cascade_chains_len": 30,
+    "exposed_pop": 42117,
+    "reachable_shelters": 25,
+    "cascade_chains_len": 25,
     "marginal_lives_saved": 0
   },
   {
     "horizon_h": 6,
-    "exposed_pop": 27519,
-    "reachable_shelters": 30,
-    "cascade_chains_len": 30,
-    "marginal_lives_saved": 3753
+    "exposed_pop": 37062,
+    "reachable_shelters": 25,
+    "cascade_chains_len": 25,
+    "marginal_lives_saved": 5055
   },
   {
     "horizon_h": 12,
-    "exposed_pop": 23766,
-    "reachable_shelters": 30,
-    "cascade_chains_len": 30,
-    "marginal_lives_saved": 7506
+    "exposed_pop": 32008,
+    "reachable_shelters": 25,
+    "cascade_chains_len": 25,
+    "marginal_lives_saved": 10109
   },
   {
     "horizon_h": 24,
-    "exposed_pop": 16261,
-    "reachable_shelters": 30,
-    "cascade_chains_len": 30,
-    "marginal_lives_saved": 15011
+    "exposed_pop": 21900,
+    "reachable_shelters": 25,
+    "cascade_chains_len": 25,
+    "marginal_lives_saved": 20217
   }
 ]

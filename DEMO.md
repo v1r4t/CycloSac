@@ -14,13 +14,13 @@ Show: `dashboard/index.html` map with 2.5m surge footprint off Puri.
 
 ## 0:20 — Exposure (30s)
 
-Say: "35 assets scored: 17 substations, 4 hospitals; shelters top at 85.5 inside the surge strip."
-Show: `output/artifacts/02_vulnerability.json` — sorted desc, `in_hazard: true` on coastal grid.
+Say: "35 city assets scored — temple substation, DHH hospital, station, NH-316; 30 of 35 inside the hazard, shelters top at 85.5."
+Show: `output/artifacts/02_vulnerability.json` — sorted desc, `in_hazard: true` on town grid.
 
 ## 0:50 — Cascade BFS + union (30s)
 
-Say: "Triggers above 70 fan out to depth 3; ward-union population 3,12,725 — union, not double-counted."
-Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 312725`.
+Say: "Triggers above 70 fan out to depth 3; ward-union population 4,21,172 — union, not double-counted."
+Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 421172`.
 
 ## 1:20 — Advisory, Odia + English, SMS-280 (30s)
 
@@ -29,7 +29,7 @@ Show: `output/artifacts/04_advisories.json` — `channel: sms`, `len(message) <=
 
 ## 1:50 — Counterfactual slider 0→6→12→24h (30s)
 
-Say: "Static 2%/h evacuation: exposed drops 31,272 → 27,519 → 23,766 → 16,261, saving 15,011 at 24h."
+Say: "Static 2%/h evacuation: exposed drops 42,117 → 37,062 → 32,008 → 21,900, saving 20,217 at 24h."
 Show: dashboard counterfactual slider, or `output/artifacts/06_counterfactual.json`.
 
 ## 2:20 — Parametric ledger (30s)

@@ -16,8 +16,8 @@ log = logging.getLogger(__name__)
 # Verified live 2026-09-26 (ee.Number(1) round-trip). Override via GEE_PROJECT.
 DEFAULT_PROJECT = "cyclone-forecast-123456"
 
-# Puri demo AOI: [minlon, minlat, maxlon, maxlat] (matches regional.json bbox).
-PURI_BBOX = [85.40, 19.70, 85.75, 19.95]
+# Puri city AOI: [minlon, minlat, maxlon, maxlat] (matches regional.json bbox).
+PURI_BBOX = [85.78, 19.78, 85.95, 19.92]
 DATASETS = {
     "sentinel1": "COPERNICUS/S1_GRD",  # SAR backscatter (flood extent proxy)
     "srtm": "USGS/SRTMGL1_003",  # 30m DEM (surge exposure elevation)

@@ -11,16 +11,16 @@ def make_inputs(d: Path) -> Path:
     w(d / "surge.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"depth_m": 2.0},
          "geometry": {"type": "Polygon", "coordinates": [
-             [[85.585, 19.825], [85.595, 19.825], [85.595, 19.835], [85.585, 19.835], [85.585, 19.825]]]}}]})
+             [[85.826, 19.808], [85.836, 19.808], [85.836, 19.818], [85.826, 19.818], [85.826, 19.808]]]}}]})
     w(d / "rainfall.geojson", {"type": "FeatureCollection", "features": []})
     w(d / "wind.geojson", {"type": "FeatureCollection", "features": []})
     w(d / "met.json", {"cyclone_name": "Michaung", "cyclone_category": 2,
                        "eta_landfall": "2026-09-27T06:00:00+05:30", "intensity_kmh": 160,
                        "forward_speed_kmh": 15, "rainfall_72h_mm": 300, "tide_phase": "high"})
     w(d / "assets.json", [
-        {"asset_id": "S1", "asset_name": "Sub Puri-04", "asset_type": "substation", "lat": 19.83, "lon": 85.59},
-        {"asset_id": "R1", "asset_name": "NH-316", "asset_type": "arterial_road", "lat": 19.81, "lon": 85.61},
-        {"asset_id": "H1", "asset_name": "CHC Puri", "asset_type": "hospital", "lat": 19.85, "lon": 85.59}])
+        {"asset_id": "S1", "asset_name": "Sub Puri-04", "asset_type": "substation", "lat": 19.8135, "lon": 85.8312},
+        {"asset_id": "R1", "asset_name": "NH-316", "asset_type": "arterial_road", "lat": 19.82, "lon": 85.85},
+        {"asset_id": "H1", "asset_name": "CHC Puri", "asset_type": "hospital", "lat": 19.812, "lon": 85.836}])
     w(d / "population.json", [
         {"ward_code": "W1", "ward_name": "Sea Beach", "population": 10000, "vulnerability_index": 0.7},
         {"ward_code": "W2", "ward_name": "Town", "population": 20000, "vulnerability_index": 0.4}])
