@@ -25,6 +25,17 @@ Odisha coast (Michaung replay): bounding box `86.0,19.0,87.5,20.5`
 `fetch_real_or_stub()` is cache-first; the live path is injectable
 (`live_fetch=`) so unit tests never need credentials.
 
+## Live traffic overlay (optional, annotate-only)
+
+- Provider: TomTom Traffic Flow v4 (`flowSegmentData`, absolute), 3 probes on
+  Puri arterials (`traffic_overlay.PROBE_POINTS`); HERE documented fallback.
+- Enable: `TOMTOM_API_KEY=... python -m forecaster.cli --traffic on ...`.
+  Default off. Missing key, no coverage, timeout, bad payload → `[]` with a
+  WARNING; pipeline exits and QA verdicts never change on traffic.
+- Output: `forecast.json: traffic_overlay[]` + `07_traffic.json`; dashboard
+  "Live Traffic" layer appears only when segments exist, else the legend
+  reads "no data — validated core only".
+
 ## Population provenance (real, not fixture)
 
 - Source: `JRC/GHSL/P2023A/GHS_POP/2020` (100m) via live GEE, fetched 2026-09-27.

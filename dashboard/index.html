@@ -180,8 +180,12 @@ fc.vulnerability_register.forEach(a=>{
  m.bindPopup(`<b>${a.asset_id}</b> ${a.asset_type}<br/>score ${a.vulnerability_score}<br/>${extra}<br/><small>${a.estimated_failure_mode||''}</small>`);
  MARKERS[a.asset_id]=m;});
 const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.create('div','legend');
- d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint<br/><span class="p0" style="color:#f0524f">◉</span> pulsing ring = P0 trigger asset';return d;};lg.addTo(MAP);
+ d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint<br/><span class="p0" style="color:#f0524f">◉</span> pulsing ring = P0 trigger asset<br/><small>Live traffic: '+(FC.traffic_overlay&&FC.traffic_overlay.length?FC.traffic_overlay.length+' segments (TomTom)':'no data — validated core only')+'</small>';return d;};lg.addTo(MAP);
  L.control.layers(null,{'Storm Surge':surgeLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
+ const tflow=(fc.traffic_overlay||[]);const trafficLayer=L.layerGroup();
+ tflow.forEach(s=>{const c=s.closed||s.congestion>=0.6?'#f0524f':s.congestion>=0.3?'#f5a524':'#30c48d';
+  L.circleMarker([s.lat,s.lon],{radius:7,color:c,weight:2}).bindPopup(`<b>${s.road_id}</b><br/>speed ${s.speed}/${s.freeflow} km/h<br/>congestion ${Math.round(s.congestion*100)}%${s.closed?'<br/>CLOSED':''}`).addTo(trafficLayer);});
+ if(tflow.length){trafficLayer.addTo(MAP);L.control.layers(null,{'Live Traffic':trafficLayer},{collapsed:false}).addTo(MAP);}
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
 renderCommander();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();renderAI();updCF(0);

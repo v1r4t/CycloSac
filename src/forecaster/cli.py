@@ -55,6 +55,7 @@ def main(argv=None):
     ap.add_argument("--crs", default=config.DEFAULT_CRS)
     ap.add_argument("--artifacts", default=None)
     ap.add_argument("--gemini-conflict-mode", default="on", choices=["off", "on"])
+    ap.add_argument("--traffic", default="off", choices=["off", "on"])
     ap.add_argument("--cache-only", action="store_true")
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args(argv)
@@ -149,6 +150,18 @@ def main(argv=None):
             except Exception as e:
                 log("warning", "gemini_conflict", "CONFLICT_DEGRADED", str(e), {})
                 conflicts = []
+        # Live traffic overlay: annotate only, never blocks (default off)
+        if a.traffic == "off":
+            traffic = []
+        else:
+            try:
+                from . import traffic_overlay
+                import os as _os
+                traffic = traffic_overlay.fetch("puri-aoi", api_key=_os.environ.get("TOMTOM_API_KEY"))
+            except Exception as e:
+                log("warning", "traffic", "TRAFFIC_DEGRADED", str(e), {})
+                traffic = []
+        write_stage(a.artifacts, "07_traffic.json", traffic)
         # QA
         known = {x["asset_id"] for x in assets}
         flags = (qa.check_register(reg, known) + qa.check_advisories(advs)
@@ -171,6 +184,7 @@ def main(argv=None):
               "hazard_narrative": narrative, "vulnerability_register": reg,
               "cascade_impact": casc, "advisories": advs,
               "parametric": par, "counterfactual": cf,
+              "traffic_overlay": traffic,
               "data_conflicts": conflicts, "quality_check": qc}
         Path(a.out).write_text(json.dumps(fc, indent=2))
         h = hashlib.md5(json.dumps(fc, sort_keys=True).encode()).hexdigest()[:8]
