@@ -87,6 +87,10 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 @keyframes sh{to{background-position:-200% 0}}
 @keyframes pulse{0%{stroke-opacity:1}50%{stroke-opacity:.2}100%{stroke-opacity:1}}
 .p0{animation:pulse 1.4s infinite}
+@keyframes ringpulse{0%{stroke-opacity:.9;stroke-width:3}50%{stroke-opacity:.25;stroke-width:1}100%{stroke-opacity:.9;stroke-width:3}}
+.p0ring{animation:ringpulse 1.6s infinite}
+#assetcard{border:1px solid var(--acc);border-radius:8px;padding:10px;margin:8px 0;font-size:13px;background:#0f2547;display:none}
+#assetcard h3{margin:0 0 6px;font-size:14px}#assetcard small{color:var(--dim)}
 .okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
 @media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}}
 </style>
@@ -102,16 +106,14 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 <span class="pill" id="status">&hellip;</span>
 <span class="pill" id="fid">loading&hellip;</span>
 <span class="pill" id="gen">&hellip;</span>
-<span id="clock"></span>
+<span id="clock" title="Live wall-clock for the demo room"></span>
 <div id="scope">Platform: Bay of Bengal &middot; Validated case study: Puri, Odisha &middot; Replay of forecast, planning only</div>
 </header>
 <div id="err">Could not load <code>output/forecast.json</code> &mdash; serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
 <main>
 <div class="mapwrap"><div id="map"></div></div>
 <aside>
-<section><h2>Situation</h2><div class="stats" id="stats"></div></section>
-<section><h2>Threat</h2><div class="threatcard" id="threat"><div class="shimmer"></div></div></section>
-<section><h2>Priority actions</h2><div id="actions"><div class="shimmer"></div></div></section>
+<section><h2>Commander&rsquo;s View</h2><div class="threatcard" id="commander"><div class="shimmer"></div></div></section>
 <section><h2>Anticipatory timeline</h2><div class="tl" id="timeline">
 <div><b>T&minus;48H</b>forecast</div><div><b>T&minus;24H</b>prep</div><div><b>T&minus;12H</b>evac planning</div><div><b>T&minus;6H</b>dispatch</div><div><b>Landfall</b>Michaung</div>
 </div></section>
@@ -119,6 +121,7 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 <div class="chips" id="typechips"></div>
 <label style="font-size:12px;color:var(--dim)">Min score <b id="scorev">0</b></label>
 <input type="range" id="scoreslider" min="0" max="100" value="0"/>
+<div id="assetcard"></div>
 <table id="exp"></table></section>
 <section><h2>Cascade chains</h2><div style="font-size:11px;color:var(--dim)" id="popsrc"></div><div id="cas"><div class="shimmer"></div></div></section>
 <section><h2>EARLY WARNINGS</h2>
@@ -145,7 +148,7 @@ function inPoly(lon,lat,ring){let inside=false;for(let i=0,j=ring.length-1;i<rin
  const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];
  if(((yi>lat)!==(yj>lat))&&(lon<(xj-xi)*(lat-yi)/(yj-yi)+xi))inside=!inside;}return inside;}
 let SURGE=[];
-setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleString('en-IN',{hour12:false});},1000);
+setInterval(()=>{const d=new Date();$('clock').textContent='Dashboard time '+d.toLocaleString('en-IN',{hour12:false});},1000);
 Promise.all([fetch('../output/forecast.json').then(r=>r.json()),
  fetch('../sample_inputs_demo/surge.geojson').then(r=>r.json()).catch(()=>null),
  fetch('../sample_inputs_demo/glossary/or.json').then(r=>r.json()).catch(()=>({}))])
@@ -156,7 +159,7 @@ const st=$('status');st.textContent='QA '+fc.quality_check.overall_status.toUppe
 st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_check.overall_status==='block'?'warn':'');
 const gt=fc.gee_tile||{};$('tile').textContent='GEE LIVE S1 '+(gt.source||'?')+' '+(gt.date||'');
 $('tile').title='Sentinel-1 via Google Earth Engine';
-$('gen').textContent='gen '+(fc.generated_at||'').slice(0,16).replace('T',' ');
+$('gen').textContent='Generated '+(fc.generated_at||'').slice(0,16).replace('T',' ');
 MAP=L.map('map').setView([19.8,85.55],11);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
 const surgeLayer=L.layerGroup().addTo(MAP),markerLayer=L.layerGroup().addTo(MAP);
@@ -167,10 +170,12 @@ SURGE=[];((surge&&surge.features)||[]).forEach(f=>{const ring=(((f.geometry||{})
  const shade=depth>=2?'#0369a1':depth>=1?'#0284c7':'#38bdf8';
  L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1,fillOpacity:.3}).bindPopup('surge '+depth+'m').addTo(surgeLayer);});
 const P0=new Set(fc.advisories.filter(a=>a.priority==='P0').flatMap(a=>a.asset_refs||[]));
+const TRIG=new Set(fc.cascade_impact.cascade_chains.map(c=>c.trigger_asset_id));
 CF=fc.counterfactual||[];
 fc.vulnerability_register.forEach(a=>{
- const m=L.circleMarker([a.lat,a.lon],{radius:5+Math.round(a.vulnerability_score/20),color:cssColor(a.vulnerability_score),
-  className:P0.has(a.asset_id)?'p0':''}).addTo(markerLayer);
+ const m=L.circleMarker([a.lat,a.lon],{radius:4+Math.round(a.vulnerability_score/25),color:cssColor(a.vulnerability_score),
+  weight:P0.has(a.asset_id)?3:1,opacity:P0.has(a.asset_id)?1:.9}).addTo(markerLayer);
+ if(TRIG.has(a.asset_id)){L.circleMarker([a.lat,a.lon],{radius:11,color:'#f0524f',weight:2,fill:false,className:'p0ring',interactive:false}).addTo(markerLayer);}
  let extra='outside footprint';for(const s of SURGE){if(inPoly(a.lon,a.lat,s.ring)){extra='surge '+s.depth+'m at asset';break;}}
  m.bindPopup(`<b>${a.asset_id}</b> ${a.asset_type}<br/>score ${a.vulnerability_score}<br/>${extra}<br/><small>${a.estimated_failure_mode||''}</small>`);
  MARKERS[a.asset_id]=m;});
@@ -179,27 +184,23 @@ const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.cre
  L.control.layers(null,{'Storm Surge':surgeLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
-renderStats();renderThreat();renderActions();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();renderAI();updCF(0);
+renderCommander();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();renderAI();updCF(0);
 }).catch(()=>{$('err').style.display='block';});
-function renderStats(){const fc=FC;
- const crit=fc.vulnerability_register.filter(a=>a.vulnerability_score>=70).length;
- const p0=fc.advisories.filter(a=>a.priority==='P0').length;
- const rows=[['critical',crit,'CRITICAL ASSETS'],['pop',fc.cascade_impact.cumulative_population_affected,'POPULATION EXPOSED'],
-  ['p0',p0,'PRIORITY ADVISORIES'],['cas',fc.cascade_impact.cascade_chains.length,'CASCADE EVENTS'],
-  ['pay',(fc.parametric.payout_events||[]).length,'INSURANCE TRIGGERS'],['block',fc.quality_check.blocker_count,'QA BLOCKERS']];
- $('stats').innerHTML=rows.map(([k,v,l])=>`<div class="stat"><b id="st-${k}">0</b><span>${l}</span></div>`).join('');
- countUp($('st-critical'),crit);countUp($('st-pop'),fc.cascade_impact.cumulative_population_affected);
- countUp($('st-p0'),p0);countUp($('st-cas'),fc.cascade_impact.cascade_chains.length);
- countUp($('st-pay'),(fc.parametric.payout_events||[]).length);countUp($('st-block'),fc.quality_check.blocker_count);}
-function renderThreat(){const fc=FC;
- const worst=fc.vulnerability_register.reduce((m,a)=>a.vulnerability_score>m?a.vulnerability_score:m,0);
- const wasset=(fc.vulnerability_register.find(a=>a.vulnerability_score===worst)||{}).asset_id||'—';
- const maxd=fc.cascade_impact.cascade_chains.reduce((m,c)=>Math.max(m,c.max_depth||0),0);
- const depth=Math.max(...SURGE.map(s=>s.depth),((fc.hazard_narrative||{}).max_depth_m||0),0);
- $('threat').innerHTML=`Worst score <b>${worst}</b> (${wasset}) &middot; max cascade depth <b>${maxd}</b><br/>`+
- `Surge <b>${depth}m</b> &middot; ${(fc.hazard_narrative||{}).hazard_summary||''}`;}
-function renderActions(){const counts={};const prio={};FC.advisories.forEach(a=>{const k=a.recommended_action||a.audience;counts[k]=(counts[k]||0)+1;if(a.priority==='P0')prio[k]='P0';else if(!prio[k])prio[k]=a.priority;});
- $('actions').innerHTML=Object.entries(counts).map(([k,v])=>{const p=prio[k]||'';const cls=p==='P0'?'act p0act':(p==='P1'?'act p1act':'act');const badge=p==='P0'?' <span class="apri p0">P0</span>':(p?` <span class="apri">${p}</span>`:'');return `<div class="${cls}"><span>${badge}${k}</span><b class="count">&times;${v}</b></div>`;}).join('')||'<p><small>No advisories.</small></p>';}
+function renderCommander(){const fc=FC;
+ const worst=fc.vulnerability_register.reduce((m,a)=>Math.max(m,a.vulnerability_score),0);
+ const level=worst>=80?'CRITICAL':worst>=60?'HIGH':'MODERATE';
+ const crit=fc.vulnerability_register.filter(a=>a.vulnerability_score>=70);
+ const p0=fc.advisories.filter(a=>a.priority==='P0');
+ const seen={};const acts=[];
+ for(const a of fc.advisories){const k=a.recommended_action||a.audience;if(seen[k])continue;seen[k]=1;
+  acts.push({t:k,p:a.priority,n:fc.advisories.filter(x=>(x.recommended_action||x.audience)===k).length});if(acts.length>=4)break;}
+ $('commander').innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><span class="pri ${level==='CRITICAL'?'p0':level==='HIGH'?'p1':'p2'}">${level} THREAT</span><small>derived from max score ${worst} — not a separate model</small></div>`+
+ `<div class="stats">`+
+ `<div class="stat"><b>${crit.length}</b><span>CRITICAL ASSETS</span></div>`+
+ `<div class="stat"><b>${fc.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}+</b><span>POPULATION EXPOSED</span></div>`+
+ `<div class="stat"><b>${p0.length}</b><span>PRIORITY ADVISORIES</span></div></div>`+
+ `<div style="margin-top:8px;font-size:12px;color:var(--dim)">TOP ACTIONS</div>`+
+ acts.map((a,i)=>`<div class="act ${a.p==='P0'?'p0act':a.p==='P1'?'p1act':'act'}"><span><span class="apri ${a.p==='P0'?'p0':''}">${a.p}</span>0${i+1} · ${a.t}</span><b class="count">&times;${a.n}</b></div>`).join('');}
 let ACTIVE_TYPE='',MIN_SCORE=0;
 function renderTypeChips(){const types=[...new Set(FC.vulnerability_register.map(a=>a.asset_type))];
  $('typechips').innerHTML='<button class="chip on" data-t="">all</button>'+types.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
@@ -215,8 +216,17 @@ function applyFilter(){const rows=FC.vulnerability_register.filter(a=>(!ACTIVE_T
 function focusAsset(id){const a=FC.vulnerability_register.find(x=>x.asset_id===id);if(!a)return;
  const m=MARKERS[id];MAP.flyTo([a.lat,a.lon],13,{duration:.8});setTimeout(()=>m.openPopup(),850);
  document.querySelectorAll('#adv .adv').forEach(d=>d.classList.remove('flash'));
- const card=document.querySelector(`#adv .adv[data-assets*="${id}"]`);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('flash');}}
-function renderChains(){$('popsrc').textContent='Pop: '+(FC.population_source||'source unrecorded');
+ const card=document.querySelector(`#adv .adv[data-assets*="${id}"]`);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('flash');}
+ const chains=FC.cascade_impact.cascade_chains.filter(c=>c.trigger_asset_id===id||(c.chain||[]).some(x=>x.asset_id===id));
+ const down=chains.reduce((s,c)=>s+(c.chain||[]).filter(x=>x.asset_id!==id).length,0);
+ const pop=Math.max(0,...chains.map(c=>c.population_affected||0));
+ const adv=(FC.advisories||[]).find(x=>(x.asset_refs||[]).includes(id));
+ const card2=$('assetcard');card2.style.display='block';
+ card2.innerHTML=`<h3>${a.asset_id} <small>${a.asset_type}</small></h3>`+
+ `Risk <b>${a.vulnerability_score}</b> &middot; Hazard <b>${a.hazard_type}</b><br/><small>${a.estimated_failure_mode||''}</small><br/>`+
+ `Cascade: <b>${down}</b> downstream asset(s)${chains.length?` in ${chains.length} chain(s), pop <b>${pop.toLocaleString('en-IN')}</b>`:' — not in a cascade chain'}<br/>`+
+ (adv?`Action: <b>[${adv.priority}] ${adv.recommended_action||''}</b>`:'<small>No direct advisory.</small>');}
+function renderChains(){$('popsrc').innerHTML=`POPULATION EXPOSED &middot; ${(FC.population_source||'source unrecorded')} estimate &mdash; modeled, not headcount`;
  $('cas').innerHTML=`<p>Cumulative pop: <b>${FC.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}</b> &middot; ${FC.cascade_impact.cascade_chains.length} chains &middot; <small>click a chain to locate on map</small></p>`+
  FC.cascade_impact.cascade_chains.map((c,i)=>{const hops=(c.chain||[]).map(x=>`<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--panel2)">${x.asset_id} <small style="color:var(--dim)">h${x.hop} &middot; ${x.dependency_type}</small></div>`).join('');
   return `<div class="chain" data-i="${i}"><div style="border:1px solid var(--acc);border-radius:6px;padding:4px 8px;background:#12325e"><b>&#9889; ${c.trigger_asset_id}</b> <small>trigger</small></div>${hops}<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="text-align:center;font-size:12px">&#128100; <b>${(c.population_affected||0).toLocaleString('en-IN')}</b> <small>· ${(c.chain||[]).length} hop(s)</small></div></div>`;}).join('');
