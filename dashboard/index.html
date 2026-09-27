@@ -24,7 +24,10 @@ border-radius:6px;padding:3px 8px}
 .pill small{color:var(--dim)}
 #scope{width:100%;font-size:11px;color:var(--dim)}
 #clock{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
-main{display:grid;grid-template-columns:minmax(0,1fr) 420px;min-height:calc(100vh - 78px)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 8px 420px;min-height:calc(100vh - 78px)}
+#grip{width:8px;cursor:col-resize;background:transparent;border:0;padding:0}
+#grip:hover,#grip.on{background:#1d3a6b}
+main.norail{grid-template-columns:1fr}main.norail aside,main.norail #grip{display:none}main.norail .mapwrap{min-height:calc(100vh - 78px)}
 .mapwrap{position:relative;min-height:calc(100vh - 78px)}
 #map{position:absolute;inset:0}
 aside{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;max-height:calc(100vh - 78px)}
@@ -92,8 +95,7 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 #assetcard{border:1px solid var(--acc);border-radius:8px;padding:10px;margin:8px 0;font-size:13px;background:#0f2547;display:none}
 #assetcard h3{margin:0 0 6px;font-size:14px}#assetcard small{color:var(--dim)}
 .okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
-@media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}}
-main.norail{grid-template-columns:1fr}main.norail aside{display:none}main.norail .mapwrap{min-height:calc(100vh - 78px)}
+@media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}#grip{display:none}}
 </style>
 </head>
 <body>
@@ -114,6 +116,7 @@ main.norail{grid-template-columns:1fr}main.norail aside{display:none}main.norail
 <div id="err">Could not load <code>output/forecast.json</code> &mdash; serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
 <main>
 <div class="mapwrap"><div id="map"></div></div>
+<div id="grip" title="Drag to resize panel"></div>
 <aside>
 <section><h2>Commander&rsquo;s View</h2><div class="threatcard" id="commander"><div class="shimmer"></div></div></section>
 <section><h2>Anticipatory timeline</h2><div class="tl" id="timeline">
@@ -272,6 +275,11 @@ function updCF(i){const r=(CF||[])[i];if(!r)return;
 $('cf').addEventListener('input',e=>updCF(+e.target.value));
 $('panelbtn').onclick=()=>{const m=document.querySelector('main');const hidden=m.classList.toggle('norail');
  $('panelbtn').textContent=hidden?'Panel ⟩':'⟨ Panel';setTimeout(()=>MAP.invalidateSize(),50);};
+(()=>{const grip=$('grip'),m=document.querySelector('main');let drag=false;
+ grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');e.preventDefault();});
+ addEventListener('mousemove',e=>{if(!drag)return;const w=Math.min(640,Math.max(280,innerWidth-e.clientX));
+  m.style.gridTemplateColumns=`minmax(0,1fr) 8px ${w}px`;});
+ addEventListener('mouseup',()=>{if(!drag)return;drag=false;grip.classList.remove('on');MAP.invalidateSize();});})();
 </script>
 </body>
 </html>
