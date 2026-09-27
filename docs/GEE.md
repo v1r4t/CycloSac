@@ -25,6 +25,19 @@ Odisha coast (Michaung replay): bounding box `86.0,19.0,87.5,20.5`
 `fetch_real_or_stub()` is cache-first; the live path is injectable
 (`live_fetch=`) so unit tests never need credentials.
 
+## Population provenance (real, not fixture)
+
+- Source: `JRC/GHSL/P2023A/GHS_POP/2020` (100m) via live GEE, fetched 2026-09-27.
+- Why GHSL not WorldPop: WorldPop direct downloads returned 403/404/500 from
+  this network; GHSL is the same evidence class. Revisit if WorldPop recovers.
+- Method: `scripts/fetch_ghsl_pop.py [inputs] --apply` — `reduceRegions(sum,
+  scale=100)` over `wards.geojson` quadrants. Sea/no-data pixels carry large
+  negative codes in this epoch and are masked to 0 (W2 covers open Bay water).
+- Result: W1 20,799 · W2 83,849 · W3 85,225 · W4 122,852 (total 312,725).
+  Vintage 2020 estimates — NOT live headcounts; no open feed provides those.
+- Provenance rides with the forecast: `population_source.json` →
+  `forecast.json: population_source` → dashboard cascade card.
+
 ## SLOSH provenance
 Surge lookup is a **SLOSH stub** (bilinear interpolation over a local table),
 not the operational NOAA SLOSH model. Citation: Jelesnianski, Chen & Shaffer,

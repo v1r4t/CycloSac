@@ -1,0 +1,11 @@
+{
+ "source": "JRC GHSL P2023A GHS_POP 2020 (100m) via Google Earth Engine",
+ "vintage": "2020",
+ "fetched": "2026-09-27",
+ "wards": {
+  "W1": 20799,
+  "W2": 83849,
+  "W3": 85225,
+  "W4": 122852
+ }
+}

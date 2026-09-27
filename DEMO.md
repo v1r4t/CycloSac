@@ -19,8 +19,8 @@ Show: `output/artifacts/02_vulnerability.json` — sorted desc, `in_hazard: true
 
 ## 0:50 — Cascade BFS + union (30s)
 
-Say: "Triggers above 70 fan out to depth 3; ward-union population 60,000 — union, not double-counted."
-Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 60000`.
+Say: "Triggers above 70 fan out to depth 3; ward-union population 3,12,725 — union, not double-counted."
+Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 312725`.
 
 ## 1:20 — Advisory, Odia + English, SMS-280 (30s)
 
@@ -29,7 +29,7 @@ Show: `output/artifacts/04_advisories.json` — `channel: sms`, `len(message) <=
 
 ## 1:50 — Counterfactual slider 0→6→12→24h (30s)
 
-Say: "Static 2%/h evacuation: exposed drops 6000 → 5280 → 4560 → 3120, saving 2,880 at 24h."
+Say: "Static 2%/h evacuation: exposed drops 31,272 → 27,519 → 23,766 → 16,261, saving 15,011 at 24h."
 Show: dashboard counterfactual slider, or `output/artifacts/06_counterfactual.json`.
 
 ## 2:20 — Parametric ledger (30s)

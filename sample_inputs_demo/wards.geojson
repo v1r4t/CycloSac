@@ -1,0 +1,137 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "ward_code": "W1"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       85.4,
+       19.7
+      ],
+      [
+       85.575,
+       19.7
+      ],
+      [
+       85.575,
+       19.825
+      ],
+      [
+       85.4,
+       19.825
+      ],
+      [
+       85.4,
+       19.7
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "ward_code": "W2"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       85.575,
+       19.7
+      ],
+      [
+       85.75,
+       19.7
+      ],
+      [
+       85.75,
+       19.825
+      ],
+      [
+       85.575,
+       19.825
+      ],
+      [
+       85.575,
+       19.7
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "ward_code": "W3"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       85.4,
+       19.825
+      ],
+      [
+       85.575,
+       19.825
+      ],
+      [
+       85.575,
+       19.95
+      ],
+      [
+       85.4,
+       19.95
+      ],
+      [
+       85.4,
+       19.825
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "ward_code": "W4"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       85.575,
+       19.825
+      ],
+      [
+       85.75,
+       19.825
+      ],
+      [
+       85.75,
+       19.95
+      ],
+      [
+       85.575,
+       19.95
+      ],
+      [
+       85.575,
+       19.825
+      ]
+     ]
+    ]
+   }
+  }
+ ]
+}

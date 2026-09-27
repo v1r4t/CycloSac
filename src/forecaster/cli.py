@@ -97,7 +97,13 @@ def main(argv=None):
         write_stage(a.artifacts, "02_vulnerability.json", reg)
         # Cascade with ward union (map all assets to W1/W2 round-robin for prototype)
         wards = inp.wards
-        award = {x["asset_id"]: wards[i % len(wards)].ward_code for i, x in enumerate(reg)} if wards else {}
+        from . import wards as wardmod
+        try:
+            wards_fc = json.loads((Path(a.inputs) / "wards.geojson").read_text())
+            award = wardmod.assign([{"asset_id": x["asset_id"], "lat": x.get("lat"), "lon": x.get("lon")}
+                                    for x in assets], wards_fc, [w.ward_code for w in wards])
+        except Exception:
+            award = {x["asset_id"]: wards[i % len(wards)].ward_code for i, x in enumerate(reg)} if wards else {}
         wpop = {w.ward_code: w.population for w in wards}
         casc = cascade.build(reg, [d.model_dump() for d in inp.dependencies],
                              asset_ward=award, ward_pop=wpop)
@@ -151,9 +157,15 @@ def main(argv=None):
             flags.append({"severity": "WARNING", "check": "parametric-orphan", "field": "insurance",
                           "issue": ";".join(par["warnings"]), "suggested_fix": "map to register"})
         qc = qa.summarize(flags)
+        try:
+            pop_src = json.loads((Path(a.inputs) / "population_source.json").read_text())
+            pop_label = f"{pop_src.get('source', '')} (vintage {pop_src.get('vintage', '?')})"
+        except Exception:
+            pop_label = "synthetic fixture (demo scale)"
         fc = {"forecast_id": inp.regional.forecast_id,
               "generated_at": datetime.now(ist).isoformat(),
               "prompt_version": "MASTER-FORECASTER-1.1.0",
+              "population_source": pop_label,
               "gee_tile": {"source": tile.get("source", "stub"), "date": tile.get("date_acquired", tile.get("date")),
                            "cached": tile.get("cached", False), "thumb_url": tile.get("thumb_url")},
               "hazard_narrative": narrative, "vulnerability_register": reg,

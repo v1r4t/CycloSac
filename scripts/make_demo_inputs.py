@@ -92,6 +92,17 @@ def build(d: Path) -> Path:
     w(d / "insurance.json", [
         {"asset_id": f"PURI-SUB-{i:02d}", "sum_insured_inr": 5000000, "insurer_id": "INS-1"}
         for i in (1, 3, 5, 7, 9)])
+    # Ward quadrants of the AOI bbox (mid 85.575 / 19.825); real geometries
+    # so assets map to wards spatially instead of round-robin.
+    mx, my = 85.575, 19.825
+    quads = {"W1": [[85.40, 19.70], [mx, 19.70], [mx, my], [85.40, my]],
+             "W2": [[mx, 19.70], [85.75, 19.70], [85.75, my], [mx, my]],
+             "W3": [[85.40, my], [mx, my], [mx, 19.95], [85.40, 19.95]],
+             "W4": [[mx, my], [85.75, my], [85.75, 19.95], [mx, 19.95]]}
+    w(d / "wards.geojson", {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "properties": {"ward_code": k},
+         "geometry": {"type": "Polygon", "coordinates": [v + [v[0]]]}}
+        for k, v in quads.items()]})
     w(d / "glossary" / "or.json", {"substation": "upakendra", "hospital": "chikitsalaya"})
     (d / ".geecache").mkdir(exist_ok=True)
     w(d / ".geecache" / "tile.json", {"cached": False, "source": "stub",
