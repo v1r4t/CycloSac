@@ -10,7 +10,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 104648,
+      "population_affected": 208077,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -26,7 +26,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 143651,
+      "population_affected": 208077,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -36,7 +36,7 @@
       "trigger_asset_id": "PURI-TWR-01",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -46,7 +46,7 @@
       "trigger_asset_id": "PURI-TWR-02",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -56,7 +56,7 @@
       "trigger_asset_id": "PURI-TWR-03",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -66,7 +66,7 @@
       "trigger_asset_id": "PURI-TWR-04",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 85225,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -82,7 +82,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 20799,
+      "population_affected": 206701,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -98,7 +98,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 143651,
+      "population_affected": 106024,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -118,7 +118,7 @@
       "trigger_asset_id": "PURI-SUB-02",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 83849,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -128,7 +128,7 @@
       "trigger_asset_id": "PURI-SUB-03",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 83849,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -148,7 +148,7 @@
       "trigger_asset_id": "PURI-SUB-05",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -158,7 +158,7 @@
       "trigger_asset_id": "PURI-SUB-06",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -168,7 +168,7 @@
       "trigger_asset_id": "PURI-SUB-07",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -178,7 +178,7 @@
       "trigger_asset_id": "PURI-SUB-08",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -188,7 +188,7 @@
       "trigger_asset_id": "PURI-SUB-09",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -198,7 +198,7 @@
       "trigger_asset_id": "PURI-SUB-10",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -208,7 +208,7 @@
       "trigger_asset_id": "PURI-SUB-11",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -218,7 +218,7 @@
       "trigger_asset_id": "PURI-SUB-12",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -228,7 +228,7 @@
       "trigger_asset_id": "PURI-SUB-13",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -238,7 +238,7 @@
       "trigger_asset_id": "PURI-SUB-14",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -248,7 +248,7 @@
       "trigger_asset_id": "PURI-SUB-15",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -258,7 +258,7 @@
       "trigger_asset_id": "PURI-SUB-16",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -268,7 +268,7 @@
       "trigger_asset_id": "PURI-SUB-17",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 85225,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -278,7 +278,7 @@
       "trigger_asset_id": "PURI-WTR-01",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -288,7 +288,7 @@
       "trigger_asset_id": "PURI-WTR-02",
       "chain": [],
       "max_depth": 0,
-      "population_affected": 20799,
+      "population_affected": 122852,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -314,7 +314,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 20799,
+      "population_affected": 143651,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"
@@ -330,7 +330,7 @@
         }
       ],
       "max_depth": 1,
-      "population_affected": 104648,
+      "population_affected": 206701,
       "confidence": {
         "level": "high",
         "reason": "deterministic BFS"

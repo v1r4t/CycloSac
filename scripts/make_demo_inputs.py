@@ -13,8 +13,10 @@ def build(d: Path) -> Path:
     (d / "glossary").mkdir(exist_ok=True)
     w = lambda p, o: Path(p).write_text(json.dumps(o, indent=1))
 
-    # Surge footprint: coastal strip (west part), depth 2.5m
-    surge_poly = [[[85.45, 19.75], [85.58, 19.75], [85.58, 19.86], [85.45, 19.86], [85.45, 19.75]]]
+    # Surge footprint shifted onto the coastal landmass (verified against
+    # JRC GSW1_4 surface-water: all asset cells below are land, occ < 20).
+    # Water coverage inside the polygon is honest — surge comes from the sea.
+    surge_poly = [[[85.55, 19.79], [85.68, 19.79], [85.68, 19.90], [85.55, 19.90], [85.55, 19.79]]]
     w(d / "surge.geojson", {"type": "FeatureCollection", "features": [
         {"type": "Feature", "properties": {"depth_m": 2.5},
          "geometry": {"type": "Polygon", "coordinates": surge_poly}}]})
@@ -33,42 +35,55 @@ def build(d: Path) -> Path:
 
     assets, audience = [], {}
     subs = []
-    for i in range(17):  # coastal grid: first 11 inside surge strip
-        lon = 85.46 + (i % 6) * 0.02 + rng.uniform(-0.003, 0.003)
-        lat = 19.76 + (i // 6) * 0.03 + rng.uniform(-0.003, 0.003)
+    # Explicit land-verified cells (JRC GSW1_4 occurrence < 20, probed
+    # 2026-09-27 on a 0.02 deg lattice). Jitter stays within cells.
+    SUBS = [(85.57, 19.81), (85.59, 19.81), (85.61, 19.81), (85.575, 19.815),
+            (85.57, 19.83), (85.59, 19.83), (85.61, 19.83),
+            (85.59, 19.85), (85.61, 19.85),
+            (85.43, 19.87), (85.45, 19.87), (85.47, 19.87),
+            (85.57, 19.87), (85.59, 19.87), (85.61, 19.87),
+            (85.43, 19.89), (85.452, 19.888)]
+    for i, (lon, lat) in enumerate(SUBS):
         aid = f"PURI-SUB-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Puri substation {i+1}",
                        "asset_type": "substation", "lat": round(lat, 5), "lon": round(lon, 5)})
         audience[aid] = "power_utility"
         subs.append(aid)
     hosps = []
-    for i in range(4):
+    for i, (lon, lat) in enumerate([(85.65, 19.87), (85.59, 19.85), (85.65, 19.85), (85.49, 19.89)]):
         aid = f"PURI-HOSP-{i+1:02d}"
-        lat, lon = 19.78 + i * 0.02, 85.52 + i * 0.03
+        lat, lon = round(lat, 5), round(lon, 5)
         assets.append({"asset_id": aid, "asset_name": f"Puri hospital {i+1}",
                        "asset_type": "hospital", "lat": lat, "lon": lon, "backup_power": i % 2 == 0})
         audience[aid] = "health_department"
         hosps.append(aid)
-    for i in range(5):  # arterial roads
+    for i, (lon, lat) in enumerate([(85.43, 19.85), (85.45, 19.85), (85.51, 19.89), (85.53, 19.89), (85.63, 19.87)]):
         aid = f"NH316-SEG-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"NH-316 segment {i+1}",
                        "asset_type": "arterial_road",
-                       "lat": round(19.77 + i * 0.025, 5), "lon": round(85.50 + i * 0.02, 5)})
+                       "lat": round(lat, 5),
+                       "lon": round(lon, 5)})
         audience[aid] = "roads_authority"
-    for i in range(3):
+    for i, (lon, lat) in enumerate([(85.65, 19.85), (85.67, 19.85), (85.67, 19.89)]):
         aid = f"PURI-WTR-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Water plant {i+1}",
-                       "asset_type": "water_plant", "lat": 19.79 + i * 0.02, "lon": 85.54 + i * 0.02})
+                       "asset_type": "water_plant",
+                       "lat": round(lat, 5),
+                       "lon": round(lon, 5)})
         audience[aid] = "municipal_commissioner"
-    for i in range(4):
+    for i, (lon, lat) in enumerate([(85.41, 19.85), (85.41, 19.87), (85.49, 19.87), (85.65, 19.89)]):
         aid = f"PURI-TWR-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Transmission tower {i+1}",
-                       "asset_type": "transmission_tower", "lat": 19.76 + i * 0.03, "lon": 85.47 + i * 0.03})
+                       "asset_type": "transmission_tower",
+                       "lat": round(lat, 5),
+                       "lon": round(lon, 5)})
         audience[aid] = "power_utility"
-    for i in range(2):
+    for i, (lon, lat) in enumerate([(85.69, 19.89), (85.71, 19.89)]):
         aid = f"PURI-SHEL-{i+1:02d}"
         assets.append({"asset_id": aid, "asset_name": f"Cyclone shelter {i+1}",
-                       "asset_type": "cyclone_shelter", "lat": 19.82 + i * 0.04, "lon": 85.60 + i * 0.03})
+                       "asset_type": "cyclone_shelter",
+                       "lat": round(lat, 5),
+                       "lon": round(lon, 5)})
         audience[aid] = "ndrf_commander"
     for aid in subs[:5]:
         audience[aid] = "power_utility"

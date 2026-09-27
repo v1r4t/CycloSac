@@ -1,6 +1,6 @@
 {
   "forecast_id": "FC-2026-PURI-001",
-  "generated_at": "2026-09-27T07:49:15.836320+05:30",
+  "generated_at": "2026-09-27T09:17:54.261457+05:30",
   "prompt_version": "MASTER-FORECASTER-1.1.0",
   "population_source": "JRC GHSL P2023A GHS_POP 2020 (100m) via Google Earth Engine (vintage 2020)",
   "gee_tile": {
@@ -37,8 +37,8 @@
       "asset_id": "PURI-SHEL-01",
       "asset_name": "Cyclone shelter 1",
       "asset_type": "cyclone_shelter",
-      "lat": 19.82,
-      "lon": 85.6,
+      "lat": 19.89,
+      "lon": 85.69,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -65,8 +65,8 @@
       "asset_id": "PURI-SHEL-02",
       "asset_name": "Cyclone shelter 2",
       "asset_type": "cyclone_shelter",
-      "lat": 19.86,
-      "lon": 85.63,
+      "lat": 19.89,
+      "lon": 85.71,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -93,8 +93,8 @@
       "asset_id": "PURI-TWR-01",
       "asset_name": "Transmission tower 1",
       "asset_type": "transmission_tower",
-      "lat": 19.76,
-      "lon": 85.47,
+      "lat": 19.85,
+      "lon": 85.41,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -121,8 +121,8 @@
       "asset_id": "PURI-TWR-02",
       "asset_name": "Transmission tower 2",
       "asset_type": "transmission_tower",
-      "lat": 19.790000000000003,
-      "lon": 85.5,
+      "lat": 19.87,
+      "lon": 85.41,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -149,8 +149,8 @@
       "asset_id": "PURI-TWR-03",
       "asset_name": "Transmission tower 3",
       "asset_type": "transmission_tower",
-      "lat": 19.82,
-      "lon": 85.53,
+      "lat": 19.87,
+      "lon": 85.49,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -177,8 +177,8 @@
       "asset_id": "PURI-TWR-04",
       "asset_name": "Transmission tower 4",
       "asset_type": "transmission_tower",
-      "lat": 19.85,
-      "lon": 85.56,
+      "lat": 19.89,
+      "lon": 85.65,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -205,13 +205,13 @@
       "asset_id": "PURI-HOSP-02",
       "asset_name": "Puri hospital 2",
       "asset_type": "hospital",
-      "lat": 19.8,
-      "lon": 85.55,
+      "lat": 19.85,
+      "lon": 85.59,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
       "hazard_type": "wind",
-      "near_boundary": true,
+      "near_boundary": false,
       "vulnerability_score": 76.9,
       "reasoning": "wind sev; frag 12/25, exposure 29/35",
       "confidence": {
@@ -233,8 +233,8 @@
       "asset_id": "PURI-HOSP-04",
       "asset_name": "Puri hospital 4",
       "asset_type": "hospital",
-      "lat": 19.84,
-      "lon": 85.61,
+      "lat": 19.89,
+      "lon": 85.49,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -261,8 +261,8 @@
       "asset_id": "PURI-SUB-01",
       "asset_name": "Puri substation 1",
       "asset_type": "substation",
-      "lat": 19.75778,
-      "lon": 85.45898,
+      "lat": 19.81,
+      "lon": 85.57,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -289,8 +289,8 @@
       "asset_id": "PURI-SUB-02",
       "asset_name": "Puri substation 2",
       "asset_type": "substation",
-      "lat": 19.75959,
-      "lon": 85.48006,
+      "lat": 19.81,
+      "lon": 85.59,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -317,8 +317,8 @@
       "asset_id": "PURI-SUB-03",
       "asset_name": "Puri substation 3",
       "asset_type": "substation",
-      "lat": 19.76178,
-      "lon": 85.50268,
+      "lat": 19.81,
+      "lon": 85.61,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -345,8 +345,8 @@
       "asset_id": "PURI-SUB-04",
       "asset_name": "Puri substation 4",
       "asset_type": "substation",
-      "lat": 19.7604,
-      "lon": 85.52068,
+      "lat": 19.815,
+      "lon": 85.575,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -373,8 +373,8 @@
       "asset_id": "PURI-SUB-05",
       "asset_name": "Puri substation 5",
       "asset_type": "substation",
-      "lat": 19.76274,
-      "lon": 85.53936,
+      "lat": 19.83,
+      "lon": 85.57,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -401,8 +401,8 @@
       "asset_id": "PURI-SUB-06",
       "asset_name": "Puri substation 6",
       "asset_type": "substation",
-      "lat": 19.75705,
-      "lon": 85.55859,
+      "lat": 19.83,
+      "lon": 85.59,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -429,8 +429,8 @@
       "asset_id": "PURI-SUB-07",
       "asset_name": "Puri substation 7",
       "asset_type": "substation",
-      "lat": 19.78906,
-      "lon": 85.46203,
+      "lat": 19.83,
+      "lon": 85.61,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -457,8 +457,8 @@
       "asset_id": "PURI-SUB-08",
       "asset_name": "Puri substation 8",
       "asset_type": "substation",
-      "lat": 19.79106,
-      "lon": 85.48068,
+      "lat": 19.85,
+      "lon": 85.59,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -485,8 +485,8 @@
       "asset_id": "PURI-SUB-09",
       "asset_name": "Puri substation 9",
       "asset_type": "substation",
-      "lat": 19.7905,
-      "lon": 85.49834,
+      "lat": 19.85,
+      "lon": 85.61,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -513,8 +513,8 @@
       "asset_id": "PURI-SUB-10",
       "asset_name": "Puri substation 10",
       "asset_type": "substation",
-      "lat": 19.79224,
-      "lon": 85.51703,
+      "lat": 19.87,
+      "lon": 85.43,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -541,8 +541,8 @@
       "asset_id": "PURI-SUB-11",
       "asset_name": "Puri substation 11",
       "asset_type": "substation",
-      "lat": 19.79154,
-      "lon": 85.54001,
+      "lat": 19.87,
+      "lon": 85.45,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -569,8 +569,8 @@
       "asset_id": "PURI-SUB-12",
       "asset_name": "Puri substation 12",
       "asset_type": "substation",
-      "lat": 19.78822,
-      "lon": 85.55951,
+      "lat": 19.87,
+      "lon": 85.47,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -597,8 +597,8 @@
       "asset_id": "PURI-SUB-13",
       "asset_name": "Puri substation 13",
       "asset_type": "substation",
-      "lat": 19.82282,
-      "lon": 85.45839,
+      "lat": 19.87,
+      "lon": 85.57,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -625,8 +625,8 @@
       "asset_id": "PURI-SUB-14",
       "asset_name": "Puri substation 14",
       "asset_type": "substation",
-      "lat": 19.81956,
-      "lon": 85.48115,
+      "lat": 19.87,
+      "lon": 85.59,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -653,8 +653,8 @@
       "asset_id": "PURI-SUB-15",
       "asset_name": "Puri substation 15",
       "asset_type": "substation",
-      "lat": 19.82285,
-      "lon": 85.49998,
+      "lat": 19.87,
+      "lon": 85.61,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -681,8 +681,8 @@
       "asset_id": "PURI-SUB-16",
       "asset_name": "Puri substation 16",
       "asset_type": "substation",
-      "lat": 19.82248,
-      "lon": 85.51718,
+      "lat": 19.89,
+      "lon": 85.43,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -709,8 +709,8 @@
       "asset_id": "PURI-SUB-17",
       "asset_name": "Puri substation 17",
       "asset_type": "substation",
-      "lat": 19.81976,
-      "lon": 85.54171,
+      "lat": 19.888,
+      "lon": 85.452,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -737,8 +737,8 @@
       "asset_id": "PURI-WTR-01",
       "asset_name": "Water plant 1",
       "asset_type": "water_plant",
-      "lat": 19.79,
-      "lon": 85.54,
+      "lat": 19.85,
+      "lon": 85.65,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -765,8 +765,8 @@
       "asset_id": "PURI-WTR-02",
       "asset_name": "Water plant 2",
       "asset_type": "water_plant",
-      "lat": 19.81,
-      "lon": 85.56,
+      "lat": 19.85,
+      "lon": 85.67,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -793,13 +793,13 @@
       "asset_id": "PURI-WTR-03",
       "asset_name": "Water plant 3",
       "asset_type": "water_plant",
-      "lat": 19.83,
-      "lon": 85.58000000000001,
+      "lat": 19.89,
+      "lon": 85.67,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
       "hazard_type": "wind",
-      "near_boundary": true,
+      "near_boundary": false,
       "vulnerability_score": 72.9,
       "reasoning": "wind sev; frag 12/25, exposure 29/35",
       "confidence": {
@@ -821,8 +821,8 @@
       "asset_id": "PURI-HOSP-01",
       "asset_name": "Puri hospital 1",
       "asset_type": "hospital",
-      "lat": 19.78,
-      "lon": 85.52,
+      "lat": 19.87,
+      "lon": 85.65,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -849,13 +849,13 @@
       "asset_id": "PURI-HOSP-03",
       "asset_name": "Puri hospital 3",
       "asset_type": "hospital",
-      "lat": 19.82,
-      "lon": 85.58,
+      "lat": 19.85,
+      "lon": 85.65,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
       "hazard_type": "wind",
-      "near_boundary": true,
+      "near_boundary": false,
       "vulnerability_score": 71.9,
       "reasoning": "wind sev; frag 12/25, exposure 29/35",
       "confidence": {
@@ -877,8 +877,8 @@
       "asset_id": "NH316-SEG-01",
       "asset_name": "NH-316 segment 1",
       "asset_type": "arterial_road",
-      "lat": 19.77,
-      "lon": 85.5,
+      "lat": 19.85,
+      "lon": 85.43,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -905,8 +905,8 @@
       "asset_id": "NH316-SEG-02",
       "asset_name": "NH-316 segment 2",
       "asset_type": "arterial_road",
-      "lat": 19.795,
-      "lon": 85.52,
+      "lat": 19.85,
+      "lon": 85.45,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -933,8 +933,8 @@
       "asset_id": "NH316-SEG-03",
       "asset_name": "NH-316 segment 3",
       "asset_type": "arterial_road",
-      "lat": 19.82,
-      "lon": 85.54,
+      "lat": 19.89,
+      "lon": 85.51,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -961,8 +961,8 @@
       "asset_id": "NH316-SEG-04",
       "asset_name": "NH-316 segment 4",
       "asset_type": "arterial_road",
-      "lat": 19.845,
-      "lon": 85.56,
+      "lat": 19.89,
+      "lon": 85.53,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -990,7 +990,7 @@
       "asset_name": "NH-316 segment 5",
       "asset_type": "arterial_road",
       "lat": 19.87,
-      "lon": 85.58,
+      "lon": 85.63,
       "in_hazard": true,
       "hazard_depth_m": 0.0,
       "hazard_wind_kmh": 165,
@@ -1026,7 +1026,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 104648,
+        "population_affected": 208077,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1042,7 +1042,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 143651,
+        "population_affected": 208077,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1052,7 +1052,7 @@
         "trigger_asset_id": "PURI-TWR-01",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1062,7 +1062,7 @@
         "trigger_asset_id": "PURI-TWR-02",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1072,7 +1072,7 @@
         "trigger_asset_id": "PURI-TWR-03",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1082,7 +1082,7 @@
         "trigger_asset_id": "PURI-TWR-04",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 85225,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1098,7 +1098,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 20799,
+        "population_affected": 206701,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1114,7 +1114,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 143651,
+        "population_affected": 106024,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1134,7 +1134,7 @@
         "trigger_asset_id": "PURI-SUB-02",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 83849,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1144,7 +1144,7 @@
         "trigger_asset_id": "PURI-SUB-03",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 83849,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1164,7 +1164,7 @@
         "trigger_asset_id": "PURI-SUB-05",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1174,7 +1174,7 @@
         "trigger_asset_id": "PURI-SUB-06",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1184,7 +1184,7 @@
         "trigger_asset_id": "PURI-SUB-07",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1194,7 +1194,7 @@
         "trigger_asset_id": "PURI-SUB-08",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1204,7 +1204,7 @@
         "trigger_asset_id": "PURI-SUB-09",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1214,7 +1214,7 @@
         "trigger_asset_id": "PURI-SUB-10",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1224,7 +1224,7 @@
         "trigger_asset_id": "PURI-SUB-11",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1234,7 +1234,7 @@
         "trigger_asset_id": "PURI-SUB-12",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1244,7 +1244,7 @@
         "trigger_asset_id": "PURI-SUB-13",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1254,7 +1254,7 @@
         "trigger_asset_id": "PURI-SUB-14",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1264,7 +1264,7 @@
         "trigger_asset_id": "PURI-SUB-15",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1274,7 +1274,7 @@
         "trigger_asset_id": "PURI-SUB-16",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1284,7 +1284,7 @@
         "trigger_asset_id": "PURI-SUB-17",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 85225,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1294,7 +1294,7 @@
         "trigger_asset_id": "PURI-WTR-01",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1304,7 +1304,7 @@
         "trigger_asset_id": "PURI-WTR-02",
         "chain": [],
         "max_depth": 0,
-        "population_affected": 20799,
+        "population_affected": 122852,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1330,7 +1330,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 20799,
+        "population_affected": 143651,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1346,7 +1346,7 @@
           }
         ],
         "max_depth": 1,
-        "population_affected": 104648,
+        "population_affected": 206701,
         "confidence": {
           "level": "high",
           "reason": "deterministic BFS"
@@ -1503,6 +1503,7 @@
       "marginal_lives_saved": 15011
     }
   ],
+  "traffic_overlay": [],
   "data_conflicts": [],
   "quality_check": {
     "overall_status": "pass",
