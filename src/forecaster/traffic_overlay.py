@@ -11,7 +11,9 @@ import urllib.request
 log = logging.getLogger(__name__)
 
 # Sample probes on arterial corridors inside the Puri AOI (override via args).
-PROBE_POINTS = [(19.80, 85.52), (19.83, 85.56), (19.86, 85.60)]
+# Verified routable 2026-09-27 (zoom-10 flow tiles); points east of ~85.55
+# fall off-network (sea/rural) and 400 — kept out deliberately.
+PROBE_POINTS = [(19.79, 85.50), (19.798, 85.525), (19.812, 85.54)]
 
 
 def _get(url: str, timeout: float):
