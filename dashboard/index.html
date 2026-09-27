@@ -93,6 +93,7 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 #assetcard h3{margin:0 0 6px;font-size:14px}#assetcard small{color:var(--dim)}
 .okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
 @media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}}
+main.norail{grid-template-columns:1fr}main.norail aside{display:none}main.norail .mapwrap{min-height:calc(100vh - 78px)}
 </style>
 </head>
 <body>
@@ -107,6 +108,7 @@ animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
 <span class="pill" id="fid">loading&hellip;</span>
 <span class="pill" id="gen">&hellip;</span>
 <span id="clock" title="Live wall-clock for the demo room"></span>
+<button class="ghost" id="panelbtn" title="Collapse/expand decision panel" style="margin-left:8px">⟨ Panel</button>
 <div id="scope">Platform: Bay of Bengal &middot; Validated case study: Puri, Odisha &middot; Replay of forecast, planning only</div>
 </header>
 <div id="err">Could not load <code>output/forecast.json</code> &mdash; serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
@@ -268,6 +270,8 @@ function updCF(i){const r=(CF||[])[i];if(!r)return;
   const atRisk=r.horizon_h===0?true:(a.in_hazard&&r.horizon_h<12);
   m.setStyle({opacity:atRisk?1:.25,fillOpacity:atRisk?.85:.15});});}
 $('cf').addEventListener('input',e=>updCF(+e.target.value));
+$('panelbtn').onclick=()=>{const m=document.querySelector('main');const hidden=m.classList.toggle('norail');
+ $('panelbtn').textContent=hidden?'Panel ⟩':'⟨ Panel';setTimeout(()=>MAP.invalidateSize(),50);};
 </script>
 </body>
 </html>
