@@ -1,35 +1,45 @@
 {
-  "blocker_count": 0,
-  "cascade_chains": [
+ "vulnerability_scores": {
+  "H1": 84.3,
+  "S1": 80.3,
+  "R1": 23.0
+ },
+ "cascade_chains": [
+  {
+   "trigger_asset_id": "H1",
+   "chain": [],
+   "max_depth": 0,
+   "population_affected": 10000,
+   "confidence": {
+    "level": "high",
+    "reason": "deterministic BFS"
+   }
+  },
+  {
+   "trigger_asset_id": "S1",
+   "chain": [
     {
-      "chain": [
-        {
-          "asset_id": "H1",
-          "dependency_type": "power",
-          "hop": 1
-        }
-      ],
-      "confidence": {
-        "level": "high",
-        "reason": "deterministic BFS"
-      },
-      "max_depth": 1,
-      "population_affected": 30000,
-      "trigger_asset_id": "S1"
+     "asset_id": "H1",
+     "dependency_type": "power",
+     "hop": 1
     }
-  ],
-  "exposed_pop": [
-    3000,
-    2640,
-    2280,
-    1560
-  ],
-  "payout_pct": [
-    0.4
-  ],
-  "vulnerability_scores": {
-    "H1": 31.0,
-    "R1": 23.0,
-    "S1": 80.3
+   ],
+   "max_depth": 1,
+   "population_affected": 30000,
+   "confidence": {
+    "level": "high",
+    "reason": "deterministic BFS"
+   }
   }
+ ],
+ "blocker_count": 0,
+ "payout_pct": [
+  0.4
+ ],
+ "exposed_pop": [
+  3000,
+  2640,
+  2280,
+  1560
+ ]
 }
