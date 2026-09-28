@@ -6,7 +6,15 @@
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",
-      "confidence": "high"
+      "policy_id": null,
+      "sum_insured_inr": 5000000,
+      "confidence": "high",
+      "evidence": {
+        "wind_kmh": 165.0,
+        "surge_m": 2.5,
+        "trigger_table": "configured parametric payout table"
+      },
+      "settlement_status": "simulated_pending_insurer_review"
     },
     {
       "asset_id": "PURI-SUB-03",
@@ -14,7 +22,15 @@
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",
-      "confidence": "high"
+      "policy_id": null,
+      "sum_insured_inr": 5000000,
+      "confidence": "high",
+      "evidence": {
+        "wind_kmh": 165.0,
+        "surge_m": 2.5,
+        "trigger_table": "configured parametric payout table"
+      },
+      "settlement_status": "simulated_pending_insurer_review"
     },
     {
       "asset_id": "PURI-SUB-05",
@@ -22,7 +38,15 @@
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",
-      "confidence": "high"
+      "policy_id": null,
+      "sum_insured_inr": 5000000,
+      "confidence": "high",
+      "evidence": {
+        "wind_kmh": 165.0,
+        "surge_m": 2.5,
+        "trigger_table": "configured parametric payout table"
+      },
+      "settlement_status": "simulated_pending_insurer_review"
     },
     {
       "asset_id": "PURI-SUB-07",
@@ -30,7 +54,15 @@
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",
-      "confidence": "high"
+      "policy_id": null,
+      "sum_insured_inr": 5000000,
+      "confidence": "high",
+      "evidence": {
+        "wind_kmh": 165.0,
+        "surge_m": 2.5,
+        "trigger_table": "configured parametric payout table"
+      },
+      "settlement_status": "simulated_pending_insurer_review"
     },
     {
       "asset_id": "PURI-SUB-09",
@@ -38,8 +70,22 @@
       "payout_pct": 0.4,
       "payout_amount": 2000000.0,
       "insurer_id": "INS-1",
-      "confidence": "high"
+      "policy_id": null,
+      "sum_insured_inr": 5000000,
+      "confidence": "high",
+      "evidence": {
+        "wind_kmh": 165.0,
+        "surge_m": 2.5,
+        "trigger_table": "configured parametric payout table"
+      },
+      "settlement_status": "simulated_pending_insurer_review"
     }
   ],
-  "warnings": []
+  "warnings": [],
+  "settlement_mode": "simulated",
+  "evidence_required": [
+    "validated hazard observation",
+    "policy eligibility",
+    "insurer approval"
+  ]
 }

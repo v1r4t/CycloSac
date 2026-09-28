@@ -8,7 +8,7 @@ def test_cli_wires_path2(tmp_path, monkeypatch):
     marker = [{"conflict_id": "T-sar-vs-model-01", "tile_ref": "T",
                "claim": "SAR vs model", "hazard_contradiction": "x",
                "confidence": 0.7, "reviewer_required": True}]
-    monkeypatch.setattr(CLI.gemini_conflict, "detect", lambda *a, **k: marker)
+    monkeypatch.setattr(CLI.gemini_conflict, "detect_with_llm", lambda *a, **k: marker)
     inp = make_inputs(tmp_path / "in")
     out = tmp_path / "forecast.json"
     assert CLI.main(["--inputs", str(inp), "--out", str(out)]) == 0
@@ -22,7 +22,7 @@ def test_cli_path2_failure_never_blocks(tmp_path, monkeypatch):
     def boom(*a, **k):
         raise RuntimeError("api down")
 
-    monkeypatch.setattr(CLI.gemini_conflict, "detect", boom)
+    monkeypatch.setattr(CLI.gemini_conflict, "detect_with_llm", boom)
     inp = make_inputs(tmp_path / "in")
     out = tmp_path / "forecast.json"
     assert CLI.main(["--inputs", str(inp), "--out", str(out)]) == 0

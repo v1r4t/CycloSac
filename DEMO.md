@@ -6,26 +6,26 @@ Total 180s. Run from repo root. Assumes `pip install -r requirements.txt` done.
 
 ```powershell
 $env:PYTHONPATH='src'
-python -m forecaster.cli --inputs sample_inputs_demo --out output/forecast.json --artifacts output/artifacts
+python -m forecaster.cli --inputs sample_inputs_demo --out output/forecast.json --artifacts output/artifacts --as-of 2026-09-25T06:00:00+05:30
 ```
 
 Say: "T-48h replay of Michaung, category 3, landfall 27 Sep 06:00 IST."
 Show: `dashboard/index.html` map with 2.5m surge footprint off Puri.
 
-## 0:20 — Exposure (30s)
+## 0:20 — Exposure + rainfall pathways (30s)
 
-Say: "35 city assets scored — temple substation, DHH hospital, station, NH-316; 30 of 35 inside the hazard, shelters top at 85.5."
-Show: `output/artifacts/02_vulnerability.json` — sorted desc, `in_hazard: true` on town grid.
+Say: "35 city assets scored — temple substation, DHH hospital, station, NH-316; 30 of 35 inside the hazard, shelters top at 85.5. Rainfall crosses thresholds on 30 pathways: 5 flooded roads, 4 hospitals, 2 shelters, 17 power assets at risk."
+Show: `output/artifacts/02_vulnerability.json` — sorted desc, `in_hazard: true` on town grid; `output/artifacts/02c_rainfall_summary.json`.
 
 ## 0:50 — Cascade BFS + union (30s)
 
 Say: "Triggers above 70 fan out to depth 3; ward-union population 4,21,172 — union, not double-counted."
 Show: `output/artifacts/03_cascade.json` — `cumulative_population_affected: 421172`.
 
-## 1:20 — Advisory, Odia + English, SMS-280 (30s)
+## 1:20 — Advisory, provenance + dispatch review (30s)
 
-Say: "Odia glossary loaded; top-5 dispatch in English, SMS channel capped at 280 chars; banned hedging words force a second LLM sampling or exit 4."
-Show: `output/artifacts/04_advisories.json` — `channel: sms`, `len(message) <= 280`. Live-key? run `python scripts/smoke_gemini.py`.
+Say: "Every run labels GEE and weather as live, replay, fallback, or stale with source and timestamp. Gemini receives surge bands, rainfall, GEE/SAR metadata, and exposed assets, produces a concise advisory with explanation, confidence, and limitations, and the operator reviews a dry-run dispatch record—nothing is sent automatically."
+Show: dashboard provenance pills, AI panel (what Gemini saw / recommendation / confidence / limits), `output/artifacts/04_advisories.json`, and `output/artifacts/04_dispatch.json`.
 
 ## 1:50 — Counterfactual slider 0→6→12→24h (30s)
 
@@ -34,8 +34,8 @@ Show: dashboard counterfactual slider, or `output/artifacts/06_counterfactual.js
 
 ## 2:20 — Parametric ledger (30s)
 
-Say: "Wind 165 + surge 2.5 trips the (150, 1.5) tier: 40% on 5 insured substations, ₹20,00,000 each, mock INR ledger."
-Show: `output/artifacts/05_parametric.json` — `payout_pct: 0.4`.
+Say: "Wind 165 + surge 2.5 trips the (150, 1.5) tier: 40% on 5 insured substations. This is simulated liquidity with the hazard evidence and insurer-review state attached—not a payment claim."
+Show: `output/artifacts/05_parametric.json` — `payout_pct: 0.4` and `evidence`.
 
 ## 2:50 — Gemini conflicts, human-in-loop (10s)
 

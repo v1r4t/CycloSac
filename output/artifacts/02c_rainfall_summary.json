@@ -1,0 +1,43 @@
+{
+  "flooded_roads": [
+    "NH316-SEG-01",
+    "NH316-SEG-02",
+    "NH316-SEG-03",
+    "NH316-SEG-04",
+    "NH316-SEG-05"
+  ],
+  "hospital_access_at_risk": [
+    "PURI-HOSP-02",
+    "PURI-HOSP-04",
+    "PURI-HOSP-01",
+    "PURI-HOSP-03"
+  ],
+  "shelter_access_at_risk": [
+    "PURI-SHEL-01",
+    "PURI-SHEL-02"
+  ],
+  "power_assets_at_risk": [
+    "PURI-TWR-01",
+    "PURI-TWR-02",
+    "PURI-TWR-04",
+    "PURI-SUB-01",
+    "PURI-SUB-02",
+    "PURI-SUB-03",
+    "PURI-SUB-04",
+    "PURI-SUB-05",
+    "PURI-SUB-06",
+    "PURI-SUB-07",
+    "PURI-SUB-08",
+    "PURI-SUB-09",
+    "PURI-SUB-10",
+    "PURI-SUB-11",
+    "PURI-SUB-12",
+    "PURI-SUB-13",
+    "PURI-SUB-14"
+  ],
+  "services_at_risk": [
+    "PURI-WTR-01",
+    "PURI-WTR-02"
+  ],
+  "total_pathways": 30
+}

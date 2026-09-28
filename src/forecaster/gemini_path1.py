@@ -33,19 +33,49 @@ def llm_complete(prompt: str, action: str, ctx: dict) -> str:
     import google.generativeai as genai  # lazy, only when key is set
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel(os.environ.get("GEMINI_MODEL", "gemini-3.8-flash"))
+    model = genai.GenerativeModel(os.environ.get("GEMINI_MODEL", config.GEMINI_MODEL))
     resp = model.generate_content(prompt)
     text = getattr(resp, "text", "") or ""
     return text.strip() or _template_raw(action, ctx)
 
 
 def _build_prompt(action: str, ctx: dict) -> str:
+    evidence = ctx.get("evidence") or {}
     return (
         f"Write a {ctx.get('channel', config.CHANNEL_DEFAULT)} emergency advisory "
         f"({ctx.get('language', 'en')}) for {ctx.get('audience', '')} "
         f"[{ctx.get('forecast_id', '')}] asset {ctx.get('asset_id', '')}. "
-        f"Action: {action}. Plain terms, no hedging."
+        f"Action: {action}. Evidence: {evidence}. "
+        "Use only the provided evidence. State the action first, use plain terms, and do not hedge."
     )
+
+
+def _explain(evidence: dict) -> dict:
+    """Operator-facing why + confidence + limits. Hazard math stays deterministic."""
+    ev = evidence or {}
+    has_surge = ev.get("surge_depth_m") is not None or ev.get("surge_bands_m") is not None
+    has_rain = ev.get("rainfall_72h_mm") is not None
+    has_score = ev.get("vulnerability_score") is not None
+    filled = sum([has_surge, has_rain, has_score])
+    confidence = "high" if filled >= 3 else "medium" if filled == 2 else "low"
+    parts = []
+    if ev.get("surge_depth_m") is not None:
+        parts.append(f"surge {ev['surge_depth_m']}m")
+    if ev.get("surge_bands_m") is not None:
+        parts.append(f"bands {ev['surge_bands_m']}")
+    if ev.get("rainfall_72h_mm") is not None:
+        parts.append(f"rain {ev['rainfall_72h_mm']}mm/72h")
+    if ev.get("vulnerability_score") is not None:
+        parts.append(f"score {ev['vulnerability_score']}")
+    if ev.get("gee_source"):
+        parts.append(f"GEE {ev['gee_source']}")
+    if ev.get("weather_mode"):
+        parts.append(f"weather {ev['weather_mode']}")
+    explanation = ("Recommended from " + ", ".join(parts)) if parts else "Recommended from available evidence."
+    limitations = ("Hazard math is deterministic; LLM only drafts prose. "
+                   "Verify with operator review, especially on stale/fallback inputs.")
+    return {"explanation": explanation, "confidence": confidence,
+            "limitations": limitations, "hazard_math_deterministic": True}
 
 
 def generate(action: str, ctx: dict, _complete=None) -> dict:
@@ -71,14 +101,24 @@ def generate(action: str, ctx: dict, _complete=None) -> dict:
                               glossary, action=action, channel=channel)
         out["truncated"] = False
         out["llm_used"] = False
+        out["generation_mode"] = "template_fallback"
+        out["llm_model"] = None
+        out["evidence_summary"] = ctx.get("evidence") or {}
+        out.update(_explain(ctx.get("evidence") or {}))
         return out
 
+    live_used = _complete is not None
+
     def _raw(attempt: int) -> str:
+        nonlocal live_used
         if _complete is not None:
             return _complete(action, ctx, attempt)
         try:
-            return llm_complete(_build_prompt(action, ctx), action, ctx)
+            raw = llm_complete(_build_prompt(action, ctx), action, ctx)
+            live_used = True
+            return raw
         except Exception:
+            live_used = False
             return _template_raw(action, ctx)
 
     last_clean = None
@@ -104,4 +144,8 @@ def generate(action: str, ctx: dict, _complete=None) -> dict:
             "priority": advisory.PRIORITY.get(audience, "P2"),
             "message": msg, "asset_refs": [asset_id], "forecast_id": forecast_id,
             "recommended_action": action, "channel": channel,
-            "truncated": truncated, "llm_used": True}
+            "truncated": truncated, "llm_used": live_used,
+            "generation_mode": "gemini" if live_used else "template_fallback",
+            "llm_model": os.environ.get("GEMINI_MODEL", config.GEMINI_MODEL) if live_used else None,
+            "evidence_summary": ctx.get("evidence") or {},
+            **_explain(ctx.get("evidence") or {})}

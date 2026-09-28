@@ -7,6 +7,21 @@ DEFAULT_CRS = "EPSG:32645"
 
 CHAR_LIMITS = {"sms": 280, "email": 500}
 CHANNEL_DEFAULT = "sms"
+GEMINI_MODEL = "gemini-3.7-flash"
+DISPATCH_MODES = {"dry-run", "approved"}
+
+# Minimum 72-hour rainfall values that turn an exposed asset into an operational
+# access or service pathway. These are decision-support thresholds, not a
+# replacement for a local hydrology model.
+RAINFALL_PATHWAY_THRESHOLDS_MM = {
+    "arterial_road": 100,
+    "hospital": 120,
+    "cyclone_shelter": 120,
+    "substation": 150,
+    "water_plant": 150,
+    "transmission_tower": 180,
+    "telecom_tower": 180,
+}
 
 FRAGILITY = {
     "substation": {"inundation_m": 0.5},

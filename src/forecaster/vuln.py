@@ -52,6 +52,15 @@ def _build_layers(surge, rainfall, wind, crs):
     return layers
 
 
+def _severity_at(lat, lon, layers, crs, kind):
+    """Return the strongest direct footprint severity for one hazard kind."""
+    fwd = Transformer.from_crs("EPSG:4326", crs, always_xy=True)
+    x, y = fwd.transform(lon, lat)
+    pt = Point(x, y)
+    return max((sev for poly, _buf, sev, layer_kind in layers
+                if layer_kind == kind and (poly.contains(pt) or poly.touches(pt))), default=0.0)
+
+
 def score_assets(assets, surge=None, rainfall=None, wind=None, crs=None):
     crs = crs or config.DEFAULT_CRS
     layers = _build_layers(surge, rainfall, wind, crs)
@@ -59,6 +68,7 @@ def score_assets(assets, surge=None, rainfall=None, wind=None, crs=None):
     for a in assets:
         in_h, near, depth, wnd, kind = _exposure(a["lat"], a["lon"], layers, crs)
         atype = a["asset_type"]
+        rainfall_depth = _severity_at(a["lat"], a["lon"], layers, crs, "rainfall")
         frag = config.FRAGILITY.get(atype, {})
         # hazard_exposure /35
         if kind == "wind":
@@ -85,6 +95,7 @@ def score_assets(assets, surge=None, rainfall=None, wind=None, crs=None):
         out.append({"asset_id": a["asset_id"], "asset_name": a.get("asset_name", a["asset_id"]),
                     "asset_type": atype, "lat": a.get("lat"), "lon": a.get("lon"), "in_hazard": in_h,
                     "hazard_depth_m": depth if kind != "wind" else 0.0,
+                    "rainfall_depth_m": rainfall_depth,
                     "hazard_wind_kmh": wnd, "hazard_type": kind, "near_boundary": near,
                     "vulnerability_score": score,
                     "reasoning": f"{kind} sev; frag {af:.0f}/25, exposure {he:.0f}/35"[:200],

@@ -3,150 +3,214 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CycloSac Ops — Cyclone Decision Console</title>
+<title>CycloSac Ops — T-48 Triage Console</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+Oriya:wght@400;600&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"/>
 <style>
-:root{--bg:#070d18;--panel:#0e1830;--panel2:#12203c;--line:#22395f;--txt:#e9f1fc;--dim:#93a9c9;
---red:#f0524f;--org:#f5a524;--grn:#30c48d;--acc:#38bdf8}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
-font-family:Inter,"Noto Sans Oriya",system-ui,sans-serif}
-header{position:sticky;top:0;z-index:500;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-padding:10px 16px;background:#0a1327ee;border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
-header h1{font-size:17px;margin:0;font-weight:800;letter-spacing:.4px}
-.sub{font-size:12px;color:var(--dim)}
-.replay{font-size:12px;font-weight:800;letter-spacing:.6px;color:#ffd7d7;background:#3a1414;
-border:1px solid #a33;border-radius:6px;padding:3px 10px}
-.demo{font-size:11px;font-weight:600;letter-spacing:.6px;color:var(--acc);border:1px dashed var(--acc);
-border-radius:6px;padding:3px 8px}
-.pill{font-size:12px;padding:3px 10px;border-radius:999px;background:#1a2c52;border:1px solid var(--line)}
-.pill.warn{background:#3a2a10}.pill.ok{background:#0e3a2a}.pill.live{background:#0c2b3a}
-.pill small{color:var(--dim)}
-#scope{width:100%;font-size:11px;color:var(--dim)}
-#clock{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
-main{display:grid;grid-template-columns:minmax(0,1fr) 8px 420px;min-height:calc(100vh - 78px)}
-#grip{width:8px;cursor:col-resize;background:transparent;border:0;padding:0}
-#grip:hover,#grip.on{background:#1d3a6b}
-main.norail{grid-template-columns:1fr}main.norail aside,main.norail #grip{display:none}main.norail .mapwrap{min-height:calc(100vh - 78px)}
-.mapwrap{position:relative;min-height:calc(100vh - 78px)}
+:root{
+ --bg:#0a0e14; --panel:#12181f; --card:#1a2129; --card2:#161d25; --line:#232b35; --line2:#2c3542;
+ --txt:#e8ecf1; --dim:#8b98a8; --faint:#5c6975;
+ --red:#e5484d; --amber:#e8a13c; --green:#2fbf71; --accent:#22d3ee; --accent-dim:#0e7490;
+ --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+ --sans:Inter,system-ui,-apple-system,sans-serif;
+ --radius:12px; --pad:20px; --gap:20px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;line-height:1.55}
+.mono,#clock,.pill,#hudbig,#hudsub,.stat b,.apri,.pri,.sev,.count,#scorev,.adv-meta,#exp td,#led td,.chain,#cfv b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.leaflet-popup-content{font-family:var(--mono);font-size:12px}
+header.topbar{position:sticky;top:0;z-index:600;background:#0d1628;border-bottom:1px solid var(--line)}
+.hrow1{display:flex;align-items:center;gap:10px;padding:0 16px;height:52px;flex-wrap:nowrap;overflow:hidden}
+.hrow1 h1{font-size:17px;margin:0;font-weight:800;letter-spacing:.5px;white-space:nowrap;flex:none}
+.badge{font-size:11px;font-weight:700;letter-spacing:.5px;border-radius:8px;padding:4px 10px;border:1px solid transparent;white-space:nowrap;flex:none}
+.badge.scenario{background:#2a1414;border-color:#7a2e2e;color:#ffc9c9}
+.badge.live{background:#0e2f1d;border-color:#1f6f4f;color:#b8f0d8}
+.badge.demo{background:transparent;border-color:var(--accent);border-style:dashed;color:var(--accent)}
+.pill.sit{font-size:12.5px;font-weight:700;background:#182230}
+.pill{font-size:11px;padding:3px 9px;border-radius:999px;background:#182a4a;border:1px solid var(--line);color:var(--txt);white-space:nowrap;flex:none}
+.pill.warn{background:#3a2a10;border-color:var(--amber)}
+.pill.ok{background:#0e3a2a;border-color:var(--green)}
+.pill.live{background:#0f2027;border-color:var(--accent)}
+details.src{position:relative;flex:none}
+details.src>summary{list-style:none;cursor:pointer;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px dashed var(--accent);color:var(--accent);white-space:nowrap;font-family:var(--mono)}
+details.src>summary::-webkit-details-marker{display:none}
+details.src>summary::marker{content:''}
+details.src[open]>div.pop{position:absolute;top:calc(100% + 8px);left:0;z-index:700;display:flex;flex-direction:column;gap:6px;background:#0d1628f2;border:1px solid var(--line);border-radius:10px;padding:10px;min-width:230px;box-shadow:0 8px 24px #00000066}
+#clock{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
+.hpush{flex:1 1 auto;min-width:8px}
+.hright{margin-left:0;display:flex;align-items:center;gap:10px;flex:none}
+#panelbtn{flex:none}
+main{display:grid;grid-template-columns:minmax(0,1fr) 12px clamp(400px,30vw,480px);gap:0;min-height:calc(100vh - 94px);padding:20px 24px;column-gap:20px}
+.mapwrap{position:relative;min-height:calc(100vh - 136px);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0a1327}
 #map{position:absolute;inset:0}
-aside{border-left:1px solid var(--line);background:var(--panel);overflow-y:auto;max-height:calc(100vh - 78px)}
-section{padding:12px 14px;border-bottom:1px solid var(--line)}
-section h2{font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);margin:0 0 8px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
-.stat b{font-size:22px;display:block;font-variant-numeric:tabular-nums}
-.stat span{font-size:10px;color:var(--dim);letter-spacing:.4px}
-.threatcard{border:1px solid var(--line);border-left:4px solid var(--org);background:var(--panel2);
-border-radius:8px;padding:10px;font-size:13px;line-height:1.6}
-.act{display:flex;justify-content:space-between;gap:8px;border:1px solid var(--line);border-radius:8px;
-padding:8px;font-size:13px;margin:6px 0;background:var(--panel2)}
-.act b.count{background:#1d3a6b;border-radius:6px;padding:1px 8px;font-size:12px}
-.tl{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;font-size:11px}
-.tl div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px;text-align:center}
-.tl b{display:block;font-size:11px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--txt);cursor:pointer}
-.chip.on{background:#1d3a6b;border-color:var(--acc)}
-input[type=range]{width:100%;accent-color:var(--acc)}
+.map-hud{position:absolute;top:16px;left:16px;z-index:500;background:#0d1628f2;border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:340px;box-shadow:0 8px 24px #00000055}
+.map-hud h3{margin:0 0 4px;font-size:11px;letter-spacing:1px;color:var(--faint);text-transform:none}
+.map-hud .big{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.hudrow{display:flex;gap:14px;align-items:center;margin:4px 0 8px}
+.gauge{flex:none;display:block}
+#gaugearc{transition:stroke-dashoffset 1.1s ease}
+.hudlvl{font-size:13px;font-weight:800;letter-spacing:1.5px}
+.lvl-CRITICAL{color:var(--red)}.lvl-HIGH{color:var(--amber)}.lvl-MODERATE{color:var(--green)}
+.map-hud small{color:var(--dim)}
+#grip{width:12px;cursor:col-resize;background:transparent;border:0;padding:0}
+#grip:hover,#grip.on{background:var(--accent-dim);border-radius:6px}
+main.norail{grid-template-columns:1fr}
+main.norail aside,main.norail #grip{display:none}
+aside{border:1px solid var(--line);background:var(--panel);border-radius:16px;overflow-y:auto;max-height:calc(100vh - 136px);padding:4px 0}
+section{padding:16px 12px;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+section h2{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.2px;color:var(--txt);margin:0 0 14px;text-transform:none}
+section h2::before{content:'';width:3px;height:15px;border-radius:2px;background:var(--tick,#3a4356);flex:none}
+section.tick-red{--tick:var(--red)}section.tick-amber{--tick:var(--amber)}section.tick-green{--tick:var(--green)}section.tick-accent{--tick:var(--accent)}
+.h2sub{font-size:11px;color:var(--faint);font-weight:500}
+section .hint{font-size:12px;color:var(--dim);margin:-6px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stats.cmd{grid-template-columns:1fr 1fr}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.stat.wide{grid-column:1/-1}
+.stat b{font-size:clamp(18px,1.6vw,24px);display:block;font-variant-numeric:tabular-nums;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat span{font-size:11px;color:var(--dim);letter-spacing:.2px;text-transform:none;white-space:nowrap}
+.threatcard{border:1px solid var(--line);border-left:4px solid var(--amber);background:var(--card);border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.65}
+.act{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px;margin:4px 0;background:var(--card);align-items:center}
+#commander .act{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center}
+.arank{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.atext{min-width:0;overflow-wrap:break-word}
+#dispatch .act,#rainpaths .act{border-radius:4px;padding:10px 12px}
+.act b.count{background:#232d38;border-radius:6px;padding:2px 10px;font-size:12px;font-family:var(--mono)}
+.tl{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;font-size:11px}
+.tl div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;color:var(--dim)}
+.tl b{display:block;font-size:11px;color:var(--txt)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--txt);cursor:pointer}
+.chip.on{background:#12333c;border-color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent)}
 table{width:100%;border-collapse:collapse;font-size:13px}
-td,th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
-tr.row{cursor:pointer}tr.row:hover td{background:#16294f}tr.row.dim{opacity:.28}tr.row.hot td{background:#3a2a10}
+td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+tr.row{cursor:pointer}tr.row:hover td{background:#16294f}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-.chain{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:13px}
-.chain:hover{border-color:var(--acc)}.chain.hot{border-color:var(--org);background:#241c0c}
-.adv{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;font-size:13px}
-.adv.flash{border-color:var(--acc);box-shadow:0 0 0 2px #38bdf855}
+.sev{display:inline-block;min-width:18px;text-align:center;font-size:10px;font-weight:800;border:1px solid var(--line);border-radius:4px;padding:0 3px;color:var(--dim)}
+.chain:focus-visible,tr.row:focus-visible,.chip:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chain{cursor:pointer;border:1px solid var(--line);border-radius:4px;padding:12px;margin:8px 0;font-size:13px;background:var(--card)}
+.chain:hover{border-color:var(--accent)}.chain.hot{border-color:var(--accent);background:#101b24}
+.adv{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;font-size:13px;background:var(--card)}
+.adv.flash{border-color:var(--accent);box-shadow:0 0 0 2px #22d3ee55}
 .adv small{color:var(--dim)}
-.adv.p0{border-left:4px solid var(--red);background:#1d1220}
-.adv.p1{border-left:4px solid var(--org)}
-.adv.p2{border-left:4px solid var(--grn)}
-.adv-head{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
-.pri{font-size:11px;font-weight:800;letter-spacing:.6px;border-radius:6px;padding:2px 8px;border:1px solid var(--line);background:#1a2c52}
-.pri.p0{background:var(--red);border-color:#ff8a8a;color:#fff;box-shadow:0 0 8px #f0524f88}
-.pri.p1{background:#3a2a10;border-color:var(--org);color:#ffd9a0}
-.pri.p2{background:#0e3a2a;border-color:var(--grn);color:#b8f0d8}
+.adv.p0{border-left:4px solid var(--red)}
+.adv.p1{border-left:4px solid var(--amber)}
+.adv.p2{border-left:4px solid var(--green)}
+.adv-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.pri{font-size:11px;font-weight:800;letter-spacing:.6px;border-radius:6px;padding:3px 10px;border:1px solid var(--line);background:#202a36;white-space:nowrap;flex-shrink:0;min-width:44px;text-align:center}
+.pri.p0{background:var(--red);border-color:#ff8a8a;color:#fff}
+.pri.p1{background:#3a2a10;border-color:var(--amber);color:#ffd9a0}
+.pri.p2{background:#0e3a2a;border-color:var(--green);color:#b8f0d8}
 .auth{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--dim);text-transform:uppercase}
-.adv-msg{font-size:13px;line-height:1.6;margin:4px 0;overflow-wrap:anywhere}
-.adv-meta{font-size:11px;color:var(--dim);line-height:1.8;overflow-wrap:anywhere}
+.adv-msg{font-size:13.5px;line-height:1.65;margin:6px 0;overflow-wrap:anywhere}
+.adv-meta{font-size:11.5px;color:var(--dim);line-height:1.8;overflow-wrap:anywhere}
 .adv-meta b{color:var(--txt)}
-.adv-foot{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
-.act.p0act{border-left:4px solid var(--red);background:#2a1215}
-.act.p1act{border-left:4px solid var(--org)}
-.apri{font-size:11px;font-weight:800;border-radius:6px;padding:1px 7px;border:1px solid var(--line);background:#1a2c52;margin-right:6px}
+.adv-foot{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.act.p0act{border-left:4px solid var(--red)}
+.act.p1act{border-left:4px solid var(--amber)}
+.apri{font-size:11px;font-weight:800;border-radius:6px;padding:2px 8px;border:1px solid var(--line);background:#202a36;margin-right:8px}
 .apri.p0{background:var(--red);border-color:#ff8a8a;color:#fff}
-button{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px}
-button.ghost{background:transparent;border:1px solid var(--line)}
-select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:5px;font-size:12px}
-.legend{background:#0a1327ee;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.8}
+button{background:#164e63;color:#fff;border:0;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:600}
+button:hover{filter:brightness(1.1)}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px;font-size:12px}
+.legend{background:#0d1628f2!important;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12px;line-height:2;color:var(--txt)!important;box-shadow:0 8px 24px #00000055}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px}
-.aoi-label{background:transparent!important;border:0!important;box-shadow:none!important;
- font-size:11px;font-weight:800;letter-spacing:1.2px;color:#dbe7f7;opacity:.75;text-shadow:0 1px 3px #000}
-#err{display:none;margin:12px;padding:12px;background:#3a1414;border:1px solid #a33;border-radius:8px}
-#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#12325e;border:1px solid var(--acc);
-border-radius:8px;padding:8px 16px;font-size:13px;display:none;z-index:600}
-.shimmer{background:linear-gradient(90deg,#12203c 25%,#1b3159 50%,#12203c 75%);background-size:200% 100%;
-animation:sh 1.2s infinite;border-radius:8px;min-height:60px;margin:6px 0}
-@keyframes sh{to{background-position:-200% 0}}
-@keyframes pulse{0%{stroke-opacity:1}50%{stroke-opacity:.2}100%{stroke-opacity:1}}
-.p0{animation:pulse 1.4s infinite}
-@keyframes ringpulse{0%{stroke-opacity:.9;stroke-width:3}50%{stroke-opacity:.25;stroke-width:1}100%{stroke-opacity:.9;stroke-width:3}}
-.p0ring{animation:ringpulse 1.6s infinite}
-#assetcard{border:1px solid var(--acc);border-radius:8px;padding:10px;margin:8px 0;font-size:13px;background:#0f2547;display:none}
+.aoi-label{background:transparent!important;border:0!important;box-shadow:none!important;font-size:11px;font-weight:700;letter-spacing:1.2px;color:#dbe7f7;opacity:.8;text-shadow:0 1px 3px #000}
+#err{display:none;margin:16px 24px;padding:14px;background:#3a1414;border:1px solid #a33;border-radius:10px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f2027;border:1px solid var(--accent);border-radius:10px;padding:10px 18px;font-size:13px;display:none;z-index:700}
+.shimmer{background:#1c2530;border-radius:10px;min-height:60px;margin:8px 0;animation:sh 1.4s infinite alternate}
+@keyframes sh{from{opacity:.5}to{opacity:1}}
+@keyframes pulse{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+.p0{animation:pulse 1.6s infinite}
+@keyframes ringpulse{0%{stroke-opacity:.9}50%{stroke-opacity:.25}100%{stroke-opacity:.9}}
+.p0ring{animation:ringpulse 1.8s infinite}
+#assetcard{border:1px solid var(--accent);border-radius:12px;padding:12px 14px;margin:10px 0;font-size:13px;background:#101c26;display:none}
 #assetcard h3{margin:0 0 6px;font-size:14px}#assetcard small{color:var(--dim)}
-.okcard{border:1px solid #1f6f4f;background:#0c2b21;border-radius:8px;padding:10px;font-size:13px}
-@media(max-width:900px){main{grid-template-columns:1fr}.mapwrap{min-height:52vh}#map{position:absolute}aside{max-height:none;border-left:0}#grip{display:none}}
+.okcard{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.6}
+.okcard.good{border-color:var(--green);background:#0c211a}
+.ministats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.ministats>div{background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center}
+.ministats b{display:block;font-size:18px;font-family:var(--mono);font-variant-numeric:tabular-nums;line-height:1.2}
+.ministats span{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.note{font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.6}
+label.fld{font-size:12px;color:var(--dim)}
+label.fld b{color:var(--txt)}
+@media(max-width:1000px){main{grid-template-columns:1fr;padding:12px}.mapwrap{min-height:52vh}aside{max-height:none}#grip{display:none}.hrow1{padding-left:12px;padding-right:12px;flex-wrap:wrap;height:auto;row-gap:8px}details.src[open]>div.pop{left:auto;right:0}section{padding:16px}.map-hud{max-width:250px;padding:10px 12px}.map-hud .big{font-size:19px}.gauge{width:72px;height:72px}table{font-size:12px}#dispatch .act,#rainpaths .act{flex-direction:column;align-items:stretch}}
 </style>
 </head>
 <body>
-<header>
-<h1>CYCLOSAC OPS</h1>
-<span class="sub">Bay of Bengal &middot; Puri Odisha</span>
-<span class="replay">MICHAUNG REPLAY T&minus;48H</span>
-<span class="demo" id="demo">DEMO REPLAY</span>
-<span class="pill live" id="tile">&hellip;</span>
-<span class="pill live" id="llm">GEMINI VERIFIED</span>
-<span class="pill" id="status">&hellip;</span>
-<span class="pill" id="fid">loading&hellip;</span>
-<span class="pill" id="gen">&hellip;</span>
-<span id="clock" title="Live wall-clock for the demo room"></span>
-<button class="ghost" id="panelbtn" title="Collapse/expand decision panel" style="margin-left:8px">⟨ Panel</button>
-<div id="scope">Platform: Bay of Bengal &middot; Validated case study: Puri, Odisha &middot; Replay of forecast, planning only</div>
+<header class="topbar">
+ <div class="hrow1">
+  <h1 title="Bay of Bengal · Puri, Odisha · T−48 triage console — validated case study, replay of forecast, planning only">CYCLOSAC OPS</h1>
+  <span class="badge scenario" id="scenario">MICHAUNG REPLAY T&minus;48H</span>
+  <span class="badge demo" id="demo">DEMO REPLAY</span>
+  <span class="pill sit" id="status">&hellip;</span>
+  <details class="src"><summary title="Data source provenance">Data sources</summary><div class="pop">
+   <span class="pill" id="tile">&hellip;</span>
+   <span class="pill" id="weather">WEATHER &hellip;</span>
+   <span class="pill" id="llm">ADVISORY &hellip;</span>
+   <span class="pill" id="fid">loading&hellip;</span>
+   <span class="pill" id="gen">&hellip;</span>
+  </div></details>
+  <span class="hpush"></span>
+  <span class="hright"><span id="clock" title="Live wall-clock for the operations room"></span>
+  <button class="ghost" id="panelbtn" title="Collapse/expand decision panel">⟨ Panel</button></span>
+  <span id="scope" hidden></span>
+ </div>
 </header>
 <div id="err">Could not load <code>output/forecast.json</code> &mdash; serve the repo root: <code>python -m http.server</code>, then open <code>/dashboard/</code>.</div>
 <main>
-<div class="mapwrap"><div id="map"></div></div>
-<div id="grip" title="Drag to resize panel"></div>
-<aside>
-<section><h2>Commander&rsquo;s View</h2><div class="threatcard" id="commander"><div class="shimmer"></div></div></section>
-<section><h2>Anticipatory timeline</h2><div class="tl" id="timeline">
-<div><b>T&minus;48H</b>forecast</div><div><b>T&minus;24H</b>prep</div><div><b>T&minus;12H</b>evac planning</div><div><b>T&minus;6H</b>dispatch</div><div><b>Landfall</b>Michaung</div>
-</div></section>
-<section><h2>Exposure filter</h2>
-<div class="chips" id="typechips"></div>
-<label style="font-size:12px;color:var(--dim)">Min score <b id="scorev">0</b></label>
-<input type="range" id="scoreslider" min="0" max="100" value="0"/>
-<div id="assetcard"></div>
-<table id="exp"></table></section>
-<section><h2>Cascade chains</h2><div style="font-size:11px;color:var(--dim)" id="popsrc"></div><div id="cas"><div class="shimmer"></div></div></section>
-<section><h2>EARLY WARNINGS</h2>
-<div class="chips"><button class="chip on" id="langbtn">EN / &#xB13;&#xB21;&#xBBC;&#xB3F;&#xB06;</button>
-<select id="prifilter"><option value="">all priorities</option><option>P0</option><option>P1</option><option>P2</option></select></div>
-<div id="adv"><div class="shimmer"></div></div></section>
-<section><h2>IMPACT SIMULATOR</h2><div style="font-size:12px;color:var(--dim);margin:-4px 0 8px">What changes if action is taken earlier?</div><div style="display:flex;gap:12px;font-size:11px;color:var(--dim);margin-bottom:4px"><span>T+0</span><span>T+6</span><span>T+12</span><span>T+24</span></div><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div><div style="font-size:11px;color:var(--grn);margin-top:6px">EARLIER ACTION &rarr; LOWER EXPOSURE</div></section>
-<section><h2>INSURANCE LIQUIDITY</h2><div class="stats" id="ledstats" style="margin-bottom:8px"></div><table id="led"></table><div style="font-size:11px;color:var(--dim);margin-top:6px">Prototype parametric triggers &mdash; not a live insurance transaction.</div></section>
-<section id="ai"><h2>AI DECISION SUPPORT</h2><div id="aibody"><div class="shimmer"></div></div></section>
-<section><h2>Conflicts</h2><div id="con"></div></section>
-</aside>
+ <div class="mapwrap">
+  <div id="map"></div>
+  <div class="map-hud" id="maphud"><h3>Threat level</h3><div class="hudrow"><svg class="gauge" width="88" height="88" viewBox="0 0 88 88" role="img" aria-label="threat gauge"><circle cx="44" cy="44" r="34" fill="none" stroke="#232b35" stroke-width="9"/><circle id="gaugearc" cx="44" cy="44" r="34" fill="none" stroke="#2fbf71" stroke-width="9" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6" transform="rotate(-90 44 44)"/><text id="gaugetxt" x="44" y="50" text-anchor="middle" fill="#e8ecf1" font-size="19" font-weight="700" font-family="JetBrains Mono,monospace">–</text></svg><div><div class="hudlvl" id="hudlvl">—</div><div class="big" id="hudbig">—</div></div></div><small id="hudsub">loading forecast…</small></div>
+ </div>
+ <div id="grip" title="Drag to resize panel"></div>
+ <aside>
+  <section class="tick-red"><h2>Commander&rsquo;s view <span class="h2sub">top actions</span></h2><div class="threatcard" id="commander"><div class="shimmer"></div></div></section>
+  <section class="tick-red"><h2>Early warnings</h2>
+   <div class="chips"><button class="chip" id="langbtn">EN / &#xB13;&#xB21;&#xBBC;&#xB3F;&#xB06;</button>
+   <select id="prifilter"><option value="">all priorities</option><option>P0</option><option>P1</option><option>P2</option></select></div>
+   <div id="adv"><div class="shimmer"></div></div>
+  </section>
+  <section class="tick-amber"><h2>Dispatch review</h2><div id="dispatch"><div class="shimmer"></div></div><div class="note">Records are auditable dry-run / approval states; this console never sends messages. Use Approve / Ack / Retry to track operator handling.</div></section>
+  <section><h2>Exposure</h2>
+   <div class="chips" id="typechips"></div>
+   <label class="fld">Min score <b id="scorev">0</b></label>
+   <input type="range" id="scoreslider" min="0" max="100" value="0"/>
+   <div id="assetcard"></div>
+   <table id="exp"></table>
+  </section>
+  <section><h2>Cascade chains</h2><div class="hint" id="popsrc"></div><div id="cas"><div class="shimmer"></div></div></section>
+  <section><h2>Rain pathways</h2><div id="rainpaths"><div class="shimmer"></div></div></section>
+  <section><h2>Impact simulator</h2><div class="hint">What changes if action is taken earlier?</div><div style="display:flex;gap:12px;font-size:11px;color:var(--dim);margin-bottom:6px"><span>T+0</span><span>T+6</span><span>T+12</span><span>T+24</span></div><input type="range" id="cf" min="0" max="3" value="0"/><div id="cfv"></div><div id="cfspark" style="margin-top:10px"></div><div style="font-size:11px;color:var(--green);margin-top:8px">EARLIER ACTION &rarr; LOWER EXPOSURE</div></section>
+  <section><h2>Insurance liquidity — simulated</h2><div class="stats" id="ledstats" style="margin-bottom:10px"><div class="shimmer"></div></div><table id="led"></table><div class="note">Simulated parametric liquidity — trigger evidence with insurer-review status, not a payment claim. <button class="ghost" onclick="downloadEvidence()">DOWNLOAD EVIDENCE</button></div></section>
+  <section><h2>Anticipatory timeline</h2><div class="tl" id="timeline">
+   <div><b>T&minus;48H</b>forecast</div><div><b>T&minus;24H</b>prep</div><div><b>T&minus;12H</b>evac planning</div><div><b>T&minus;6H</b>dispatch</div><div><b>Landfall</b>Michaung</div>
+  </div></section>
+  <section id="ai" class="tick-accent"><h2>AI decision support</h2><div id="aibody"><div class="shimmer"></div></div></section>
+  <section class="tick-red"><h2>Conflicts</h2><div id="con"><div class="shimmer"></div></div></section>
+ </aside>
 </main>
-<div id="toast">copied</div>
+<div id="toast" role="status" aria-live="polite">copied</div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 let FC,CF,GLOSS={},OR=false,MARKERS={},MAP;
 const $=id=>document.getElementById(id);
-const color=s=>s>=70?'var(--red)':s>=40?'var(--org)':'var(--grn)';
 const cssColor=s=>s>=70?'#f0524f':s>=40?'#f5a524':'#30c48d';
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function compact(n){n=Number(n||0);if(n>=1e7)return (n/1e7).toFixed(2)+' Cr';if(n>=1e5)return (n/1e5).toFixed(1)+' L';if(n>=1e3)return (n/1e3).toFixed(1)+'k';return String(n);}
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1400);}
+function sectionErr(id,e){const el=$(id);if(el)el.innerHTML=`<div class="adv" style="border-left:4px solid var(--red)"><b>Section failed to render.</b><br/><small>${esc(String((e&&e.message)||e))}</small></div>`;}
+function safeRender(id,fn){try{fn();}catch(e){sectionErr(id,e);}}
+function syncHash(){try{const p=new URLSearchParams();if(ACTIVE_TYPE)p.set('type',ACTIVE_TYPE);if(MIN_SCORE)p.set('score',String(MIN_SCORE));const pf=$('prifilter').value;if(pf)p.set('pri',pf);const cv=$('cf').value;if(cv&&cv!=='0')p.set('cf',cv);const h=p.toString();history.replaceState(null,'',h?'#'+h:location.pathname+location.search);}catch(e){}}
+function restoreHash(){try{const p=new URLSearchParams(String(location.hash||'').slice(1));const t=p.get('type');if(t!=null)ACTIVE_TYPE=t;const s=parseInt(p.get('score')||'0',10);if(!isNaN(s))MIN_SCORE=Math.max(0,Math.min(100,s));return {pri:p.get('pri')||'',cf:parseInt(p.get('cf')||'0',10)||0};}catch(e){return {pri:'',cf:0};}}
+function dkey(){return 'cyclosac-dispatch-'+((FC&&FC.forecast_id)||'na');}
+function saveDispatch(){try{localStorage.setItem(dkey(),JSON.stringify((FC.dispatch_records||[]).map(r=>({dispatch_id:r.dispatch_id,status:r.status,mode:r.mode,approved_by:r.approved_by,ack:r.ack,retry_count:r.retry_count}))));}catch(e){}}
+function loadDispatch(){try{const m={};JSON.parse(localStorage.getItem(dkey())||'[]').forEach(x=>{if(x&&x.dispatch_id)m[x.dispatch_id]=x;});(FC.dispatch_records||[]).forEach(r=>{const x=m[r.dispatch_id];if(x){if(x.status)r.status=x.status;if(x.mode)r.mode=x.mode;if(x.approved_by!==undefined)r.approved_by=x.approved_by;if(x.ack)r.ack=x.ack;r.retry_count=x.retry_count||0;}});}catch(e){}}
+function renderSpark(){const el=$('cfspark');if(!el)return;const cf=(CF||[]);if(cf.length<2){el.innerHTML='';return;}const vals=cf.map(r=>Number(r.exposed_pop||0));const max=Math.max.apply(null,vals.concat([1])),min=Math.min.apply(null,vals.concat([0]));const W=360,H=64,P=10;const X=i=>P+i*(W-2*P)/(vals.length-1),Y=v=>H-P-((v-min)/((max-min)||1))*(H-2*P);const pts=vals.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="exposed population across evacuation horizons"><polyline points="${pts}" fill="none" stroke="#22d3ee" stroke-width="2"/>`+vals.map((v,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.5" fill="#22d3ee"><title>T+${cf[i].horizon_h}h: ${v.toLocaleString('en-IN')}</title></circle>`).join('')+`</svg><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim)"><span>T+0</span><span>T+6</span><span>T+12</span><span>T+24</span></div>`;}
 function countUp(el,to,suffix){suffix=suffix||'';let v=0;const st=Math.max(1,Math.round(to/30));
  const iv=setInterval(()=>{v+=st;if(v>=to){v=to;clearInterval(iv);}el.textContent=v.toLocaleString('en-IN')+suffix;},30);}
 function inPoly(lon,lat,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){
@@ -156,129 +220,163 @@ let SURGE=[];
 setInterval(()=>{const d=new Date();$('clock').textContent='Dashboard time '+d.toLocaleString('en-IN',{hour12:false});},1000);
 Promise.all([fetch('../output/forecast.json').then(r=>r.json()),
  fetch('../sample_inputs_demo/surge.geojson').then(r=>r.json()).catch(()=>null),
+ fetch('../sample_inputs_demo/rainfall.geojson').then(r=>r.json()).catch(()=>null),
  fetch('../sample_inputs_demo/glossary/or.json').then(r=>r.json()).catch(()=>({}))])
-.then(([fc,surge,gloss])=>{
+.then(([fc,surge,rainfall,gloss])=>{
 FC=fc;GLOSS=gloss||{};
 $('fid').textContent=fc.forecast_id;
-const st=$('status');st.textContent='QA '+fc.quality_check.overall_status.toUpperCase();
-st.className='pill '+(fc.quality_check.overall_status==='pass'?'ok':fc.quality_check.overall_status==='block'?'warn':'');
-const gt=fc.gee_tile||{};$('tile').textContent='GEE LIVE S1 '+(gt.source||'?')+' '+(gt.date||'');
-$('tile').title='Sentinel-1 via Google Earth Engine';
+const qc0=fc.quality_check||{};const st=$('status');st.textContent='QA '+String(qc0.overall_status||'unknown').toUpperCase();
+st.className='pill sit '+((qc0.overall_status==='pass')?'ok':(qc0.overall_status==='block')?'warn':'');
+const gt=fc.gee_tile||{};const wp0=((fc.weather||{}).provenance)||{};
+const liveRun=(gt.mode==='live_provider'&&gt.freshness==='live')||wp0.freshness==='live';
+$('scenario').textContent=liveRun?'MICHAUNG LIVE T-48H':'MICHAUNG REPLAY T-48H';
+$('demo').textContent=liveRun?'LIVE DATA':'DEMO REPLAY';
+$('scope').textContent='Platform: Bay of Bengal · Validated case study: Puri, Odisha · '+(liveRun?'Live inputs with fallback labelling':'Replay of forecast, planning only');
+$('tile').textContent='GEE '+String(gt.freshness||gt.data_status||gt.source||'?').toUpperCase()+' '+(gt.date||'');
+$('tile').title='GEE '+(gt.mode||'')+' · '+(gt.source||'')+' · acquired '+(gt.date_acquired||gt.date||'?')+' · fetched '+(gt.fetched_at||'?')+' · age '+(gt.age_days!=null?gt.age_days+'d':'?');
+const wp=((fc.weather||{}).provenance)||{};$('weather').textContent='WEATHER '+String(wp.freshness||'unknown').toUpperCase();
+$('weather').title=(wp.source||'weather source')+' · '+(wp.fetched_at||'timestamp unavailable');
+const ai=fc.ai_decision_support||{};const advs0=fc.advisories||[];const anyLlm=advs0.some(x=>x.llm_used);$('llm').textContent='ADVISORY '+String((ai.advisory_modes||['template_fallback']).join('/')).toUpperCase()+(anyLlm?' · LLM':' · TEMPLATE');
+$('llm').title='Requested model '+(ai.model_requested||'?')+'; LLM used on '+(advs0.filter(x=>x.llm_used).length)+'/'+advs0.length+' advisories; fallback is deterministic template';
 $('gen').textContent='Generated '+(fc.generated_at||'').slice(0,16).replace('T',' ');
+const reg0=(fc.vulnerability_register||[]);
+const crit0=reg0.filter(a=>a.vulnerability_score>=70).length;
+const pop0=((fc.cascade_impact||{}).cumulative_population_affected||0);
+$('hudbig').textContent=crit0+' critical · '+(pop0).toLocaleString('en-IN')+' exposed';
+$('hudsub').textContent=(fc.forecast_id||'')+' · '+(advs0.length)+' advisories · QA '+(qc0.overall_status||'?');
 MAP=L.map('map').setView([19.845,85.865],12);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OSM'}).addTo(MAP);
-const surgeLayer=L.layerGroup().addTo(MAP),markerLayer=L.layerGroup().addTo(MAP);
-// Omitted (no data — never invent geometry): rainfall, cascade-geometry, vulnerability-heat overlays.
+const surgeLayer=L.layerGroup().addTo(MAP),rainLayer=L.layerGroup(),markerLayer=L.layerGroup().addTo(MAP);
 L.tooltip({permanent:true,direction:'top',className:'aoi-label',offset:[0,-6]}).setLatLng([19.794,85.502]).setContent('PURI, ODISHA — VALIDATED CASE STUDY').addTo(MAP);
 SURGE=[];((surge&&surge.features)||[]).forEach(f=>{const ring=(((f.geometry||{}).coordinates||[])[0])||[];
  if(!ring.length)return;const depth=(f.properties||{}).depth_m||0;SURGE.push({ring,depth});
- const shade=depth>=2?'#0369a1':depth>=1?'#0284c7':'#38bdf8';
- L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1,fillOpacity:.3}).bindPopup('surge '+depth+'m').addTo(surgeLayer);});
-const P0=new Set(fc.advisories.filter(a=>a.priority==='P0').flatMap(a=>a.asset_refs||[]));
-const TRIG=new Set(fc.cascade_impact.cascade_chains.map(c=>c.trigger_asset_id));
+ const shade=depth>=2?'#2f5b8f':depth>=1?'#4a7ab0':'#7d9cbd';
+ L.polygon(ring.map(p=>[p[1],p[0]]),{color:shade,weight:1.5,fillOpacity:.28}).bindPopup('surge '+depth+'m').addTo(surgeLayer);});
+((rainfall&&rainfall.features)||[]).forEach(f=>{const ring=(((f.geometry||{}).coordinates||[])[0])||[];
+ if(!ring.length)return;const depth=(f.properties||{}).depth_m||0;
+ L.polygon(ring.map(p=>[p[1],p[0]]),{color:'#8fa3b8',weight:1.5,fillOpacity:.18,dashArray:'6 5'}).bindPopup('rainfall impact depth '+depth+'m').addTo(rainLayer);});
+const P0=new Set((fc.advisories||[]).filter(a=>a.priority==='P0').flatMap(a=>a.asset_refs||[]));
+const TRIG=new Set(((fc.cascade_impact||{}).cascade_chains||[]).map(c=>c.trigger_asset_id));
 CF=fc.counterfactual||[];
-fc.vulnerability_register.forEach(a=>{
- const m=L.circleMarker([a.lat,a.lon],{radius:4+Math.round(a.vulnerability_score/25),color:cssColor(a.vulnerability_score),
-  weight:P0.has(a.asset_id)?3:1,opacity:P0.has(a.asset_id)?1:.9}).addTo(markerLayer);
- if(TRIG.has(a.asset_id)){L.circleMarker([a.lat,a.lon],{radius:11,color:'#f0524f',weight:2,fill:false,className:'p0ring',interactive:false}).addTo(markerLayer);}
+(fc.vulnerability_register||[]).forEach(a=>{
+ const m=L.circleMarker([a.lat,a.lon],{radius:5+Math.round((a.vulnerability_score||0)/22),color:cssColor(a.vulnerability_score),
+  weight:P0.has(a.asset_id)?3:1,opacity:P0.has(a.asset_id)?1:.9,fillOpacity:.85}).addTo(markerLayer);
+ if(TRIG.has(a.asset_id)){L.circleMarker([a.lat,a.lon],{radius:12,color:'#e5484d',weight:2,fill:false,className:'p0ring',interactive:false}).addTo(markerLayer);}
  let extra='outside footprint';for(const s of SURGE){if(inPoly(a.lon,a.lat,s.ring)){extra='surge '+s.depth+'m at asset';break;}}
- m.bindPopup(`<b>${a.asset_id}</b> ${a.asset_type}<br/>score ${a.vulnerability_score}<br/>${extra}<br/><small>${a.estimated_failure_mode||''}</small>`);
+ m.bindPopup(`<b>${esc(a.asset_id)}</b> ${esc(a.asset_type)}<br/>score ${a.vulnerability_score}<br/>${esc(extra)}<br/><small>${esc(a.estimated_failure_mode||'')}</small>`);
  MARKERS[a.asset_id]=m;});
 const lg=L.control({position:'bottomright'});lg.onAdd=()=>{const d=L.DomUtil.create('div','legend');
- d.innerHTML='<b>Legend</b><br/><i style="background:#f0524f"></i>critical ≥70<br/><i style="background:#f5a524"></i>moderate ≥40<br/><i style="background:#30c48d"></i>low &lt;40<br/><i style="background:#38bdf8;border-radius:0"></i>surge footprint<br/><span class="p0" style="color:#f0524f">◉</span> pulsing ring = P0 trigger asset<br/><small>Live traffic: '+(FC.traffic_overlay&&FC.traffic_overlay.length?FC.traffic_overlay.length+' segments (TomTom)':'no data — validated core only')+'</small>';return d;};lg.addTo(MAP);
- L.control.layers(null,{'Storm Surge':surgeLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
+ d.innerHTML='<b>Legend</b><br/><i style="background:#e5484d"></i>critical ≥70<br/><i style="background:#e8a13c"></i>moderate ≥40<br/><i style="background:#2fbf71"></i>low &lt;40<br/><i style="background:#4a7ab0;border-radius:0"></i>surge footprint<br/><i style="background:#8fa3b8;border-radius:0"></i>rainfall pathway footprint<br/><span class="p0" style="color:#e5484d">◉</span> pulsing ring = P0 trigger asset<br/><small>Live traffic: '+(FC.traffic_overlay&&FC.traffic_overlay.length?FC.traffic_overlay.length+' segments (TomTom)':'no data — validated core only')+'</small>';return d;};lg.addTo(MAP);
+ L.control.layers(null,{'Storm Surge':surgeLayer,'Rainfall pathways':rainLayer,'Critical Infrastructure':markerLayer},{collapsed:false}).addTo(MAP);
  const tflow=(fc.traffic_overlay||[]);const trafficLayer=L.layerGroup();
- tflow.forEach(s=>{const c=s.closed||s.congestion>=0.6?'#f0524f':s.congestion>=0.3?'#f5a524':'#30c48d';
-  L.circleMarker([s.lat,s.lon],{radius:7,color:c,weight:2}).bindPopup(`<b>${s.road_id}</b><br/>speed ${s.speed}/${s.freeflow} km/h<br/>congestion ${Math.round(s.congestion*100)}%${s.closed?'<br/>CLOSED':''}`).addTo(trafficLayer);});
+ tflow.forEach(s=>{const c=s.closed||s.congestion>=0.6?'#e5484d':s.congestion>=0.3?'#e8a13c':'#2fbf71';
+  L.circleMarker([s.lat,s.lon],{radius:7,color:c,weight:2}).bindPopup(`<b>${esc(s.road_id)}</b><br/>speed ${s.speed}/${s.freeflow} km/h<br/>congestion ${Math.round(s.congestion*100)}%${s.closed?'<br/>CLOSED':''}`).addTo(trafficLayer);});
  if(tflow.length){trafficLayer.addTo(MAP);L.control.layers(null,{'Live Traffic':trafficLayer},{collapsed:false}).addTo(MAP);}
 MAP.on('click',e=>{let d='—';for(const s of SURGE){if(inPoly(e.latlng.lng,e.latlng.lat,s.ring)){d=s.depth+'m';break;}}
  L.popup().setLatLng(e.latlng).setContent('surge depth here: <b>'+d+'</b>').openOn(MAP);});
-renderCommander();renderTypeChips();applyFilter();renderChains();renderAdv();renderLedger();renderConflicts();renderAI();updCF(0);
+loadDispatch();const _rst=restoreHash();$('prifilter').value=_rst.pri;$('cf').value=String(_rst.cf);$('scoreslider').value=String(MIN_SCORE);$('scorev').textContent=MIN_SCORE;
+safeRender('commander',renderCommander);safeRender('exp',()=>{renderTypeChips();applyFilter();});safeRender('cas',renderChains);safeRender('adv',renderAdv);safeRender('rainpaths',renderRainfall);safeRender('dispatch',renderDispatch);safeRender('led',renderLedger);safeRender('con',renderConflicts);safeRender('aibody',renderAI);safeRender('cfv',()=>updCF(parseInt($('cf').value||'0',10)||0));safeRender('cfspark',renderSpark);safeRender('maphud',paintGauge);
 }).catch(()=>{$('err').style.display='block';});
-function renderCommander(){const fc=FC;
- const worst=fc.vulnerability_register.reduce((m,a)=>Math.max(m,a.vulnerability_score),0);
- const level=worst>=80?'CRITICAL':worst>=60?'HIGH':'MODERATE';
- const crit=fc.vulnerability_register.filter(a=>a.vulnerability_score>=70);
- const p0=fc.advisories.filter(a=>a.priority==='P0');
+function threat(){const reg=((FC||{}).vulnerability_register||[]);const worst=reg.reduce((m,a)=>Math.max(m,a.vulnerability_score||0),0);const level=worst>=80?'CRITICAL':worst>=60?'HIGH':'MODERATE';return {worst,level};}
+function paintGauge(){try{const t=threat();const C=213.6;const arc=$('gaugearc');if(!arc)return;arc.setAttribute('stroke',t.level==='CRITICAL'?'#e5484d':t.level==='HIGH'?'#e8a13c':'#2fbf71');arc.setAttribute('stroke-dashoffset',String(C*(1-Math.min(100,t.worst)/100)));const txt=$('gaugetxt');if(txt)txt.textContent=String(t.worst);const lvl=$('hudlvl');if(lvl){lvl.textContent=t.level;lvl.className='hudlvl lvl-'+t.level;}}catch(e){}}
+function renderCommander(){const fc=FC;const reg=(fc.vulnerability_register||[]);
+ const {worst,level}=threat();
+ $('commander').style.borderLeftColor=level==='CRITICAL'?'var(--red)':level==='HIGH'?'var(--amber)':'var(--green)';
+ const crit=reg.filter(a=>a.vulnerability_score>=70);
+ const p0=(fc.advisories||[]).filter(a=>a.priority==='P0');
  const seen={};const acts=[];
- for(const a of fc.advisories){const k=a.recommended_action||a.audience;if(seen[k])continue;seen[k]=1;
-  acts.push({t:k,p:a.priority,n:fc.advisories.filter(x=>(x.recommended_action||x.audience)===k).length});if(acts.length>=4)break;}
- $('commander').innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><span class="pri ${level==='CRITICAL'?'p0':level==='HIGH'?'p1':'p2'}">${level} THREAT</span><small>derived from max score ${worst} — not a separate model</small></div>`+
- `<div class="stats">`+
- `<div class="stat"><b>${crit.length}</b><span>CRITICAL ASSETS</span></div>`+
- `<div class="stat"><b>${fc.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}+</b><span>POPULATION EXPOSED</span></div>`+
- `<div class="stat"><b>${p0.length}</b><span>PRIORITY ADVISORIES</span></div></div>`+
- `<div style="margin-top:8px;font-size:12px;color:var(--dim)">TOP ACTIONS</div>`+
- acts.map((a,i)=>`<div class="act ${a.p==='P0'?'p0act':a.p==='P1'?'p1act':'act'}"><span><span class="apri ${a.p==='P0'?'p0':''}">${a.p}</span>0${i+1} · ${a.t}</span><b class="count">&times;${a.n}</b></div>`).join('');}
+ for(const a of (fc.advisories||[])){const k=a.recommended_action||a.audience;if(seen[k])continue;seen[k]=1;
+  acts.push({t:k,p:a.priority,n:(fc.advisories||[]).filter(x=>(x.recommended_action||x.audience)===k).length});if(acts.length>=4)break;}
+ $('commander').innerHTML=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:10px"><span class="pri ${level==='CRITICAL'?'p0':level==='HIGH'?'p1':'p2'}">${level} THREAT</span><small>derived from max score ${worst} — not a separate model</small></div>`+
+ `<div class="stats cmd">`+
+ `<div class="stat wide"><b title="${(((fc.cascade_impact||{}).cumulative_population_affected||0)).toLocaleString('en-IN')}">${compact((fc.cascade_impact||{}).cumulative_population_affected||0)}+</b><span>Population exposed</span></div>`+
+ `<div class="stat"><b>${crit.length}</b><span>Critical assets</span></div>`+
+ `<div class="stat"><b>${p0.length}</b><span>Priority advisories</span></div></div>`+
+ acts.map((a,i)=>`<div class="act ${a.p==='P0'?'p0act':a.p==='P1'?'p1act':'act'}"><span><span class="apri ${a.p==='P0'?'p0':''}">${esc(a.p)}</span></span><span class="arank">0${i+1}</span><span class="atext">${esc(a.t).replace(/T-(\d)/g,'T−$1')}</span><b class="count">&times;${a.n}</b></div>`).join('');}
 let ACTIVE_TYPE='',MIN_SCORE=0;
-function renderTypeChips(){const types=[...new Set(FC.vulnerability_register.map(a=>a.asset_type))];
- $('typechips').innerHTML='<button class="chip on" data-t="">all</button>'+types.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+function renderTypeChips(){const types=[...new Set((FC.vulnerability_register||[]).map(a=>a.asset_type))];
+ $('typechips').innerHTML='<button class="chip'+(ACTIVE_TYPE===''?' on':'')+'" data-t="">all</button>'+types.map(t=>`<button class="chip${ACTIVE_TYPE===t?' on':''}" data-t="${esc(t)}">${esc(t)}</button>`).join('');
  $('typechips').querySelectorAll('button').forEach(b=>b.onclick=()=>{ACTIVE_TYPE=b.dataset.t;
-  $('typechips').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');applyFilter();});
- $('scoreslider').oninput=e=>{MIN_SCORE=+e.target.value;$('scorev').textContent=MIN_SCORE;applyFilter();};}
-function applyFilter(){const rows=FC.vulnerability_register.filter(a=>(!ACTIVE_TYPE||a.asset_type===ACTIVE_TYPE)&&a.vulnerability_score>=MIN_SCORE);
+  $('typechips').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');applyFilter();syncHash();});
+ $('scoreslider').oninput=e=>{MIN_SCORE=+e.target.value;$('scorev').textContent=MIN_SCORE;applyFilter();syncHash();};}
+function applyFilter(){const rows=(FC.vulnerability_register||[]).filter(a=>(!ACTIVE_TYPE||a.asset_type===ACTIVE_TYPE)&&a.vulnerability_score>=MIN_SCORE);
  const ids=new Set(rows.map(a=>a.asset_id));
  Object.entries(MARKERS).forEach(([id,m])=>m.setStyle({opacity:ids.has(id)?1:.15,fillOpacity:ids.has(id)?.8:.1}));
  $('exp').innerHTML='<tr><th></th><th>Asset</th><th>Score</th><th>Hazard</th></tr>'+rows.map(a=>
-  `<tr class="row" data-id="${a.asset_id}"><td><span class="dot" style="background:${cssColor(a.vulnerability_score)}"></span></td><td>${a.asset_id}<br/><small>${a.asset_type}</small></td><td>${a.vulnerability_score}</td><td>${a.hazard_type}</td></tr>`).join('');
+  `<tr class="row" tabindex="0" role="button" data-id="${esc(a.asset_id)}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();focusAsset(this.dataset.id)}"><td><span class="dot" style="background:${cssColor(a.vulnerability_score)}"></span><span class="sev" title="severity ${a.vulnerability_score>=70?'critical':a.vulnerability_score>=40?'moderate':'low'}">${a.vulnerability_score>=70?'C':a.vulnerability_score>=40?'M':'L'}</span></td><td>${esc(a.asset_id)}<br/><small>${esc(a.asset_type)}</small></td><td>${a.vulnerability_score}</td><td>${esc(a.hazard_type)}</td></tr>`).join('');
  $('exp').querySelectorAll('tr.row').forEach(r=>r.onclick=()=>focusAsset(r.dataset.id));}
-function focusAsset(id){const a=FC.vulnerability_register.find(x=>x.asset_id===id);if(!a)return;
+function focusAsset(id){const a=(FC.vulnerability_register||[]).find(x=>x.asset_id===id);if(!a)return;
  const m=MARKERS[id];MAP.flyTo([a.lat,a.lon],13,{duration:.8});setTimeout(()=>m.openPopup(),850);
  document.querySelectorAll('#adv .adv').forEach(d=>d.classList.remove('flash'));
  const card=document.querySelector(`#adv .adv[data-assets*="${id}"]`);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.classList.add('flash');}
- const chains=FC.cascade_impact.cascade_chains.filter(c=>c.trigger_asset_id===id||(c.chain||[]).some(x=>x.asset_id===id));
+ const chains=((FC.cascade_impact||{}).cascade_chains||[]).filter(c=>c.trigger_asset_id===id||(c.chain||[]).some(x=>x.asset_id===id));
  const down=chains.reduce((s,c)=>s+(c.chain||[]).filter(x=>x.asset_id!==id).length,0);
  const pop=Math.max(0,...chains.map(c=>c.population_affected||0));
  const adv=(FC.advisories||[]).find(x=>(x.asset_refs||[]).includes(id));
  const card2=$('assetcard');card2.style.display='block';
- card2.innerHTML=`<h3>${a.asset_id} <small>${a.asset_type}</small></h3>`+
- `Risk <b>${a.vulnerability_score}</b> &middot; Hazard <b>${a.hazard_type}</b><br/><small>${a.estimated_failure_mode||''}</small><br/>`+
+ card2.innerHTML=`<h3>${esc(a.asset_id)} <small>${esc(a.asset_type)}</small></h3>`+
+ `Risk <b>${a.vulnerability_score}</b> &middot; Hazard <b>${esc(a.hazard_type)}</b><br/><small>${esc(a.estimated_failure_mode||'')}</small><br/>`+
  `Cascade: <b>${down}</b> downstream asset(s)${chains.length?` in ${chains.length} chain(s), pop <b>${pop.toLocaleString('en-IN')}</b>`:' — not in a cascade chain'}<br/>`+
- (adv?`Action: <b>[${adv.priority}] ${adv.recommended_action||''}</b>`:'<small>No direct advisory.</small>');}
-function renderChains(){$('popsrc').innerHTML=`POPULATION EXPOSED &middot; ${(FC.population_source||'source unrecorded')} estimate &mdash; modeled, not headcount`;
- $('cas').innerHTML=`<p>Cumulative pop: <b>${FC.cascade_impact.cumulative_population_affected.toLocaleString('en-IN')}</b> &middot; ${FC.cascade_impact.cascade_chains.length} chains &middot; <small>click a chain to locate on map</small></p>`+
- FC.cascade_impact.cascade_chains.map((c,i)=>{const hops=(c.chain||[]).map(x=>`<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--panel2)">${x.asset_id} <small style="color:var(--dim)">h${x.hop} &middot; ${x.dependency_type}</small></div>`).join('');
-  return `<div class="chain" data-i="${i}"><div style="border:1px solid var(--acc);border-radius:6px;padding:4px 8px;background:#12325e"><b>&#9889; ${c.trigger_asset_id}</b> <small>trigger</small></div>${hops}<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="text-align:center;font-size:12px">&#128100; <b>${(c.population_affected||0).toLocaleString('en-IN')}</b> <small>· ${(c.chain||[]).length} hop(s)</small></div></div>`;}).join('');
+ (adv?`Action: <b>[${esc(adv.priority)}] ${esc(adv.recommended_action||'')}</b>`:'<small>No direct advisory.</small>');}
+function renderChains(){$('popsrc').innerHTML=`POPULATION EXPOSED &middot; ${esc(FC.population_source||'source unrecorded')} estimate &mdash; modeled, not headcount`;
+ $('cas').innerHTML=`<p>Cumulative pop: <b>${(((FC.cascade_impact||{}).cumulative_population_affected||0)).toLocaleString('en-IN')}</b> &middot; ${((FC.cascade_impact||{}).cascade_chains||[]).length} chains<br/><small>click a chain to locate on map</small></p>`+
+ ((FC.cascade_impact||{}).cascade_chains||[]).map((c,i)=>{const hops=(c.chain||[]).map(x=>`<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="border:1px solid var(--line);border-radius:6px;padding:4px 8px;background:var(--card)">${esc(x.asset_id)} <small style="color:var(--dim)">h${x.hop} &middot; ${esc(x.dependency_type)}</small></div>`).join('');
+  return `<div class="chain" data-i="${i}" tabindex="0" role="button" aria-label="cascade chain ${esc(c.trigger_asset_id)}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><div style="border:1px solid var(--accent);border-radius:6px;padding:4px 8px;background:#10202a"><b>&#9889; ${esc(c.trigger_asset_id)}</b> <small>trigger</small></div>${hops}<div style="text-align:center;color:var(--dim);font-size:11px;line-height:1">&#9660;</div><div style="text-align:center;font-size:12px">&#128100; <b>${(c.population_affected||0).toLocaleString('en-IN')}</b> <small>· ${(c.chain||[]).length} hop(s)</small></div></div>`;}).join('');
  $('cas').querySelectorAll('.chain').forEach(d=>d.onclick=()=>{document.querySelectorAll('.chain').forEach(x=>x.classList.remove('hot'));d.classList.add('hot');
-  const c=FC.cascade_impact.cascade_chains[+d.dataset.i];const ids=[c.trigger_asset_id,...c.chain.map(x=>x.asset_id)];
-  const pts=ids.map(id=>{const a=FC.vulnerability_register.find(x=>x.asset_id===id);return a?[a.lat,a.lon]:null;}).filter(Boolean);
+  const c=((FC.cascade_impact||{}).cascade_chains||[])[+d.dataset.i];const ids=[c.trigger_asset_id,...c.chain.map(x=>x.asset_id)];
+  const pts=ids.map(id=>{const a=(FC.vulnerability_register||[]).find(x=>x.asset_id===id);return a?[a.lat,a.lon]:null;}).filter(Boolean);
   if(pts.length)MAP.flyToBounds(pts,{padding:[40,40]});toast(ids.length+' assets in chain');});}
 function orText(s){let o=s;for(const[k,v]of Object.entries(GLOSS)){o=o.split(k).join(v);}return o;}
 function renderAdv(){const pri=$('prifilter').value;
- const list=FC.advisories.filter(a=>!pri||a.priority===pri);
- $('adv').innerHTML=list.map((m,i)=>{const msg=OR?orText(m.message):m.message;
+ const list=(FC.advisories||[]).filter(a=>!pri||a.priority===pri);
+ $('adv').innerHTML=list.map((m,i)=>{const raw=String(m.message||'');const msg=esc(OR?orText(raw):raw);
   const pc=m.priority==='P0'?'p0':(m.priority==='P1'?'p1':'p2');
   const lang=OR?'\u0b13\u0b21\u0b3c\u0b3f\u0b06':'English';
-  return `<div class="adv ${pc}" data-assets="${(m.asset_refs||[]).join(',')}"><div class="adv-head"><span class="pri ${pc}">${m.priority}</span><span class="auth">\u26a0 Early warning</span><span style="margin-left:auto;font-size:11px;color:var(--dim)">${msg.length}ch \u00b7 ${lang}</span></div><div class="auth">Issuing authority: <b>${m.audience}</b></div><div class="adv-msg">${msg}</div><div class="adv-meta">ACTION: <b>${m.recommended_action||''}</b><br/>CHANNEL: <b>${m.channel||'sms'}</b> \u00b7 LANGUAGE: <b>${lang}</b></div><div class="adv-foot"><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('span').textContent);toast('advisory copied')">COPY ADVISORY</button><span style="display:none">${msg}</span></div></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
-$('prifilter').onchange=renderAdv;
-$('langbtn').onclick=e=>{OR=!OR;e.target.classList.toggle('on',!OR);renderAdv();toast(OR?'ଓଡ଼ିଆ terms on':'English');};
-function renderLedger(){const ev=FC.parametric.payout_events||[];
+  return `<div class="adv ${pc}" data-assets="${(m.asset_refs||[]).map(esc).join(',')}"><div class="adv-head"><span class="pri ${pc}">${esc(m.priority)}</span><span class="auth">\u26a0 Early warning</span><span style="margin-left:auto;font-size:11px;color:var(--dim)">${raw.length}ch \u00b7 ${lang}</span></div><div class="auth">Issuing authority: <b>${esc(m.audience)}</b></div><div class="adv-msg">${msg}</div><div class="adv-meta">ACTION: <b>${esc(m.recommended_action||'')}</b><br/>CHANNEL: <b>${esc(m.channel||'sms')}</b> \u00b7 LANGUAGE: <b>${lang}</b></div><div class="adv-foot"><button onclick="copyAdvisory(${i})">COPY ADVISORY</button></div></div>`;}).join('')||'<p><small>No advisories at this filter.</small></p>';}
+function copyAdvisory(i){const pri=$('prifilter').value;const list=(FC.advisories||[]).filter(a=>!pri||a.priority===pri);const m=list[i];if(!m)return;const t=String(OR?orText(String(m.message||'')):String(m.message||''));if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('advisory copied'),()=>toast('copy failed'));}else{toast('copy unavailable');}}
+$('prifilter').onchange=()=>{renderAdv();syncHash();};
+$('langbtn').onclick=e=>{OR=!OR;e.target.classList.toggle('on',OR);renderAdv();toast(OR?'ଓଡ଼ିଆ terms on':'English');};
+function renderLedger(){const ev=((FC.parametric||{}).payout_events||[]);
  const tot=ev.reduce((s,p)=>s+Number(p.payout_amount||0),0);
  const rate=ev.length?Math.round(Number(ev[0].payout_pct||0)*100):0;
- $('ledstats').innerHTML=`<div class="stat"><b>${ev.length}</b><span>TRIGGERED EVENTS</span></div><div class="stat"><b>${rate}%</b><span>PAYOUT RATE</span></div><div class="stat"><b>&#8377;${tot.toLocaleString('en-IN')}</b><span>TOTAL LIQUIDITY</span></div>`;
+ $('ledstats').innerHTML=`<div class="stat"><b>${ev.length}</b><span>Triggered events</span></div><div class="stat"><b>${rate}%</b><span>Payout rate</span></div><div class="stat"><b>&#8377;${tot.toLocaleString('en-IN')}</b><span>Simulated liquidity</span></div>`;
  $('led').innerHTML='<tr><th>Asset</th><th>Trigger</th><th>Payout</th><th>Amount</th></tr>'+ev.map(p=>
- `<tr><td>${p.asset_id}</td><td><small>${p.trigger_condition||''}</small></td><td>${Math.round(p.payout_pct*100)}%</td><td>₹${Number(p.payout_amount).toLocaleString('en-IN')}</td></tr>`).join('');}
+ `<tr><td>${esc(p.asset_id)}<br/><small>${esc(p.policy_id||'')} · ${esc(p.settlement_status||'simulated')}</small></td><td><small>${esc(p.trigger_condition||'')}</small></td><td>${Number(p.payout_pct)||0?Math.round(Number(p.payout_pct)*100)+'%':'—'}</td><td>₹${Number(p.payout_amount||0).toLocaleString('en-IN')}</td></tr>`).join('');}
+function downloadEvidence(){const ev=(FC.parametric||{}).payout_events||[];const reg=(FC.vulnerability_register||[]);const depths=reg.map(a=>Number(a.hazard_depth_m||0));const surge=depths.length?Math.max(...depths):0;const blob=new Blob([JSON.stringify({forecast_id:FC.forecast_id,generated_at:FC.generated_at,hazard:{wind_kmh:((FC.weather||{}).values||{}).intensity_kmh,surge_m:surge},events:ev,settlement_mode:(FC.parametric||{}).settlement_mode,evidence_required:(FC.parametric||{}).evidence_required},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='parametric-evidence.json';a.click();toast('evidence downloaded');}
+function renderRainfall(){const paths=FC.rainfall_pathways||[];const sum=FC.rainfall_summary||{};
+ const head=sum.total_pathways!=null?`<div class="okcard"><b>${sum.total_pathways}</b> pathways · roads <b>${(sum.flooded_roads||[]).length}</b> · hospitals <b>${(sum.hospital_access_at_risk||[]).length}</b> · shelters <b>${(sum.shelter_access_at_risk||[]).length}</b> · power <b>${(sum.power_assets_at_risk||[]).length}</b></div>`:'';
+ $('rainpaths').innerHTML=head+(paths.length?paths.map(p=>`<div class="act"><span><b>${esc(p.asset_id)}</b> · ${esc(p.category||'')} · ${esc(p.severity)}<br/><small>${esc(p.impact_pathway)}</small><br/><small>${esc(p.why_threshold||'')}</small></span><button class="ghost" onclick="focusAsset('${esc(p.asset_id)}')">VIEW</button></div>`).join('')
+ :'<div class="okcard">No rainfall pathway crossed its configured operational threshold.</div>');}
+function renderDispatch(){const records=FC.dispatch_records||[];
+ $('dispatch').innerHTML=records.length?records.map((r,i)=>`<div class="act"><span><b>${esc(r.asset_id||'district')}</b> · ${esc(r.audience)}<br/><small>${esc(r.channel)} · ${esc(String(r.status||'').replaceAll('_',' '))} · ${esc(r.mode)}</small><br/><small>to synthetic role ${esc(r.recipient||r.audience)} · retry ${r.retry_count||0} · ack ${esc(r.ack||'pending')}</small></span><span><button class="ghost" onclick="approveDispatch(${i})">APPROVE</button> <button class="ghost" onclick="ackDispatch(${i})">ACK</button> <button class="ghost" onclick="retryDispatch(${i})">RETRY</button></span></div>`).join('')
+ :'<p><small>No dispatch records prepared.</small></p>';}
+function approveDispatch(i){const r=FC.dispatch_records[i];if(!r)return;r.status='approved_for_delivery';r.mode='approved';r.approved_by='operator (dashboard dry-run)';saveDispatch();renderDispatch();toast('Record '+r.dispatch_id+' approved locally — still dry-run, nothing sent');}
+function ackDispatch(i){const r=FC.dispatch_records[i];if(!r)return;r.ack='acknowledged';saveDispatch();renderDispatch();toast('Record '+r.dispatch_id+' acknowledged');}
+function retryDispatch(i){const r=FC.dispatch_records[i];if(!r)return;r.retry_count=(r.retry_count||0)+1;saveDispatch();renderDispatch();toast('Record '+r.dispatch_id+' retry '+(r.retry_count));}
 function renderAI(){const nAdv=(FC.advisories||[]).length;const dc=FC.data_conflicts||[];const qc=FC.quality_check||{};
- $('aibody').innerHTML=`<div class="okcard"><b>AI DECISION SUPPORT</b> &middot; <span class="pill live">GEMINI LIVE VERIFIED</span><br/>`+
- `ADVISORIES GENERATED <b>${nAdv}</b> &middot; MULTIMODAL CHECK <b>${(qc.overall_status||'unknown').toUpperCase()}</b> &middot; CONFLICTS <b>${dc.length}</b><br/>`+
- (dc.length?dc.map(c=>`<div>CONFLICT <b>${c.conflict_id}</b>: ${c.claim}</div>`).join(''):'<span>No open conflicts.</span><br/>')+
- `<small>Path 2 verification completed &mdash; annotate-only.</small><br/><small>Gemini does advisory generation + conflict detection, not hazard math.</small></div>`;}
+ const ai=FC.ai_decision_support||{};const mode=(ai.advisory_modes||['template_fallback']).join(', ');
+ const first=(FC.advisories||[])[0]||{};
+ $('aibody').innerHTML=`<div class="okcard"><b>AI DECISION SUPPORT</b> &middot; <span class="pill live">${mode.toUpperCase()}</span><br/>`+
+ `<div class="ministats"><div><b>${nAdv}</b><span>advisories</span></div><div><b>${esc(String(qc.overall_status||'unknown').toUpperCase())}</b><span>rule checks</span></div><div><b>${dc.length}</b><span>conflicts</span></div></div>`+
+ (dc.length?dc.map(c=>`<div>CONFLICT <b>${esc(c.conflict_id)}</b>: ${esc(c.claim)} <small>(${esc(c.generation_mode||'heuristic')})</small></div>`).join(''):'<span>No open conflicts.</span><br/>')+
+ `<small>Requested model: ${esc(ai.model_requested||'not configured')}; operator review remains required for conflicts.</small><br/><small>Gemini supports explanations and advisories; hazard math remains deterministic.</small>`+
+ (first.explanation?`<br/><small><b>What Gemini saw:</b> ${esc(JSON.stringify(first.evidence_summary||{}).slice(0,220))}</small><br/><small><b>Recommendation:</b> ${esc(first.recommended_action||'')} · <b>Confidence:</b> ${esc(first.confidence||'')}</small><br/><small><b>Why:</b> ${esc(first.explanation||'')}</small><br/><small><b>Limits:</b> ${esc(first.limitations||'')}</small><br/><small>Operator retains final control — dispatch is dry-run/approval only.</small>`:'')+`</div>`;}
 function renderConflicts(){const dc=FC.data_conflicts||[];
- $('con').innerHTML=dc.length?dc.map(c=>`<div class="adv">CONFLICT <b>${c.conflict_id}</b><br/>${c.claim}<br/><small>${c.hazard_contradiction} — conf ${c.confidence} · reviewer required</small></div>`).join('')
- :'<div class="okcard">✓ No open conflicts. Path2 check ran annotate-only and never blocks dispatch.</div>';}
+ $('con').innerHTML=dc.length?dc.map(c=>`<div class="adv">CONFLICT <b>${esc(c.conflict_id)}</b><br/>${esc(c.claim)}<br/><small>${esc(c.hazard_contradiction)} — conf ${c.confidence} · reviewer required</small></div>`).join('')
+ :'<div class="okcard good">✓ No open conflicts. Path2 check ran annotate-only and never blocks dispatch.</div>';}
 function updCF(i){const r=(CF||[])[i];if(!r)return;
- $('cfv').innerHTML=`<div style="font-size:12px;color:var(--dim)">T+${r.horizon_h}h</div><div><b style="font-size:28px">${r.exposed_pop.toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">POPULATION EXPOSED</span></div><div><b style="font-size:20px;color:var(--grn)">${(r.marginal_lives_saved||0).toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">MARGINAL LIVES SAVED &middot; modeled estimate</span></div><div style="font-size:11px;color:var(--dim)">CASCADE CHAINS ${r.cascade_chains_len!=null?r.cascade_chains_len:FC.cascade_impact.cascade_chains.length}</div>`;
- const all=FC.vulnerability_register;
+ $('cfv').innerHTML=`<div style="font-size:12px;color:var(--dim)">T+${r.horizon_h}h</div><div><b style="font-size:28px">${r.exposed_pop.toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">POPULATION EXPOSED</span></div><div><b style="font-size:20px;color:var(--green)">${(r.marginal_lives_saved||0).toLocaleString('en-IN')}</b><br/><span style="font-size:11px;color:var(--dim)">MARGINAL LIVES SAVED &middot; modeled estimate</span></div><div style="font-size:11px;color:var(--dim)">CASCADE CHAINS ${r.cascade_chains_len!=null?r.cascade_chains_len:((FC.cascade_impact||{}).cascade_chains||[]).length}</div>`;
+ const all=(FC.vulnerability_register||[]);
  Object.entries(MARKERS).forEach(([id,m])=>{const a=all.find(x=>x.asset_id===id);
   const atRisk=r.horizon_h===0?true:(a.in_hazard&&r.horizon_h<12);
   m.setStyle({opacity:atRisk?1:.25,fillOpacity:atRisk?.85:.15});});}
-$('cf').addEventListener('input',e=>updCF(+e.target.value));
+$('cf').addEventListener('input',e=>{updCF(+e.target.value);syncHash();});
 $('panelbtn').onclick=()=>{const m=document.querySelector('main');const hidden=m.classList.toggle('norail');
  $('panelbtn').textContent=hidden?'Panel ⟩':'⟨ Panel';setTimeout(()=>MAP.invalidateSize(),50);};
 (()=>{const grip=$('grip'),m=document.querySelector('main');let drag=false;
  grip.addEventListener('mousedown',e=>{drag=true;grip.classList.add('on');e.preventDefault();});
  addEventListener('mousemove',e=>{if(!drag)return;const w=Math.min(640,Math.max(280,innerWidth-e.clientX));
-  m.style.gridTemplateColumns=`minmax(0,1fr) 8px ${w}px`;});
+  m.style.gridTemplateColumns=`minmax(0,1fr) 12px ${w}px`;});
  addEventListener('mouseup',()=>{if(!drag)return;drag=false;grip.classList.remove('on');MAP.invalidateSize();});})();
 </script>
 </body>

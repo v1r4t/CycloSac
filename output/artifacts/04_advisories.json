@@ -11,7 +11,33 @@
     "recommended_action": "Secure PURI-SHEL-01 by T-24h",
     "channel": "sms",
     "truncated": false,
-    "llm_used": false
+    "llm_used": false,
+    "generation_mode": "template_fallback",
+    "llm_model": null,
+    "evidence_summary": {
+      "gee_source": "real",
+      "gee_freshness": "replay",
+      "gee_date_acquired": "2026-09-24",
+      "sar_water_frac": 0,
+      "weather_mode": "fixture_replay",
+      "weather_source": "met.json",
+      "surge_depth_m": 0.0,
+      "surge_bands_m": [
+        60.0,
+        40.0
+      ],
+      "max_surge_m": 2.5,
+      "wind_kmh": 165.0,
+      "rainfall_72h_mm": 320.0,
+      "tide_phase": "high",
+      "vulnerability_score": 85.5,
+      "asset_type": "cyclone_shelter",
+      "in_hazard": true
+    },
+    "explanation": "Recommended from surge 0.0m, bands [60.0, 40.0], rain 320.0mm/72h, score 85.5, GEE real, weather fixture_replay",
+    "confidence": "high",
+    "limitations": "Hazard math is deterministic; LLM only drafts prose. Verify with operator review, especially on stale/fallback inputs.",
+    "hazard_math_deterministic": true
   },
   {
     "audience": "ndrf_commander",
@@ -25,7 +51,33 @@
     "recommended_action": "Secure PURI-SHEL-02 by T-24h",
     "channel": "sms",
     "truncated": false,
-    "llm_used": false
+    "llm_used": false,
+    "generation_mode": "template_fallback",
+    "llm_model": null,
+    "evidence_summary": {
+      "gee_source": "real",
+      "gee_freshness": "replay",
+      "gee_date_acquired": "2026-09-24",
+      "sar_water_frac": 0,
+      "weather_mode": "fixture_replay",
+      "weather_source": "met.json",
+      "surge_depth_m": 0.0,
+      "surge_bands_m": [
+        60.0,
+        40.0
+      ],
+      "max_surge_m": 2.5,
+      "wind_kmh": 165.0,
+      "rainfall_72h_mm": 320.0,
+      "tide_phase": "high",
+      "vulnerability_score": 85.5,
+      "asset_type": "cyclone_shelter",
+      "in_hazard": true
+    },
+    "explanation": "Recommended from surge 0.0m, bands [60.0, 40.0], rain 320.0mm/72h, score 85.5, GEE real, weather fixture_replay",
+    "confidence": "high",
+    "limitations": "Hazard math is deterministic; LLM only drafts prose. Verify with operator review, especially on stale/fallback inputs.",
+    "hazard_math_deterministic": true
   },
   {
     "audience": "power_utility",
@@ -39,7 +91,33 @@
     "recommended_action": "Secure PURI-TWR-01 by T-24h",
     "channel": "sms",
     "truncated": false,
-    "llm_used": false
+    "llm_used": false,
+    "generation_mode": "template_fallback",
+    "llm_model": null,
+    "evidence_summary": {
+      "gee_source": "real",
+      "gee_freshness": "replay",
+      "gee_date_acquired": "2026-09-24",
+      "sar_water_frac": 0,
+      "weather_mode": "fixture_replay",
+      "weather_source": "met.json",
+      "surge_depth_m": 0.0,
+      "surge_bands_m": [
+        60.0,
+        40.0
+      ],
+      "max_surge_m": 2.5,
+      "wind_kmh": 165.0,
+      "rainfall_72h_mm": 320.0,
+      "tide_phase": "high",
+      "vulnerability_score": 81.9,
+      "asset_type": "transmission_tower",
+      "in_hazard": true
+    },
+    "explanation": "Recommended from surge 0.0m, bands [60.0, 40.0], rain 320.0mm/72h, score 81.9, GEE real, weather fixture_replay",
+    "confidence": "high",
+    "limitations": "Hazard math is deterministic; LLM only drafts prose. Verify with operator review, especially on stale/fallback inputs.",
+    "hazard_math_deterministic": true
   },
   {
     "audience": "power_utility",
@@ -53,7 +131,33 @@
     "recommended_action": "Secure PURI-TWR-02 by T-24h",
     "channel": "sms",
     "truncated": false,
-    "llm_used": false
+    "llm_used": false,
+    "generation_mode": "template_fallback",
+    "llm_model": null,
+    "evidence_summary": {
+      "gee_source": "real",
+      "gee_freshness": "replay",
+      "gee_date_acquired": "2026-09-24",
+      "sar_water_frac": 0,
+      "weather_mode": "fixture_replay",
+      "weather_source": "met.json",
+      "surge_depth_m": 0.0,
+      "surge_bands_m": [
+        60.0,
+        40.0
+      ],
+      "max_surge_m": 2.5,
+      "wind_kmh": 165.0,
+      "rainfall_72h_mm": 320.0,
+      "tide_phase": "high",
+      "vulnerability_score": 81.9,
+      "asset_type": "transmission_tower",
+      "in_hazard": true
+    },
+    "explanation": "Recommended from surge 0.0m, bands [60.0, 40.0], rain 320.0mm/72h, score 81.9, GEE real, weather fixture_replay",
+    "confidence": "high",
+    "limitations": "Hazard math is deterministic; LLM only drafts prose. Verify with operator review, especially on stale/fallback inputs.",
+    "hazard_math_deterministic": true
   },
   {
     "audience": "power_utility",
@@ -67,6 +171,32 @@
     "recommended_action": "Secure PURI-TWR-04 by T-24h",
     "channel": "sms",
     "truncated": false,
-    "llm_used": false
+    "llm_used": false,
+    "generation_mode": "template_fallback",
+    "llm_model": null,
+    "evidence_summary": {
+      "gee_source": "real",
+      "gee_freshness": "replay",
+      "gee_date_acquired": "2026-09-24",
+      "sar_water_frac": 0,
+      "weather_mode": "fixture_replay",
+      "weather_source": "met.json",
+      "surge_depth_m": 0.0,
+      "surge_bands_m": [
+        60.0,
+        40.0
+      ],
+      "max_surge_m": 2.5,
+      "wind_kmh": 165.0,
+      "rainfall_72h_mm": 320.0,
+      "tide_phase": "high",
+      "vulnerability_score": 81.9,
+      "asset_type": "transmission_tower",
+      "in_hazard": true
+    },
+    "explanation": "Recommended from surge 0.0m, bands [60.0, 40.0], rain 320.0mm/72h, score 81.9, GEE real, weather fixture_replay",
+    "confidence": "high",
+    "limitations": "Hazard math is deterministic; LLM only drafts prose. Verify with operator review, especially on stale/fallback inputs.",
+    "hazard_math_deterministic": true
   }
 ]

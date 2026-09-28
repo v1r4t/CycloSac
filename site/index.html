@@ -63,8 +63,8 @@ population, and dependency graphs into one decision-grade forecast JSON.</p>
 </ol>
 <h2>Replay it (T-48h, Cyclone Michaung → Puri)</h2>
 <pre>$env:PYTHONPATH='src'
-python -m forecaster.cli --inputs sample_inputs_demo --out output/forecast.json --artifacts output/artifacts
-python -m pytest tests/   # 63 green</pre>
+python -m forecaster.cli --inputs sample_inputs_demo --out output/forecast.json --artifacts output/artifacts --as-of 2026-09-25T06:00:00+05:30
+python -m pytest tests/   # 83 green</pre>
 <h2>Audiences served</h2>
 <div class="grid">
 <div class="card"><h3>Power utility</h3><p>Which substations to de-energize, when, backup options.</p></div>

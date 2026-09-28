@@ -15,5 +15,8 @@ def test_cli_happy(tmp_path):
     assert r.returncode == 0, r.stderr
     fc = json.loads(out.read_text())
     for k in ["forecast_id", "hazard_narrative", "vulnerability_register",
-              "cascade_impact", "advisories", "quality_check"]:
+              "cascade_impact", "advisories", "quality_check", "weather",
+              "rainfall_pathways", "dispatch_records", "ai_decision_support"]:
         assert k in fc
+    assert fc["weather"]["provenance"]["freshness"] == "replay"
+    assert all(record["delivery_performed"] is False for record in fc["dispatch_records"])

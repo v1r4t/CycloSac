@@ -36,5 +36,7 @@ def make_inputs(d: Path) -> Path:
     (d / ".geecache").mkdir(exist_ok=True)
     w(d / ".geecache" / "tile.json", {"cached": False, "source": "stub",
                                       "aoi": "test", "date": "2026-09-25",
+                                      "date_acquired": "2026-09-25",
+                                      "fetched_at": "2026-09-25T00:00:00+00:00",
                                       "note": "test stub; live path covered manually"})
     return d

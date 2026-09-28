@@ -25,7 +25,14 @@ the structures-on-water finding.
 
 ## Design
 `fetch_real_or_stub()` is cache-first; the live path is injectable
-(`live_fetch=`) so unit tests never need credentials.
+(`live_fetch=`) so unit tests never need credentials. Every tile is
+summarized by `gee_fetcher.describe(tile, as_of)`: `mode` in
+{`live_provider`, `cached_replay`, `fixture_fallback`}, `freshness` in
+{`live`, `replay`, `fallback`, `stale`} (stale = `date_acquired` more
+than 3 days before `--as-of`), mirroring the `weather_fetcher`
+vocabulary. `output/artifacts/00_gee.json` omits only the per-read
+`retrieved_at` timestamp; stub tiles carry `date_acquired` (= request
+date) and `fetched_at` so reloaded caches keep their provenance.
 
 ## Live traffic overlay (optional, annotate-only)
 
@@ -52,7 +59,9 @@ the structures-on-water finding.
   `forecast.json: population_source` → dashboard cascade card.
 
 ## SLOSH provenance
-Surge lookup is a **SLOSH stub** (bilinear interpolation over a local table),
+Surge lookup is a **SLOSH stub** (nearest-grid lookup over a local table
+built by `scripts/make_slosh_lookup.py`, loaded from `SLOSH_LOOKUP_PATH`
+=`data/slosh_lookup.npz`),
 not the operational NOAA SLOSH model. Citation: Jelesnianski, Chen & Shaffer,
 "SLOSH: Sea, Lake, and Overland Surges from Hurricanes" (NOAA Tech. Rep.
 NWS 48, 1992). Replace `SLOSH_LOOKUP_PATH` with basin runs before any

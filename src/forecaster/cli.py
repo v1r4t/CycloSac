@@ -9,9 +9,10 @@ from pathlib import Path
 
 from . import config
 from .loader import load_inputs, LoaderError
-from .gee_fetcher import fetch as gee_fetch, GeeError
+from .gee_fetcher import fetch as gee_fetch, GeeError, describe as gee_describe
 from .hazard import validate_hazard, StageError
-from . import vuln, cascade, glossary, advisory, gemini_path1, gemini_conflict, parametric, counterfactual, qa
+from . import (vuln, cascade, glossary, advisory, gemini_path1, gemini_conflict,
+               parametric, counterfactual, qa, weather_fetcher, rainfall_pathways, dispatch)
 from .glossary import GlossaryError
 
 
@@ -56,6 +57,11 @@ def main(argv=None):
     ap.add_argument("--artifacts", default=None)
     ap.add_argument("--gemini-conflict-mode", default="on", choices=["off", "on"])
     ap.add_argument("--traffic", default="off", choices=["off", "on"])
+    ap.add_argument("--as-of", default=None, help="ISO timestamp used to request and label source data")
+    ap.add_argument("--weather-url", default=None,
+                    help="Optional JSON weather-provider endpoint; no request is made unless supplied")
+    ap.add_argument("--dispatch-mode", default="dry-run", choices=sorted(config.DISPATCH_MODES),
+                    help="Create dispatch records only; this command never sends a message")
     ap.add_argument("--cache-only", action="store_true")
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args(argv)
@@ -71,21 +77,26 @@ def main(argv=None):
         write_error(a.artifacts, "00_loader", e, a.verbose)
         return config.EXIT_LOADER_FAIL
     try:
+        as_of = a.as_of or datetime.now(ist).isoformat()
+        as_of_date = as_of[:10]
+        met, weather_provenance = weather_fetcher.fetch(inp.met.model_dump(), a.weather_url)
         # GEE (priority 1)
         try:
-            tile = gee_fetch("aoi", "2026-09-25", str(Path(a.inputs) / ".geecache"), use_cache_only=a.cache_only)
+            tile = gee_fetch("aoi", as_of_date, str(Path(a.inputs) / ".geecache"), use_cache_only=a.cache_only)
         except GeeError as e:
             log("error", "gee_fetcher", "GEE_NO_CACHE", str(e), {})
             write_error(a.artifacts, "00_gee", e, a.verbose)
             return config.EXIT_GEE_NO_CACHE
-        write_stage(a.artifacts, "00_gee.json", tile)
+        stable_tile = {k: v for k, v in tile.items()
+                       if k not in ("retrieved_at",)}
+        write_stage(a.artifacts, "00_gee.json", stable_tile)
         # Hazard narrative from met + footprint stats
         surge = geojson_polys(inp.raw.get("surge.geojson"), "depth_m")
         rain = geojson_polys(inp.raw.get("rainfall.geojson"), "depth_m")
         wind = geojson_polys(inp.raw.get("wind.geojson"), "wind_kmh")
         max_depth = max([s["depth_m"] for s in surge] + [0])
         narrative = validate_hazard({
-            "hazard_summary": f"{inp.met.cyclone_name} cat {inp.met.cyclone_category} landfall {inp.met.eta_landfall}",
+            "hazard_summary": f"{met['cyclone_name']} cat {met['cyclone_category']} landfall {met['eta_landfall']}",
             "inundation_area_km2": 100.0, "depth_bands": [60.0, 40.0],
             "max_depth_m": max_depth,
             "timeline": [{"hours_before_landfall": 48, "event": "surge arrival"},
@@ -96,6 +107,10 @@ def main(argv=None):
         assets = [x.model_dump() for x in inp.assets]
         reg = vuln.score_assets(assets, surge, rain, wind, crs=a.crs)
         write_stage(a.artifacts, "02_vulnerability.json", reg)
+        rain_paths = rainfall_pathways.build(reg, float(met["rainfall_72h_mm"]))
+        write_stage(a.artifacts, "02b_rainfall_pathways.json", rain_paths)
+        rain_summary = rainfall_pathways.summarize(rain_paths)
+        write_stage(a.artifacts, "02c_rainfall_summary.json", rain_summary)
         # Cascade with ward union (map all assets to W1/W2 round-robin for prototype)
         wards = inp.wards
         from . import wards as wardmod
@@ -122,7 +137,22 @@ def main(argv=None):
                       else f"Secure {r['asset_id']} by T-24h")
             ctx = {"audience": aud, "language": "en" if aud != "municipal_commissioner" else lang,
                    "forecast_id": inp.regional.forecast_id, "asset_id": r["asset_id"],
-                   "glossary": gloss, "channel": "sms"}
+                   "glossary": gloss, "channel": "sms",
+                   "evidence": {"gee_source": tile.get("source", "stub"),
+                                "gee_freshness": gee_describe(tile, as_of_date)["freshness"],
+                                "gee_date_acquired": tile.get("date_acquired", tile.get("date")),
+                                "sar_water_frac": tile.get("sar_water_frac", 0),
+                                "weather_mode": weather_provenance["mode"],
+                                "weather_source": weather_provenance["source"],
+                                "surge_depth_m": r.get("hazard_depth_m", 0),
+                                "surge_bands_m": [60.0, 40.0],
+                                "max_surge_m": max_depth,
+                                "wind_kmh": met["intensity_kmh"],
+                                "rainfall_72h_mm": met["rainfall_72h_mm"],
+                                "tide_phase": met.get("tide_phase"),
+                                "vulnerability_score": r["vulnerability_score"],
+                                "asset_type": r.get("asset_type"),
+                                "in_hazard": r.get("in_hazard")}}
             try:
                 advs.append(gemini_path1.generate(action, ctx))
             except advisory.AdvisoryError as e:
@@ -130,9 +160,11 @@ def main(argv=None):
                 write_error(a.artifacts, "advisory", e, a.verbose)
                 return config.EXIT_INTERNAL
         write_stage(a.artifacts, "04_advisories.json", advs)
+        dispatch_records = dispatch.build_records(advs, a.dispatch_mode)
+        write_stage(a.artifacts, "04_dispatch.json", dispatch_records)
         # Parametric (priority 8)
         par = parametric.build_payouts([{"asset_id": r["asset_id"]} for r in reg],
-                                       {"wind_kmh": inp.met.intensity_kmh, "surge_m": max_depth},
+                                       {"wind_kmh": met["intensity_kmh"], "surge_m": max_depth},
                                        inp.insurance)
         write_stage(a.artifacts, "05_parametric.json", par)
         # Counterfactual (priority 7)
@@ -145,8 +177,9 @@ def main(argv=None):
         else:
             try:
                 bands = {"sar_water_frac": tile.get("sar_water_frac", 0),
-                         "model_surge_m": max_depth}
-                conflicts = gemini_conflict.detect("geetile", bands, assets)
+                         "model_surge_m": max_depth, "rainfall_72h_mm": met["rainfall_72h_mm"]}
+                conflicts = gemini_conflict.detect_with_llm(
+                    "geetile", bands, assets, met=met, tile=tile)
             except Exception as e:
                 log("warning", "gemini_conflict", "CONFLICT_DEGRADED", str(e), {})
                 conflicts = []
@@ -178,14 +211,21 @@ def main(argv=None):
         fc = {"forecast_id": inp.regional.forecast_id,
               "generated_at": datetime.now(ist).isoformat(),
               "prompt_version": "MASTER-FORECASTER-1.1.0",
+              "as_of": as_of,
               "population_source": pop_label,
-              "gee_tile": {"source": tile.get("source", "stub"), "date": tile.get("date_acquired", tile.get("date")),
-                           "cached": tile.get("cached", False), "thumb_url": tile.get("thumb_url")},
+              "gee_tile": gee_describe(tile, as_of_date),
+              "weather": {"values": met, "provenance": weather_provenance},
               "hazard_narrative": narrative, "vulnerability_register": reg,
-              "cascade_impact": casc, "advisories": advs,
+              "rainfall_pathways": rain_paths, "rainfall_summary": rain_summary, "cascade_impact": casc, "advisories": advs,
+              "dispatch_records": dispatch_records,
               "parametric": par, "counterfactual": cf,
               "traffic_overlay": traffic,
-              "data_conflicts": conflicts, "quality_check": qc}
+              "data_conflicts": conflicts,
+              "ai_decision_support": {"model_requested": config.GEMINI_MODEL,
+                                      "advisory_modes": sorted({x.get("generation_mode") for x in advs}),
+                                      "human_review_required_for_conflicts": True,
+                                      "hazard_math_is_deterministic": True},
+              "quality_check": qc}
         Path(a.out).write_text(json.dumps(fc, indent=2))
         h = hashlib.md5(json.dumps(fc, sort_keys=True).encode()).hexdigest()[:8]
         log("info", "cli", "DONE", f"forecast {inp.regional.forecast_id} hash={h} status={qc['overall_status']}", {})
